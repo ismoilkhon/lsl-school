@@ -8,14 +8,8 @@ interface AuthProviderProps {
 
 export default function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
-    // Temporarily disable authentication check to prevent hanging
-    console.log('AuthProvider: Authentication check disabled temporarily');
+    console.log('AuthProvider: Starting authentication check...');
     
-    // Set loading to false immediately so pages can render
-    useAuthStore.getState().setLoading(false);
-    
-    // TODO: Re-enable authentication check once Appwrite connection issues are resolved
-    /*
     const checkAuthWithTimeout = async () => {
       try {
         // Add a timeout to prevent hanging
@@ -34,7 +28,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     };
     
     checkAuthWithTimeout();
-    */
   }, []); // Empty dependency array to run only once
 
   return <>{children}</>;

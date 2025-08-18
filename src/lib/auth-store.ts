@@ -22,23 +22,34 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   error: null,
   isAuthenticated: false,
 
-  setUser: (user) => set({ 
-    user, 
-    isAuthenticated: !!user,
-    error: null 
-  }),
+  setUser: (user) => {
+    console.log('AuthStore: setUser called with:', user);
+    set({ 
+      user, 
+      isAuthenticated: !!user,
+      error: null,
+      loading: false
+    });
+    console.log('AuthStore: State updated, isAuthenticated:', !!user);
+  },
 
-  setLoading: (loading) => set({ loading }),
+  setLoading: (loading) => {
+    console.log('AuthStore: setLoading called with:', loading);
+    set({ loading });
+  },
 
-  setError: (error) => set({ error }),
+  setError: (error) => {
+    console.log('AuthStore: setError called with:', error);
+    set({ error });
+  },
 
   checkAuth: async () => {
-    console.log('checkAuth: Starting authentication check...');
+    console.log('AuthStore: checkAuth: Starting authentication check...');
     set({ loading: true, error: null });
     
     try {
       const user = await getCurrentUser();
-      console.log('checkAuth: User retrieved:', user);
+      console.log('AuthStore: checkAuth: User retrieved:', user);
       
       if (user) {
         set({ 
@@ -47,7 +58,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           loading: false,
           error: null 
         });
-        console.log('checkAuth: User authenticated successfully');
+        console.log('AuthStore: checkAuth: User authenticated successfully');
       } else {
         set({ 
           user: null, 
@@ -55,10 +66,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           loading: false,
           error: null 
         });
-        console.log('checkAuth: No user found, not authenticated');
+        console.log('AuthStore: checkAuth: No user found, not authenticated');
       }
     } catch (error: any) {
-      console.error('checkAuth: Error occurred:', error);
+      console.error('AuthStore: checkAuth: Error occurred:', error);
       set({ 
         user: null, 
         isAuthenticated: false,
@@ -69,6 +80,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   logout: async () => {
+    console.log('AuthStore: logout: Starting logout...');
     set({ loading: true });
     
     try {
@@ -79,7 +91,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         loading: false,
         error: null 
       });
+      console.log('AuthStore: logout: Logout successful');
     } catch (error: any) {
+      console.error('AuthStore: logout: Error occurred:', error);
       set({ 
         loading: false,
         error: error.message || 'Logout failed'
@@ -89,7 +103,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   getUserRole: () => {
     const { user } = get();
-    return user?.prefs?.role || 'student';
+    const role = user?.prefs?.role || 'student';
+    console.log('AuthStore: getUserRole: Returning role:', role);
+    return role;
   }
 }));
 

@@ -55,33 +55,43 @@ export const signUp = async (email: string, password: string, name: string, role
 
 export const signIn = async (email: string, password: string) => {
     try {
+        console.log('appwrite-auth: signIn started for email:', email);
+        
         // First check if there's already an active session
         try {
             const existingUser = await account.get();
             if (existingUser) {
+                console.log('appwrite-auth: Existing session found, returning user:', existingUser);
                 // Return success with existing user data
                 return { success: true, user: existingUser, session: null };
             }
         } catch (sessionError) {
+            console.log('appwrite-auth: No existing session found, proceeding with sign in');
             // No active session, proceed with sign in
         }
 
         // Clear any existing sessions to prevent conflicts
         try {
             await account.deleteSessions();
+            console.log('appwrite-auth: Cleared existing sessions');
         } catch (clearError) {
+            console.log('appwrite-auth: Error clearing sessions (ignored):', clearError);
             // Ignore errors when clearing sessions
         }
 
         // Create new session with email and password
+        console.log('appwrite-auth: Creating new session...');
         const session = await account.createEmailPasswordSession(email, password);
+        console.log('appwrite-auth: Session created successfully');
         
         // After successful session creation, get the user data
+        console.log('appwrite-auth: Getting user data...');
         const user = await account.get();
+        console.log('appwrite-auth: User data retrieved:', user);
         
         return { success: true, session, user };
     } catch (error: any) {
-        console.error('Sign in error:', error);
+        console.error('appwrite-auth: Sign in error:', error);
         return { success: false, error: error.message };
     }
 };
@@ -98,33 +108,33 @@ export const signOut = async () => {
 
 export const getCurrentUser = async (): Promise<AppwriteUser | null> => {
     try {
-        console.log('getCurrentUser: Attempting to get current user...');
+        console.log('appwrite-auth: getCurrentUser: Attempting to get current user...');
         
         // Add a timeout to prevent hanging
         const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('getCurrentUser timeout')), 3000);
+            setTimeout(() => reject(new Error('getCurrentUser timeout')), 5000);
         });
         
         const userPromise = account.get();
         const user = await Promise.race([userPromise, timeoutPromise]) as any;
         
-        console.log('getCurrentUser: User retrieved successfully:', user);
+        console.log('appwrite-auth: getCurrentUser: User retrieved successfully:', user);
         return user as AppwriteUser;
     } catch (error: any) {
         // Check if it's a "missing scope" error (no active session)
         if (error.message && error.message.includes('missing scope')) {
-            console.log('getCurrentUser: No active session found, user is not authenticated');
+            console.log('appwrite-auth: getCurrentUser: No active session found, user is not authenticated');
             return null;
         }
         
         // Check if it's a timeout error
         if (error.message && error.message.includes('timeout')) {
-            console.log('getCurrentUser: Timeout occurred, returning null');
+            console.log('appwrite-auth: getCurrentUser: Timeout occurred, returning null');
             return null;
         }
         
         // Log other errors but still return null
-        console.error('getCurrentUser: Error occurred:', error);
+        console.error('appwrite-auth: getCurrentUser: Error occurred:', error);
         return null;
     }
 };

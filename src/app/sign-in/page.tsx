@@ -10,29 +10,40 @@ export default function SignInPage() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     
-    const { user, loading: authLoading, checkAuth, getUserRole } = useAuthStore();
+    const { user, loading: authLoading, isAuthenticated, checkAuth, getUserRole } = useAuthStore();
     const router = useRouter();
     const searchParams = useSearchParams();
     const redirectTo = searchParams.get('redirect') || '/admin';
 
     // Check if user is already authenticated
     useEffect(() => {
-        console.log('SignInPage: useEffect triggered', { user, authLoading, isAuthenticated: !!user });
+        console.log('SignInPage: useEffect triggered', { 
+            user, 
+            authLoading, 
+            isAuthenticated: !!user,
+            currentPath: window.location.pathname 
+        });
         
-        if (!authLoading && user) {
+        if (!authLoading && user && isAuthenticated) {
             // User is already authenticated, redirect to appropriate dashboard
             const role = getUserRole();
-            console.log('SignInPage: Redirecting authenticated user to:', role);
-            router.push(`/${role}`);
+            console.log('SignInPage: User already authenticated, redirecting to role:', role);
+            
+            // Use a small delay to ensure the store is properly updated
+            setTimeout(() => {
+                router.push(`/${role}`);
+            }, 100);
         }
-    }, [user, authLoading, router, getUserRole]);
+    }, [user, authLoading, isAuthenticated, router, getUserRole]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+        console.log('SignInPage: handleSubmit started');
 
         try {
             const result = await signIn(email, password);
+            console.log('SignInPage: signIn result:', result);
             
             if (result.success) {
                 toast.success("Sign in successful!");
@@ -42,34 +53,31 @@ export default function SignInPage() {
                     console.log('SignInPage: User data received:', result.user);
                     console.log('SignInPage: User preferences:', result.user.prefs);
                     
+                    // Update the auth store with the user data
                     useAuthStore.getState().setUser(result.user);
-                    const role = result.user.prefs?.role || 'student';
-                    console.log('SignInPage: Redirecting to role:', role);
                     
-                    // Try router.push first, fallback to window.location if it doesn't work
-                    try {
-                        router.push(`/${role}`);
-                        console.log('SignInPage: Router push completed');
-                        
-                        // Add a fallback redirect after a short delay
-                        setTimeout(() => {
-                            if (window.location.pathname === '/sign-in') {
-                                console.log('SignInPage: Fallback redirect needed');
-                                const urlParams = new URLSearchParams(window.location.search);
-                                const redirectTo = urlParams.get('redirect');
-                                if (redirectTo) {
-                                    console.log('SignInPage: Fallback redirecting to:', redirectTo);
-                                    window.location.href = redirectTo;
-                                } else {
-                                    console.log('SignInPage: Fallback redirecting to role:', role);
-                                    window.location.href = `/${role}`;
-                                }
-                            }
-                        }, 1000);
-                    } catch (routerError) {
-                        console.error('Router push failed, using window.location:', routerError);
-                        window.location.href = `/${role}`;
-                    }
+                    // Wait a moment for the store to update
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    
+                    // Get the user role and determine redirect path
+                    const role = result.user.prefs?.role || 'student';
+                    const redirectPath = redirectTo !== '/admin' ? redirectTo : `/${role}`;
+                    
+                    console.log('SignInPage: About to redirect to:', redirectPath);
+                    console.log('SignInPage: Current auth state:', useAuthStore.getState());
+                    
+                    // Use router.push for navigation
+                    router.push(redirectPath);
+                    
+                    // Add a fallback redirect after a short delay
+                    setTimeout(() => {
+                        if (window.location.pathname === '/sign-in') {
+                            console.log('SignInPage: Fallback redirect needed');
+                            console.log('SignInPage: Current path:', window.location.pathname);
+                            console.log('SignInPage: Redirecting to:', redirectPath);
+                            window.location.href = redirectPath;
+                        }
+                    }, 1000);
                 } else {
                     // No user data, need to get it via checkAuth
                     console.log('SignInPage: No user data, calling checkAuth...');
@@ -94,6 +102,18 @@ export default function SignInPage() {
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
                     <p className="mt-4 text-gray-600">Checking authentication...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // If user is already authenticated, show loading while redirecting
+    if (user && isAuthenticated) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Redirecting to dashboard...</p>
                 </div>
             </div>
         );
