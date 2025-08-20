@@ -1,4 +1,4 @@
-import { Client, Databases, Account, ID } from 'appwrite';
+import { Client, Databases, Account, ID, Storage } from 'appwrite';
 
 // Initialize Appwrite client
 const client = new Client()
@@ -8,9 +8,11 @@ const client = new Client()
 // Initialize services
 export const databases = new Databases(client);
 export const account = new Account(client);
+export const storage = new Storage(client);
 
 // Database ID (you'll need to create this in Appwrite)
 export const DATABASE_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || 'school_management';
+export const BUCKET_ID = process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || 'uploads';
 
 // Collection IDs
 export const COLLECTIONS = {

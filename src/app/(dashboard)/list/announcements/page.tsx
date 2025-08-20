@@ -6,8 +6,10 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import Image from "next/image";
-import { useAuth } from "@/components/AppwriteAuthProvider";
-import { getAnnouncements, getClasses } from "@/lib/appwrite-data";
+import { useAuthStore } from "@/lib/auth-store";
+import { adminListDocuments } from "@/lib/appwrite-admin";
+import { COLLECTIONS } from "@/lib/appwrite";
+import { Query } from "node-appwrite";
 import { useEffect, useState } from "react";
 
 type AnnouncementList = {
@@ -20,14 +22,14 @@ type AnnouncementList = {
 };
 
 const AnnouncementListPage = () => {
-  const { user } = useAuth();
+  const { getUserRole } = useAuthStore();
   const [data, setData] = useState<AnnouncementList[]>([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [searchParams, setSearchParams] = useState<{ [key: string]: string | undefined }>({});
 
-  const role = user?.prefs?.role || 'student';
+  const role = getUserRole();
   
   const columns = [
     {
@@ -80,16 +82,11 @@ const AnnouncementListPage = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Build filters for Appwrite
-        const filters: Record<string, any> = {};
-        
-        if (searchParams.search) {
-          filters.title = searchParams.search;
-        }
-
-        const result = await getAnnouncements(page, ITEM_PER_PAGE, filters);
-        setData(result.data as unknown as AnnouncementList[]);
-        setCount(result.count);
+        const offset = (page - 1) * ITEM_PER_PAGE;
+        const queries: string[] = [Query.limit(ITEM_PER_PAGE), Query.offset(offset), Query.orderDesc('$createdAt')];
+        const res = await adminListDocuments(COLLECTIONS.ANNOUNCEMENTS, queries);
+        setData((res.documents as unknown as AnnouncementList[]) || []);
+        setCount(res.total || 0);
       } catch (error) {
         console.error('Error fetching announcements:', error);
       } finally {

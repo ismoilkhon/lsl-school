@@ -1,7 +1,7 @@
 // Load environment variables from .env.local
 require('dotenv').config({ path: '.env.local' });
 
-const { Client, Databases, ID } = require('node-appwrite');
+const { Client, Databases, Storage, ID, Permission, Role } = require('node-appwrite');
 
 // Initialize Appwrite client
 const client = new Client()
@@ -10,6 +10,8 @@ const client = new Client()
     .setKey(process.env.APPWRITE_API_KEY || '');
 
 const databases = new Databases(client);
+const storage = new Storage(client);
+const BUCKET_ID = process.env.APPWRITE_BUCKET_ID || 'uploads';
 const DATABASE_ID = process.env.APPWRITE_DATABASE_ID || 'school_management';
 
 // Collection configurations with attributes
@@ -300,12 +302,28 @@ async function setupAppwrite() {
     const dbId = await createDatabase();
     console.log(`📝 Using database ID: ${dbId}`);
     await createCollections();
+    // Ensure a single public uploads bucket exists
+    try {
+        await storage.createBucket(BUCKET_ID, 'Uploads', [
+            Permission.read(Role.any()),
+            Permission.create(Role.any()),
+            Permission.update(Role.any()),
+            Permission.delete(Role.any()),
+        ], true, undefined, undefined, ['jpg','jpeg','png','webp']);
+        console.log(`✅ Storage bucket created: ${BUCKET_ID}`);
+    } catch (e) {
+        if (e.code === 409) {
+            console.log(`✅ Storage bucket already exists: ${BUCKET_ID}`);
+        } else {
+            console.warn('⚠️  Could not create storage bucket:', e.message);
+        }
+    }
     console.log('✅ Setup completed!');
     console.log(`📊 Database ID: ${dbId}`);
     console.log('💡 Collections and attributes created successfully!');
     console.log('📝 Next steps:');
-    console.log('   1. Run: node scripts/migrate-data.js to import data');
-    console.log('   2. Update your application code to use Appwrite');
+    console.log('   1. Set NEXT_PUBLIC_APPWRITE_BUCKET_ID and APPWRITE_BUCKET_ID to the bucket id: ' + BUCKET_ID);
+    console.log('   2. Run: node scripts/migrate-data.js to import data');
 }
 
 setupAppwrite().catch(console.error);

@@ -1,24 +1,13 @@
-import { getDocuments, COLLECTIONS } from "@/lib/appwrite";
-import { Query } from "appwrite";
+import { getAnnouncements } from "@/lib/appwrite-data";
 
 const Announcements = async () => {
-  // TODO: Replace with proper authentication
-  const userId = "temp_user_id";
-  const sessionClaims = { metadata: { role: "admin" } };
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-
   let data: any[] = [];
   
   try {
-    // Fetch announcements from Appwrite
-    const announcementsRes = await getDocuments(COLLECTIONS.ANNOUNCEMENTS, [
-      Query.limit(3),
-      Query.orderDesc('$createdAt')
-    ]);
-    data = announcementsRes.documents;
+    const res = await getAnnouncements(1, 3, {});
+    data = res.data;
   } catch (error) {
     console.warn('Failed to fetch announcements:', error);
-    // Fallback data for build time or when API is unavailable
     data = [];
   }
 

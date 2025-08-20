@@ -15,4 +15,7 @@ export {
   createExam,
   updateExam,
   deleteExam,
+  createEvent,
+  updateEvent,
+  deleteEvent,
 } from "./appwrite-actions";

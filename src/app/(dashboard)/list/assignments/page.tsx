@@ -2,17 +2,19 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { getDocuments, COLLECTIONS } from "@/lib/appwrite";
+import { adminListDocuments } from "@/lib/appwrite-admin";
+import { COLLECTIONS } from "@/lib/appwrite";
+import { Query } from "node-appwrite";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import Image from "next/image";
+import { headers } from "next/headers";
 
 const AssignmentListPage = async ({
   searchParams,
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-  // TODO: Replace with proper authentication
-  const role = "admin";
+  const role = headers().get('x-user-role') || 'student';
   
   const columns = [
     {
@@ -75,9 +77,10 @@ const AssignmentListPage = async ({
   }
 
   // Fetch data from Appwrite
-  const assignmentsRes = await getDocuments(COLLECTIONS.ASSIGNMENTS, queries);
-  const data = assignmentsRes.documents;
-  const count = assignmentsRes.total;
+  const offset = (p - 1) * ITEM_PER_PAGE;
+  const res = await adminListDocuments(COLLECTIONS.ASSIGNMENTS, [Query.limit(ITEM_PER_PAGE), Query.offset(offset)]);
+  const data = res.documents as any[];
+  const count = res.total;
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">

@@ -9,16 +9,46 @@ const client = new Client()
 
 const account = new Account(client);
 
-// Define role-based access control
+// Define role-based access control (route prefixes)
 const roleRoutes = {
+  // Admin can access everything under /admin and /list
   admin: ['/admin', '/list'],
-  teacher: ['/teacher', '/list/students', '/list/classes', '/list/lessons', '/list/exams', '/list/assignments', '/list/results', '/list/attendances'],
-  student: ['/student', '/list/lessons', '/list/exams', '/list/assignments', '/list/results'],
-  parent: ['/parent', '/list/students', '/list/results', '/list/attendances']
-};
+  // Teacher can see and manage classes, lessons, exams, assignments, results, attendance, plus events & announcements
+  teacher: [
+    '/teacher',
+    '/list/students',
+    '/list/classes',
+    '/list/lessons',
+    '/list/exams',
+    '/list/assignments',
+    '/list/results',
+    '/list/attendance',
+    '/list/events',
+    '/list/announcements',
+  ],
+  // Student can see timetable, exams, assignments, own results, events & announcements
+  student: [
+    '/student',
+    '/list/lessons',
+    '/list/exams',
+    '/list/assignments',
+    '/list/results',
+    '/list/events',
+    '/list/announcements',
+  ],
+  // Parent can see child's results, timetable, attendance, events & announcements
+  parent: [
+    '/parent',
+    '/list/lessons',
+    '/list/results',
+    '/list/attendance',
+    '/list/events',
+    '/list/announcements',
+  ],
+} as const;
 
 // Public routes that don't require authentication
-const publicRoutes = ['/sign-in', '/sign-up', '/', '/debug'];
+const publicRoutes = ['/sign-in', '/sign-up', '/'];
 
 // Get user role from session or user preferences
 async function getUserRole(request: NextRequest): Promise<string | null> {
@@ -76,17 +106,24 @@ function hasAccess(userRole: string, pathname: string): boolean {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Allow public routes
-  if (publicRoutes.includes(pathname) || pathname.startsWith('/_next') || pathname.startsWith('/api')) {
+  // Allow public routes (match exact or subpaths)
+  if (
+    publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/')) ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api')
+  ) {
     return NextResponse.next();
   }
 
-  // Temporarily skip middleware for dashboard routes to fix authentication redirect loop
-  // TODO: Re-enable once client-side authentication is working properly
-  if (pathname.startsWith('/admin') || pathname.startsWith('/teacher') || 
-      pathname.startsWith('/student') || pathname.startsWith('/parent') || 
-      pathname.startsWith('/list')) {
-    console.log('Middleware: Skipping authentication check for dashboard route:', pathname);
+  // TEMP: Allow dashboard routes while we rely on client auth store to handle redirects
+  if (
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/teacher') ||
+    pathname.startsWith('/student') ||
+    pathname.startsWith('/parent') ||
+    pathname.startsWith('/list')
+  ) {
+    console.log('Middleware: Skipping auth for dashboard route:', pathname);
     return NextResponse.next();
   }
 
@@ -101,7 +138,9 @@ export async function middleware(request: NextRequest) {
     if (!userRole) {
       console.log('Middleware: No user role found, redirecting to sign-in');
       const signInUrl = new URL('/sign-in', request.url);
-      signInUrl.searchParams.set('redirect', pathname);
+      if (pathname && pathname !== '/' && pathname !== '/sign-in') {
+        signInUrl.searchParams.set('redirect', pathname);
+      }
       return NextResponse.redirect(signInUrl);
     }
 
@@ -126,7 +165,9 @@ export async function middleware(request: NextRequest) {
     
     // On error, redirect to sign-in
     const signInUrl = new URL('/sign-in', request.url);
-    signInUrl.searchParams.set('redirect', pathname);
+    if (pathname && pathname !== '/' && pathname !== '/sign-in') {
+      signInUrl.searchParams.set('redirect', pathname);
+    }
     return NextResponse.redirect(signInUrl);
   }
 }

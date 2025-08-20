@@ -1,4 +1,6 @@
-const UserCard = ({ type }: { type: string }) => {
+const UserCard = ({ type, count, label }: { type: string; count?: number; label?: string }) => {
+  const displayLabel = label || `${type}s`;
+  const displayCount = typeof count === 'number' ? count.toLocaleString() : '—';
   return (
     <div className="rounded-2xl odd:bg-lamaPurple even:bg-lamaYellow p-4 flex-1 min-w-[130px]">
       <div className="flex justify-between items-center">
@@ -6,8 +8,8 @@ const UserCard = ({ type }: { type: string }) => {
           2024/25
         </span>
       </div>
-      <h1 className="text-2xl font-semibold my-4">1,234</h1>
-      <h2 className="capitalize text-sm font-medium text-gray-500">{type}s</h2>
+      <h1 className="text-2xl font-semibold my-4">{displayCount}</h1>
+      <h2 className="capitalize text-sm font-medium text-gray-500">{displayLabel}</h2>
     </div>
   );
 };

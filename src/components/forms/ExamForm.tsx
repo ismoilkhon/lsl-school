@@ -9,12 +9,7 @@ import {
   subjectSchema,
   SubjectSchema,
 } from "@/lib/formValidationSchemas";
-import {
-  createExam,
-  createSubject,
-  updateExam,
-  updateSubject,
-} from "@/lib/actions";
+import { createExam, updateExam } from "@/lib/actions";
 import { useFormState } from "react-dom";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { toast } from "react-toastify";

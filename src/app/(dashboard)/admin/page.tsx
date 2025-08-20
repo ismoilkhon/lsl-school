@@ -1,91 +1,21 @@
-"use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/lib/auth-store";
 import Announcements from "@/components/Announcements";
 import AttendanceChartContainer from "@/components/AttendanceChartContainer";
 import CountChartContainer from "@/components/CountChartContainer";
 import EventCalendarContainer from "@/components/EventCalendarContainer";
 import FinanceChart from "@/components/FinanceChart";
-import UserCard from "@/components/UserCard";
+import StatsCards from "@/components/StatsCards";
 
-const AdminPage = ({
+export default function AdminPage({
   searchParams,
 }: {
   searchParams: { [keys: string]: string | undefined };
-}) => {
-  const { user, loading, isAuthenticated, getUserRole, checkAuth } = useAuthStore();
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    console.log('AdminPage: useEffect triggered', { 
-      user, 
-      loading, 
-      isAuthenticated, 
-      isAuthorized,
-      currentPath: window.location.pathname 
-    });
-
-    const verifyAccess = async () => {
-      if (!isAuthenticated && !loading) {
-        console.log('AdminPage: User not authenticated, redirecting to sign-in');
-        router.push('/sign-in');
-        return;
-      }
-
-      if (user && isAuthenticated) {
-        const role = getUserRole();
-        console.log('AdminPage: User authenticated, role:', role);
-        
-        if (role !== 'admin') {
-          console.log('AdminPage: User role is not admin, redirecting to:', role);
-          // Redirect to appropriate dashboard
-          router.push(`/${role}`);
-          return;
-        }
-        console.log('AdminPage: User authorized as admin');
-        setIsAuthorized(true);
-      }
-    };
-
-    if (!loading) {
-      verifyAccess();
-    }
-  }, [user, loading, isAuthenticated, getUserRole, router, isAuthorized]);
-
-  // Show loading while checking authentication
-  if (loading || !isAuthenticated) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show loading while checking authorization
-  if (!isAuthorized) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Checking authorization...</p>
-        </div>
-      </div>
-    );
-  }
-
+}) {
   return (
     <div className="p-4 flex gap-4 flex-col">
       {/* Welcome Message */}
       <div className="w-full">
         <div className="bg-white p-4 rounded-md shadow-sm">
-          <h1 className="text-2xl font-bold text-gray-800">
-            Welcome back, {user?.name}!
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-800">Welcome back!</h1>
           <p className="text-gray-600">Administrator Dashboard</p>
         </div>
       </div>
@@ -95,12 +25,7 @@ const AdminPage = ({
         {/* LEFT */}
         <div className="w-full lg:w-2/3 flex flex-col gap-8">
           {/* USER CARDS */}
-          <div className="flex gap-4 justify-between flex-wrap">
-            <UserCard type="admin" />
-            <UserCard type="teacher" />
-            <UserCard type="student" />
-            <UserCard type="parent" />
-          </div>
+          <StatsCards />
           {/* MIDDLE CHARTS */}
           <div className="flex gap-4 flex-col lg:flex-row">
             {/* COUNT CHART */}
@@ -119,12 +44,10 @@ const AdminPage = ({
         </div>
         {/* RIGHT */}
         <div className="w-full lg:w-1/3 flex flex-col gap-8">
-          <EventCalendarContainer searchParams={searchParams}/>
+          <EventCalendarContainer searchParams={searchParams} />
           <Announcements />
         </div>
       </div>
     </div>
   );
-};
-
-export default AdminPage;
+}

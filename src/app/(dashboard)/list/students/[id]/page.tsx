@@ -1,7 +1,8 @@
-import { getDocument, COLLECTIONS } from "@/lib/appwrite";
+import { adminGetDocument } from "@/lib/appwrite-admin";
+import { COLLECTIONS } from "@/lib/appwrite";
 
 const StudentDetailPage = async ({ params }: { params: { id: string } }) => {
-  const student = await getDocument(COLLECTIONS.STUDENTS, params.id);
+  const student = await adminGetDocument(COLLECTIONS.STUDENTS, params.id);
 
   if (!student) {
     return <div>Student not found</div>;

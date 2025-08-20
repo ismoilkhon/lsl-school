@@ -1,5 +1,8 @@
-import { getDocuments, COLLECTIONS } from "@/lib/appwrite";
+import { adminListDocuments } from "@/lib/appwrite-admin";
+import { COLLECTIONS } from "@/lib/appwrite";
+import { Query } from "node-appwrite";
 import FormModal from "./FormModal";
+import dynamic from "next/dynamic";
 
 export type FormContainerProps = {
   table:
@@ -23,33 +26,36 @@ export type FormContainerProps = {
 const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
   let relatedData = {};
 
-  // TODO: Replace with proper authentication
-  const role = "admin"; // Hardcoded for now
-  const currentUserId = "temp_user_id";
+  // Role-based visibility can be refined per form if needed using middleware-enforced pages
 
   if (type !== "delete") {
     switch (table) {
       case "subject":
-        const subjectTeachersRes = await getDocuments(COLLECTIONS.TEACHERS);
+        const subjectTeachersRes = await adminListDocuments(COLLECTIONS.TEACHERS, [Query.limit(100)]);
         relatedData = { teachers: subjectTeachersRes.documents };
         break;
       case "class":
-        const classGradesRes = await getDocuments(COLLECTIONS.GRADES);
-        const classTeachersRes = await getDocuments(COLLECTIONS.TEACHERS);
+        const classGradesRes = await adminListDocuments(COLLECTIONS.GRADES, [Query.limit(100)]);
+        const classTeachersRes = await adminListDocuments(COLLECTIONS.TEACHERS, [Query.limit(100)]);
         relatedData = { teachers: classTeachersRes.documents, grades: classGradesRes.documents };
         break;
       case "teacher":
-        const teacherSubjectsRes = await getDocuments(COLLECTIONS.SUBJECTS);
+        const teacherSubjectsRes = await adminListDocuments(COLLECTIONS.SUBJECTS, [Query.limit(100)]);
         relatedData = { subjects: teacherSubjectsRes.documents };
         break;
       case "student":
-        const studentGradesRes = await getDocuments(COLLECTIONS.GRADES);
-        const studentClassesRes = await getDocuments(COLLECTIONS.CLASSES);
+        const studentGradesRes = await adminListDocuments(COLLECTIONS.GRADES, [Query.limit(100)]);
+        const studentClassesRes = await adminListDocuments(COLLECTIONS.CLASSES, [Query.limit(100)]);
         relatedData = { classes: studentClassesRes.documents, grades: studentGradesRes.documents };
         break;
       case "exam":
-        const examLessonsRes = await getDocuments(COLLECTIONS.LESSONS);
+        const examLessonsRes = await adminListDocuments(COLLECTIONS.LESSONS, [Query.limit(100)]);
         relatedData = { lessons: examLessonsRes.documents };
+        break;
+      case "event":
+        // could fetch classes to pick an audience
+        const classesRes = await adminListDocuments(COLLECTIONS.CLASSES, [Query.limit(100)]);
+        relatedData = { classes: classesRes.documents };
         break;
 
       default:

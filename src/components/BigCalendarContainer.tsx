@@ -1,7 +1,6 @@
-import { getDocuments, COLLECTIONS } from "@/lib/appwrite";
+import { getLessons } from "@/lib/appwrite-data";
 import BigCalendar from "./BigCalender";
 import { adjustScheduleToCurrentWeek } from "@/lib/utils";
-import { Query } from "appwrite";
 
 const BigCalendarContainer = async ({
   type,
@@ -13,11 +12,9 @@ const BigCalendarContainer = async ({
   let data: any[] = [];
   
   try {
-    const dataRes = await getDocuments(COLLECTIONS.LESSONS, [
-      Query.equal(type, id)
-    ]);
+    const { data: lessons } = await getLessons(1, 100, { [type]: id });
 
-    data = dataRes.documents.map((lesson) => ({
+    data = lessons.map((lesson: any) => ({
       title: lesson.name,
       start: new Date(lesson.startTime),
       end: new Date(lesson.endTime),

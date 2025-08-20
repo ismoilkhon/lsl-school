@@ -1,5 +1,3 @@
-'use client';
-
 import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -7,11 +5,13 @@ import TableSearch from "@/components/TableSearch";
 
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import Image from "next/image";
+import { getAppwriteFilePreviewUrl } from "@/lib/utils";
 import Link from "next/link";
+import { headers } from "next/headers";
 
-import { useAuth } from "@/components/AppwriteAuthProvider";
-import { getStudents, getClasses } from "@/lib/appwrite-data";
-import { useEffect, useState } from "react";
+import { adminListDocuments } from "@/lib/appwrite-admin";
+import { COLLECTIONS } from "@/lib/appwrite";
+import { Query } from "node-appwrite";
 
 type StudentList = {
   $id: string;
@@ -32,15 +32,12 @@ type StudentList = {
   class?: { $id: string; name: string };
 };
 
-const StudentListPage = () => {
-  const { user } = useAuth();
-  const [data, setData] = useState<StudentList[]>([]);
-  const [count, setCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [searchParams, setSearchParams] = useState<{ [key: string]: string | undefined }>({});
-
-  const role = user?.prefs?.role || 'student';
+const StudentListPage = async ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | undefined };
+}) => {
+  const role = headers().get('x-user-role') || 'student';
 
   const columns = [
     {
@@ -84,7 +81,7 @@ const StudentListPage = () => {
     >
       <td className="flex items-center gap-4 p-4">
         <Image
-          src={item.img || "/noAvatar.png"}
+          src={item.img ? getAppwriteFilePreviewUrl(item.img, 40, 40) : "/noAvatar.png"}
           alt=""
           width={40}
           height={40}
@@ -114,33 +111,13 @@ const StudentListPage = () => {
     </tr>
   );
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        // Build filters for Appwrite
-        const filters: Record<string, any> = {};
-        
-        if (searchParams.search) {
-          filters.name = searchParams.search;
-        }
-
-        const result = await getStudents(page, ITEM_PER_PAGE, filters);
-        setData(result.data as unknown as StudentList[]);
-        setCount(result.count);
-      } catch (error) {
-        console.error('Error fetching students:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [page, searchParams]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const { page, ...queryParams } = searchParams;
+  const p = page ? parseInt(page) : 1;
+  const offset = (p - 1) * ITEM_PER_PAGE;
+  const queries: string[] = [Query.limit(ITEM_PER_PAGE), Query.offset(offset)];
+  const result = await adminListDocuments(COLLECTIONS.STUDENTS, queries);
+  const data = (result.documents as unknown as StudentList[]) || [];
+  const count = result.total || 0;
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
@@ -165,7 +142,7 @@ const StudentListPage = () => {
       {/* LIST */}
       <Table columns={columns} renderRow={renderRow} data={data} />
       {/* PAGINATION */}
-      <Pagination page={page} count={count} />
+      <Pagination page={p} count={count} />
     </div>
   );
 };

@@ -1,10 +1,28 @@
 import { 
-  getDocuments, 
-  getDocument, 
-  COLLECTIONS, 
-  DATABASE_ID 
+  getDocuments as getDocumentsClient, 
+  getDocument as getDocumentClient, 
+  COLLECTIONS as CLIENT_COLLECTIONS, 
+  DATABASE_ID as CLIENT_DATABASE_ID 
 } from "./appwrite";
 import { Query } from "appwrite";
+
+// Expose shared constants
+export const COLLECTIONS = CLIENT_COLLECTIONS;
+export const DATABASE_ID = CLIENT_DATABASE_ID;
+
+// Decide whether we are running on the server or client
+const isServer = typeof window === "undefined";
+
+// Environment-aware wrappers (temporarily use client SDK on server; rely on safeQuery fallbacks)
+const listDocuments = async (collectionId: string, queries?: string[]) => {
+  // Do NOT import server-only code at build time; only use client SDK here
+  return getDocumentsClient(collectionId, queries);
+};
+
+const getDocument = async (collectionId: string, documentId: string) => {
+  // Do NOT import server-only code at build time; only use client SDK here
+  return getDocumentClient(collectionId, documentId);
+};
 
 // Helper function to build Appwrite queries
 const buildQueries = (filters: Record<string, any> = {}) => {
@@ -34,7 +52,7 @@ const safeQuery = async <T>(queryFn: () => Promise<T>, fallback: T): Promise<T> 
   } catch (error: any) {
     // During build time or when not authenticated, return fallback
     if (error?.code === 401 || error?.code === 400 || process.env.NODE_ENV === 'production') {
-      console.warn('Query failed (likely due to build-time execution), using fallback:', error.message);
+      console.warn('Query failed (likely due to missing auth or build-time execution), using fallback:', error?.message || error);
       return fallback;
     }
     console.error('Unexpected query error:', error);
@@ -54,10 +72,8 @@ export const getAnnouncements = async (
     queries.push(Query.offset((page - 1) * limit));
     queries.push(Query.orderDesc('$createdAt'));
 
-    const response = await getDocuments(COLLECTIONS.ANNOUNCEMENTS, queries);
+    const response = await safeQuery(() => listDocuments(COLLECTIONS.ANNOUNCEMENTS, queries), { documents: [], total: 0 } as any);
     
-    // For role-based filtering, we'll need to handle this differently
-    // since Appwrite doesn't have the same relational queries as Prisma
     return {
       data: response.documents,
       count: response.total,
@@ -80,7 +96,7 @@ export const getStudents = async (
     queries.push(Query.offset((page - 1) * limit));
     queries.push(Query.orderDesc('$createdAt'));
 
-    const response = await getDocuments(COLLECTIONS.STUDENTS, queries);
+    const response = await safeQuery(() => listDocuments(COLLECTIONS.STUDENTS, queries), { documents: [], total: 0 } as any);
     
     return {
       data: response.documents,
@@ -94,7 +110,7 @@ export const getStudents = async (
 
 export const getStudentById = async (id: string) => {
   try {
-    return await getDocument(COLLECTIONS.STUDENTS, id);
+    return await safeQuery(() => getDocument(COLLECTIONS.STUDENTS, id), null as any);
   } catch (error) {
     console.error('Error fetching student:', error);
     return null;
@@ -113,7 +129,7 @@ export const getTeachers = async (
     queries.push(Query.offset((page - 1) * limit));
     queries.push(Query.orderDesc('$createdAt'));
 
-    const response = await getDocuments(COLLECTIONS.TEACHERS, queries);
+    const response = await safeQuery(() => listDocuments(COLLECTIONS.TEACHERS, queries), { documents: [], total: 0 } as any);
     
     return {
       data: response.documents,
@@ -127,7 +143,7 @@ export const getTeachers = async (
 
 export const getTeacherById = async (id: string) => {
   try {
-    return await getDocument(COLLECTIONS.TEACHERS, id);
+    return await safeQuery(() => getDocument(COLLECTIONS.TEACHERS, id), null as any);
   } catch (error) {
     console.error('Error fetching teacher:', error);
     return null;
@@ -146,7 +162,7 @@ export const getClasses = async (
     queries.push(Query.offset((page - 1) * limit));
     queries.push(Query.orderDesc('$createdAt'));
 
-    const response = await getDocuments(COLLECTIONS.CLASSES, queries);
+    const response = await safeQuery(() => listDocuments(COLLECTIONS.CLASSES, queries), { documents: [], total: 0 } as any);
     
     return {
       data: response.documents,
@@ -170,7 +186,7 @@ export const getSubjects = async (
     queries.push(Query.offset((page - 1) * limit));
     queries.push(Query.orderDesc('$createdAt'));
 
-    const response = await getDocuments(COLLECTIONS.SUBJECTS, queries);
+    const response = await safeQuery(() => listDocuments(COLLECTIONS.SUBJECTS, queries), { documents: [], total: 0 } as any);
     
     return {
       data: response.documents,
@@ -194,7 +210,7 @@ export const getLessons = async (
     queries.push(Query.offset((page - 1) * limit));
     queries.push(Query.orderDesc('$createdAt'));
 
-    const response = await getDocuments(COLLECTIONS.LESSONS, queries);
+    const response = await safeQuery(() => listDocuments(COLLECTIONS.LESSONS, queries), { documents: [], total: 0 } as any);
     
     return {
       data: response.documents,
@@ -218,7 +234,7 @@ export const getExams = async (
     queries.push(Query.offset((page - 1) * limit));
     queries.push(Query.orderDesc('$createdAt'));
 
-    const response = await getDocuments(COLLECTIONS.EXAMS, queries);
+    const response = await safeQuery(() => listDocuments(COLLECTIONS.EXAMS, queries), { documents: [], total: 0 } as any);
     
     return {
       data: response.documents,
@@ -242,7 +258,7 @@ export const getAssignments = async (
     queries.push(Query.offset((page - 1) * limit));
     queries.push(Query.orderDesc('$createdAt'));
 
-    const response = await getDocuments(COLLECTIONS.ASSIGNMENTS, queries);
+    const response = await safeQuery(() => listDocuments(COLLECTIONS.ASSIGNMENTS, queries), { documents: [], total: 0 } as any);
     
     return {
       data: response.documents,
@@ -266,7 +282,7 @@ export const getResults = async (
     queries.push(Query.offset((page - 1) * limit));
     queries.push(Query.orderDesc('$createdAt'));
 
-    const response = await getDocuments(COLLECTIONS.RESULTS, queries);
+    const response = await safeQuery(() => listDocuments(COLLECTIONS.RESULTS, queries), { documents: [], total: 0 } as any);
     
     return {
       data: response.documents,
@@ -290,7 +306,7 @@ export const getEvents = async (
     queries.push(Query.offset((page - 1) * limit));
     queries.push(Query.orderDesc('$createdAt'));
 
-    const response = await getDocuments(COLLECTIONS.EVENTS, queries);
+    const response = await safeQuery(() => listDocuments(COLLECTIONS.EVENTS, queries), { documents: [], total: 0 } as any);
     
     return {
       data: response.documents,
@@ -314,7 +330,7 @@ export const getParents = async (
     queries.push(Query.offset((page - 1) * limit));
     queries.push(Query.orderDesc('$createdAt'));
 
-    const response = await getDocuments(COLLECTIONS.PARENTS, queries);
+    const response = await safeQuery(() => listDocuments(COLLECTIONS.PARENTS, queries), { documents: [], total: 0 } as any);
     
     return {
       data: response.documents,
@@ -338,7 +354,7 @@ export const getGrades = async (
     queries.push(Query.offset((page - 1) * limit));
     queries.push(Query.orderDesc('$createdAt'));
 
-    const response = await getDocuments(COLLECTIONS.GRADES, queries);
+    const response = await safeQuery(() => listDocuments(COLLECTIONS.GRADES, queries), { documents: [], total: 0 } as any);
     
     return {
       data: response.documents,
@@ -362,7 +378,7 @@ export const getAttendances = async (
     queries.push(Query.offset((page - 1) * limit));
     queries.push(Query.orderDesc('$createdAt'));
 
-    const response = await getDocuments(COLLECTIONS.ATTENDANCES, queries);
+    const response = await safeQuery(() => listDocuments(COLLECTIONS.ATTENDANCES, queries), { documents: [], total: 0 } as any);
     
     return {
       data: response.documents,

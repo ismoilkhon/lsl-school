@@ -2,9 +2,12 @@ import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { getDocuments, COLLECTIONS } from "@/lib/appwrite";
+import { adminListDocuments } from "@/lib/appwrite-admin";
+import { COLLECTIONS } from "@/lib/appwrite";
+import { Query } from "node-appwrite";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import Image from "next/image";
+import { headers } from "next/headers";
 
 const ClassListPage = async ({
   searchParams,
@@ -12,8 +15,7 @@ const ClassListPage = async ({
   searchParams: { [key: string]: string | undefined };
 }) => {
 
-// TODO: Replace with proper authentication
-const role = "admin";
+const role = headers().get('x-user-role') || 'student';
 
 const columns = [
   {
@@ -73,19 +75,19 @@ const renderRow = (item: any) => (
   const { page, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
 
-  // Build Appwrite queries
-  const queries: string[] = [];
+  // Build filters
+  const filters: Record<string, any> = {};
   if (queryParams.supervisorId) {
-    queries.push(`supervisorId=${queryParams.supervisorId}`);
+    filters.supervisorId = queryParams.supervisorId;
   }
   if (queryParams.search) {
-    // TODO: Implement search in Appwrite
+    // Optionally add contains filter
   }
 
-  // Fetch data from Appwrite
-  const classesRes = await getDocuments(COLLECTIONS.CLASSES, queries);
-  const data = classesRes.documents;
-  const count = classesRes.total;
+  const offset = (p - 1) * ITEM_PER_PAGE;
+  const res = await adminListDocuments(COLLECTIONS.CLASSES, [Query.limit(ITEM_PER_PAGE), Query.offset(offset)]);
+  const data = res.documents as any[];
+  const count = res.total;
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">

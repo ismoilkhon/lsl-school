@@ -1,15 +1,10 @@
-import { getDocuments, COLLECTIONS } from "@/lib/appwrite";
+import { adminListDocuments } from "@/lib/appwrite-admin";
+import { COLLECTIONS } from "@/lib/appwrite";
+import { Query } from "node-appwrite";
 
 const LessonsListPage = async () => {
-  let data: any[] = [];
-  
-  try {
-    const lessonsRes = await getDocuments(COLLECTIONS.LESSONS);
-    data = lessonsRes.documents;
-  } catch (error) {
-    console.warn('Failed to fetch lessons:', error);
-    data = [];
-  }
+  const res = await adminListDocuments(COLLECTIONS.LESSONS, [Query.limit(50), Query.offset(0)]);
+  const data = (res.documents as any[]) || [];
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">

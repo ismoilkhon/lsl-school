@@ -27,28 +27,41 @@ export interface AuthState {
 // Authentication functions
 export const signUp = async (email: string, password: string, name: string, role: string = 'student') => {
     try {
+        console.log('appwrite-auth: signUp started for:', { email, name, role });
+        
         // Create the user account (allowed for guests)
         const createdUser = await account.create(
             ID.unique(),
             email,
             password
         );
+        console.log('appwrite-auth: User account created:', createdUser.$id);
 
         // Create a session for the newly created user
         const session = await account.createEmailPasswordSession(email, password);
+        console.log('appwrite-auth: Session created for new user');
 
-        // After session exists, update preferences (requires auth scope)
-        await account.updatePrefs({
-            role: role,
-            name: name
-        });
+        // After session exists, update preferences using the account service
+        // Note: This might require the user to be authenticated first
+        console.log('appwrite-auth: Updating user preferences...');
+        try {
+            await account.updatePrefs({
+                role: role,
+                name: name
+            });
+            console.log('appwrite-auth: User preferences updated successfully');
+        } catch (prefsError: any) {
+            console.warn('appwrite-auth: Could not update preferences immediately:', prefsError.message);
+            console.log('appwrite-auth: Preferences will be updated on first sign-in');
+        }
 
         // Fetch the authenticated user with updated prefs
         const authedUser = await account.get();
+        console.log('appwrite-auth: Final user data retrieved:', authedUser);
 
         return { success: true, user: authedUser, session };
     } catch (error: any) {
-        console.error('Sign up error:', error);
+        console.error('appwrite-auth: Sign up error:', error);
         return { success: false, error: error.message };
     }
 };
@@ -88,6 +101,30 @@ export const signIn = async (email: string, password: string) => {
         console.log('appwrite-auth: Getting user data...');
         const user = await account.get();
         console.log('appwrite-auth: User data retrieved:', user);
+        
+        // Check if user has preferences set, if not, try to set them
+        if (!user.prefs || !user.prefs.role) {
+            console.log('appwrite-auth: User has no role set, attempting to set default role...');
+            try {
+                // Try to set a default role based on email
+                let defaultRole = 'student';
+                if (email.includes('admin')) defaultRole = 'admin';
+                else if (email.includes('teacher')) defaultRole = 'teacher';
+                else if (email.includes('parent')) defaultRole = 'parent';
+                
+                await account.updatePrefs({
+                    role: defaultRole,
+                    name: user.name || 'Unknown'
+                });
+                console.log('appwrite-auth: Default role set:', defaultRole);
+                
+                // Get updated user data
+                const updatedUser = await account.get();
+                return { success: true, session, user: updatedUser };
+            } catch (prefsError: any) {
+                console.warn('appwrite-auth: Could not set default role:', prefsError.message);
+            }
+        }
         
         return { success: true, session, user };
     } catch (error: any) {

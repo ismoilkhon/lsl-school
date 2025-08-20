@@ -43,3 +43,16 @@ export const adjustScheduleToCurrentWeek = (
     };
   });
 };
+
+// Generate Appwrite Storage preview URL for images stored by fileId
+// Width/height can be tuned per usage
+export const getAppwriteFilePreviewUrl = (
+  fileId: string,
+  width: number = 80,
+  height: number = 80
+): string => {
+  const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1';
+  const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '';
+  const bucketId = process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || 'uploads';
+  return `${endpoint}/storage/buckets/${bucketId}/files/${fileId}/preview?project=${projectId}&width=${width}&height=${height}&quality=80`;
+};

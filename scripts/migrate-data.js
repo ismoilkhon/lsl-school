@@ -1,7 +1,7 @@
 // Load environment variables from .env.local
 require('dotenv').config({ path: '.env.local' });
 
-const { Client, Databases, ID } = require('node-appwrite');
+const { Client, Databases, Storage, ID, Permission, Role } = require('node-appwrite');
 
 // Initialize Appwrite client
 const client = new Client()
@@ -10,6 +10,8 @@ const client = new Client()
     .setKey(process.env.APPWRITE_API_KEY || '');
 
 const databases = new Databases(client);
+const storage = new Storage(client);
+const BUCKET_ID = process.env.APPWRITE_BUCKET_ID || 'uploads';
 const DATABASE_ID = process.env.APPWRITE_DATABASE_ID || 'school_management';
 
 // Collection IDs
@@ -29,17 +31,17 @@ const COLLECTIONS = {
     ANNOUNCEMENTS: 'announcements',
 };
 
-// Sample data to migrate (replace with your actual data)
+// Sample data to migrate (more specific mock data)
 const sampleData = {
     grades: [
-        { level: 1 },
-        { level: 2 },
-        { level: 3 },
-        { level: 4 },
-        { level: 5 },
-        { level: 6 },
-        { level: 7 },
-        { level: 8 },
+        { level: 1, name: 'Grade 1' },
+        { level: 2, name: 'Grade 2' },
+        { level: 3, name: 'Grade 3' },
+        { level: 4, name: 'Grade 4' },
+        { level: 5, name: 'Grade 5' },
+        { level: 6, name: 'Grade 6' },
+        { level: 7, name: 'Grade 7' },
+        { level: 8, name: 'Grade 8' },
     ],
     parents: [
         {
@@ -53,22 +55,19 @@ const sampleData = {
         },
         // Add more parents as needed
     ],
-    teachers: [
-        {
-            username: 'teacher1',
-            name: 'Jane',
-            surname: 'Smith',
-            email: 'jane@smith.com',
-            phone: '1234567890',
-            address: '456 Oak St, Anytown, USA',
-            img: null,
-            bloodType: 'A+',
-            sex: 'FEMALE',
-            birthday: new Date('1985-01-01').toISOString(),
-            createdAt: new Date().toISOString(),
-        },
-        // Add more teachers as needed
-    ],
+    teachers: Array.from({ length: 5 }).map((_, i) => ({
+        username: `teacher${i+1}`,
+        name: ['Jane','Emily','Liam','Noah','Olivia'][i%5],
+        surname: ['Smith','Johnson','Williams','Brown','Jones'][i%5],
+        email: `teacher${i+1}@lsl.edu`,
+        phone: `12345678${i}${i}`,
+        address: `${100+i} Oak St, Anytown, USA`,
+        img: null,
+        bloodType: ['A+','B+','O+','AB+','A-'][i%5],
+        sex: i%2===0 ? 'FEMALE' : 'MALE',
+        birthday: new Date(`198${i}-0${(i%9)+1}-01`).toISOString(),
+        createdAt: new Date().toISOString(),
+    })),
     classes: [
         {
             name: '1A',
@@ -94,37 +93,34 @@ const sampleData = {
         { name: 'Music' },
         { name: 'Physical Education' },
     ],
-    students: [
-        {
-            username: 'student1',
-            name: 'Alice',
-            surname: 'Johnson',
-            email: 'alice@johnson.com',
-            phone: '1234567890',
-            address: '789 Pine St, Anytown, USA',
-            img: null,
-            bloodType: 'O+',
-            sex: 'FEMALE',
-            birthday: new Date('2010-01-01').toISOString(),
-            parentId: null, // Will be set after parents are created
-            classId: 1,
-            gradeId: 1,
-            createdAt: new Date().toISOString(),
-        },
-        // Add more students as needed
-    ],
-    lessons: [
-        {
-            name: 'Math Lesson 1',
-            day: 'MONDAY',
-            startTime: new Date('2024-01-01T08:00:00Z').toISOString(),
-            endTime: new Date('2024-01-01T08:45:00Z').toISOString(),
-            subjectId: 1,
-            classId: 1,
-            teacherId: null, // Will be set after teachers are created
-        },
-        // Add more lessons as needed
-    ],
+    students: Array.from({ length: 10 }).map((_, i) => ({
+        username: `student${i+1}`,
+        name: ['Alice','Bob','Carol','David','Eva','Finn','Grace','Henry','Ivy','Jack'][i],
+        surname: ['Johnson','Miller','Davis','Garcia','Martinez','Hernandez','Lopez','Gonzalez','Wilson','Anderson'][i],
+        email: `student${i+1}@lsl.edu`,
+        phone: `55500000${i}`,
+        address: `${200+i} Pine St, Anytown, USA`,
+        img: null,
+        bloodType: ['O+','A-','B+','AB-','O-'][i%5],
+        sex: i%2===0 ? 'FEMALE' : 'MALE',
+        birthday: new Date(`201${i%9}-0${(i%9)+1}-15`).toISOString(),
+        parentId: null,
+        classId: (i%2)+1,
+        gradeId: (i%4)+1,
+        createdAt: new Date().toISOString(),
+    })),
+    lessons: Array.from({ length: 6 }).map((_, i) => {
+        const dayStr = String((i % 28) + 1).padStart(2, '0');
+        return {
+            name: `Lesson ${i+1}`,
+            day: ['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','MONDAY'][i],
+            startTime: new Date(`2024-01-${dayStr}T08:00:00Z`).toISOString(),
+            endTime: new Date(`2024-01-${dayStr}T08:45:00Z`).toISOString(),
+            subjectId: (i%4)+1,
+            classId: (i%2)+1,
+            teacherId: null,
+        };
+    }),
     exams: [
         {
             title: 'Math Midterm',
@@ -188,7 +184,13 @@ async function createDocument(collectionId, data) {
             DATABASE_ID,
             collectionId,
             ID.unique(),
-            data
+            data,
+            [
+                Permission.read(Role.any()),
+                Permission.update(Role.team('admins')), // optional: restrict writes
+                Permission.delete(Role.team('admins')),
+                Permission.create(Role.team('admins')),
+            ]
         );
         console.log(`Created document in ${collectionId}:`, document.$id);
         return document;
@@ -232,7 +234,7 @@ async function migrateData() {
         for (const classItem of sampleData.classes) {
             const doc = await createDocument(COLLECTIONS.CLASSES, {
                 ...classItem,
-                gradeId: parseInt(classItem.gradeId), // Convert to integer for Appwrite
+                gradeId: parseInt(classItem.gradeId),
             });
             classIds[classItem.name] = doc.$id;
         }
@@ -248,10 +250,12 @@ async function migrateData() {
         // Step 6: Create students (depends on parents, classes, grades)
         console.log('Creating students...');
         const studentIds = {};
-        for (const student of sampleData.students) {
+        for (const [i, student] of sampleData.students.entries()) {
+            const parentValues = Object.values(parentIds);
+            const parentId = parentValues.length > 0 ? parentValues[i % parentValues.length] : null;
             const doc = await createDocument(COLLECTIONS.STUDENTS, {
                 ...student,
-                parentId: parentIds[student.parentId] || null,
+                parentId: parentId,
                 classId: parseInt(student.classId),
                 gradeId: parseInt(student.gradeId),
             });
@@ -261,12 +265,12 @@ async function migrateData() {
         // Step 7: Create lessons (depends on subjects, classes, teachers)
         console.log('Creating lessons...');
         const lessonIds = {};
-        for (const lesson of sampleData.lessons) {
+        for (const [i, lesson] of sampleData.lessons.entries()) {
             const doc = await createDocument(COLLECTIONS.LESSONS, {
                 ...lesson,
                 subjectId: parseInt(lesson.subjectId),
                 classId: parseInt(lesson.classId),
-                teacherId: lesson.teacherId || null,
+                teacherId: Object.values(teacherIds)[i % Object.values(teacherIds).length] || null,
             });
             lessonIds[lesson.name] = doc.$id;
         }
@@ -295,21 +299,24 @@ async function migrateData() {
 
         // Step 10: Create results (depends on exams, assignments, students)
         console.log('Creating results...');
-        for (const result of sampleData.results) {
+        const studentValues = Object.values(studentIds);
+        for (const [i, result] of sampleData.results.entries()) {
+            const sid = studentValues.length > 0 ? studentValues[i % studentValues.length] : null;
             await createDocument(COLLECTIONS.RESULTS, {
                 ...result,
                 examId: result.examId ? parseInt(result.examId) : null,
                 assignmentId: result.assignmentId ? parseInt(result.assignmentId) : null,
-                studentId: result.studentId || null,
+                studentId: sid,
             });
         }
 
         // Step 11: Create attendances (depends on students, lessons)
         console.log('Creating attendances...');
-        for (const attendance of sampleData.attendances) {
+        for (const [i, attendance] of sampleData.attendances.entries()) {
+            const sid = studentValues.length > 0 ? studentValues[i % studentValues.length] : null;
             await createDocument(COLLECTIONS.ATTENDANCES, {
                 ...attendance,
-                studentId: attendance.studentId || null,
+                studentId: sid,
                 lessonId: parseInt(attendance.lessonId),
             });
         }

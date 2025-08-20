@@ -2,18 +2,21 @@ import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { getDocuments, COLLECTIONS } from "@/lib/appwrite";
+import { adminListDocuments } from "@/lib/appwrite-admin";
+import { COLLECTIONS } from "@/lib/appwrite";
+import { Query } from "node-appwrite";
 import Image from "next/image";
+import { getAppwriteFilePreviewUrl } from "@/lib/utils";
 import Link from "next/link";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import { headers } from "next/headers";
 
 const TeacherListPage = async ({
   searchParams,
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-  // TODO: Replace with proper authentication
-  const role = "admin";
+  const role = headers().get('x-user-role') || 'student';
   const columns = [
     {
       header: "Info",
@@ -61,7 +64,7 @@ const TeacherListPage = async ({
     >
       <td className="flex items-center gap-4 p-4">
         <Image
-          src={item.img || "/noAvatar.png"}
+          src={item.img ? getAppwriteFilePreviewUrl(item.img, 40, 40) : "/noAvatar.png"}
           alt=""
           width={40}
           height={40}
@@ -102,15 +105,17 @@ const TeacherListPage = async ({
   const p = page ? parseInt(page) : 1;
 
   // Build Appwrite queries
-  const queries: string[] = [];
+  const offset = (p - 1) * ITEM_PER_PAGE;
+  const queries: string[] = [
+    Query.limit(ITEM_PER_PAGE),
+    Query.offset(offset),
+  ];
   if (queryParams.search) {
-    // TODO: Implement search in Appwrite
+    // TODO: Implement search in Appwrite (e.g., Query.contains)
   }
-
-  // Fetch data from Appwrite
-  const teachersRes = await getDocuments(COLLECTIONS.TEACHERS, queries);
-  const data = teachersRes.documents;
-  const count = teachersRes.total;
+  const result = await adminListDocuments(COLLECTIONS.TEACHERS, queries);
+  const data = (result.documents as any[]) || [];
+  const count = result.total || 0;
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">

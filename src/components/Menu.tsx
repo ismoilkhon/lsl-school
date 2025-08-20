@@ -1,5 +1,7 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuthStore } from "@/lib/auth-store";
 
 const menuItems = [
   {
@@ -78,12 +80,6 @@ const menuItems = [
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
-        icon: "/message.png",
-        label: "Messages",
-        href: "/list/messages",
-        visible: ["admin", "teacher", "student", "parent"],
-      },
-      {
         icon: "/announcement.png",
         label: "Announcements",
         href: "/list/announcements",
@@ -117,8 +113,8 @@ const menuItems = [
 ];
 
 const Menu = () => {
-  // TODO: Replace with proper authentication
-  const role = "admin";
+  const { getUserRole } = useAuthStore();
+  const role = getUserRole();
   return (
     <div className="mt-4 text-sm">
       {menuItems.map((i) => (

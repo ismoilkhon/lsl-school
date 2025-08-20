@@ -20,7 +20,7 @@ import {
 } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { CldUploadWidget } from "next-cloudinary";
+import { storage, BUCKET_ID } from "@/lib/appwrite";
 
 const StudentForm = ({
   type,
@@ -41,7 +41,8 @@ const StudentForm = ({
     resolver: zodResolver(studentSchema),
   });
 
-  const [img, setImg] = useState<any>();
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const [state, formAction] = useFormState(
     type === "create" ? createStudent : updateStudent,
@@ -51,10 +52,20 @@ const StudentForm = ({
     }
   );
 
-  const onSubmit = handleSubmit((data) => {
-    console.log("hello");
-    console.log(data);
-    formAction({ ...data, img: img?.secure_url });
+  const onSubmit = handleSubmit(async (formData) => {
+    let img: string | undefined = data?.img;
+    try {
+      if (file) {
+        setUploading(true);
+        const created = await storage.createFile(BUCKET_ID, "unique()", file);
+        img = created.$id;
+      }
+      formAction({ ...formData, img });
+    } catch (e) {
+      toast.error("File upload failed");
+    } finally {
+      setUploading(false);
+    }
   });
 
   const router = useRouter();
@@ -96,25 +107,11 @@ const StudentForm = ({
       <span className="text-xs text-gray-400 font-medium">
         Personal Information
       </span>
-      <CldUploadWidget
-        uploadPreset="school"
-        onSuccess={(result, { widget }) => {
-          setImg(result.info);
-          widget.close();
-        }}
-      >
-        {({ open }) => {
-          return (
-            <div
-              className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer"
-              onClick={() => open()}
-            >
-              <Image src="/upload.png" alt="" width={28} height={28} />
-              <span>Upload a photo</span>
-            </div>
-          );
-        }}
-      </CldUploadWidget>
+      <div className="flex flex-col gap-2 w-full md:w-1/4">
+        <label className="text-xs text-gray-500">Photo</label>
+        <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+        {uploading && <p className="text-xs text-gray-500">Uploading...</p>}
+      </div>
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
           label="First Name"
