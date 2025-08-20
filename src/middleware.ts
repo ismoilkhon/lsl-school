@@ -54,7 +54,14 @@ const publicRoutes = ['/sign-in', '/sign-up', '/'];
 async function getUserRole(request: NextRequest): Promise<string | null> {
   try {
     console.log('Middleware: getUserRole: Starting...');
-    
+    // Prefer explicit role cookie fallback when Appwrite session cookie isn't present (cross-subdomain)
+    const roleCookie = request.cookies.get('role');
+    if (roleCookie?.value) {
+      const role = roleCookie.value.toLowerCase();
+      console.log('Middleware: getUserRole: Using role cookie:', role);
+      return role;
+    }
+
     // Get session cookie
     const sessionCookieName = 'a_session_' + (process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '');
     const sessionCookie = request.cookies.get(sessionCookieName);
@@ -76,7 +83,7 @@ async function getUserRole(request: NextRequest): Promise<string | null> {
     console.log('Middleware: getUserRole: User retrieved:', user ? 'yes' : 'no');
     
     if (user) {
-      const role = user.prefs?.role || 'student';
+      const role = (user.prefs?.role || 'student').toLowerCase();
       console.log('Middleware: getUserRole: User role:', role);
       return role;
     }
@@ -124,7 +131,15 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/list')
   ) {
     console.log('Middleware: Skipping auth for dashboard route:', pathname);
-    return NextResponse.next();
+    // Still attempt to read user role and pass it via header so server components can render role-gated UI
+    try {
+      const role = await getUserRole(request);
+      const resp = NextResponse.next();
+      if (role) resp.headers.set('x-user-role', role);
+      return resp;
+    } catch {
+      return NextResponse.next();
+    }
   }
 
   try {

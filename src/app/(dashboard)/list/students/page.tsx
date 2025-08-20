@@ -148,3 +148,4 @@ const StudentListPage = async ({
 };
 
 export default StudentListPage;
+export const dynamic = 'force-dynamic';

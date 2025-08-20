@@ -6,6 +6,12 @@ import {
   deleteStudent,
   deleteSubject,
   deleteTeacher,
+  deleteEvent,
+  deleteAnnouncement,
+  deleteLesson,
+  deleteAssignment,
+  deleteResult,
+  deleteAttendance,
 } from "@/lib/actions";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -14,6 +20,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 import { toast } from "react-toastify";
 import { FormContainerProps } from "./FormContainer";
+import { useAuthStore } from "@/lib/auth-store";
 
 const deleteActionMap = {
   subject: deleteSubject,
@@ -21,14 +28,14 @@ const deleteActionMap = {
   teacher: deleteTeacher,
   student: deleteStudent,
   exam: deleteExam,
+  event: deleteEvent,
+  announcement: deleteAnnouncement,
+  lesson: deleteLesson,
+  assignment: deleteAssignment,
+  result: deleteResult,
+  attendance: deleteAttendance,
 // TODO: OTHER DELETE ACTIONS
   parent: deleteSubject,
-  lesson: deleteSubject,
-  assignment: deleteSubject,
-  result: deleteSubject,
-  attendance: deleteSubject,
-  event: deleteSubject,
-  announcement: deleteSubject,
 };
 
 // USE LAZY LOADING
@@ -52,6 +59,9 @@ const ExamForm = dynamic(() => import("./forms/ExamForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 const EventForm = dynamic(() => import("./forms/EventForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const AnnouncementForm = dynamic(() => import("./forms/AnnouncementForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 // TODO: OTHER FORMS
@@ -110,7 +120,69 @@ const forms: {
       type={type}
       data={data}
       setOpen={setOpen}
-      relatedData={relatedData}
+    />
+  ),
+  // Placeholder forms for unimplemented types
+  parent: (setOpen, type, data, relatedData) => (
+    <div className="p-4 text-center">
+      <p className="text-gray-500">Parent form is not yet implemented.</p>
+      <button 
+        onClick={() => setOpen(false)}
+        className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md"
+      >
+        Close
+      </button>
+    </div>
+  ),
+  lesson: (setOpen, type, data, relatedData) => (
+    <div className="p-4 text-center">
+      <p className="text-gray-500">Lesson form is not yet implemented.</p>
+      <button 
+        onClick={() => setOpen(false)}
+        className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md"
+      >
+        Close
+      </button>
+    </div>
+  ),
+  assignment: (setOpen, type, data, relatedData) => (
+    <div className="p-4 text-center">
+      <p className="text-gray-500">Assignment form is not yet implemented.</p>
+      <button 
+        onClick={() => setOpen(false)}
+        className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md"
+      >
+        Close
+      </button>
+    </div>
+  ),
+  result: (setOpen, type, data, relatedData) => (
+    <div className="p-4 text-center">
+      <p className="text-gray-500">Result form is not yet implemented.</p>
+      <button 
+        onClick={() => setOpen(false)}
+        className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md"
+      >
+        Close
+      </button>
+    </div>
+  ),
+  attendance: (setOpen, type, data, relatedData) => (
+    <div className="p-4 text-center">
+      <p className="text-gray-500">Attendance form is not yet implemented.</p>
+      <button 
+        onClick={() => setOpen(false)}
+        className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md"
+      >
+        Close
+      </button>
+    </div>
+  ),
+  announcement: (setOpen, type, data, relatedData) => (
+    <AnnouncementForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
     />
   ),
 };
@@ -133,6 +205,36 @@ const FormModal = ({
   const [open, setOpen] = useState(false);
 
   const Form = () => {
+    const { getUserRole, user, checkAuth } = useAuthStore();
+    
+    // Refresh auth store when component mounts to ensure we have latest user data
+    useEffect(() => {
+      if (!user) {
+        checkAuth();
+      }
+    }, [user, checkAuth]);
+    
+    const userRole = getUserRole();
+    
+    // Fallback: try to get role from cookie if auth store doesn't have it
+    const getRoleFromCookie = () => {
+      if (typeof document !== 'undefined') {
+        const cookies = document.cookie.split(';');
+        const roleCookie = cookies.find(cookie => cookie.trim().startsWith('role='));
+        if (roleCookie) {
+          return roleCookie.split('=')[1];
+        }
+      }
+      return null;
+    };
+    
+    const finalRole = userRole || getRoleFromCookie() || 'student';
+    
+    console.log('FormModal: User from store:', user);
+    console.log('FormModal: User role from store:', userRole);
+    console.log('FormModal: User prefs:', user?.prefs);
+    console.log('FormModal: Final role being used:', finalRole);
+    
     const [state, formAction] = useFormState(deleteActionMap[table], {
       success: false,
       error: false,
@@ -145,12 +247,18 @@ const FormModal = ({
         toast(`${table} has been deleted!`);
         setOpen(false);
         router.refresh();
+      } else if (state.error) {
+        toast.error(`Failed to delete ${table}. Please try again.`);
       }
-    }, [state, router]);
+    }, [state, router, table]);
 
+    console.log('FormModal: Rendering form for table:', table, 'type:', type);
+    console.log('FormModal: Available forms:', Object.keys(forms));
+    
     return type === "delete" && id ? (
       <form action={formAction} className="p-4 flex flex-col gap-4">
-        <input type="text | number" name="id" value={id} hidden />
+        <input type="hidden" name="id" value={id} />
+        <input type="hidden" name="userRole" value={finalRole} />
         <span className="text-center font-medium">
           All data will be lost. Are you sure you want to delete this {table}?
         </span>
@@ -159,7 +267,17 @@ const FormModal = ({
         </button>
       </form>
     ) : type === "create" || type === "update" ? (
-      forms[table](setOpen, type, data, relatedData)
+      forms[table] ? forms[table](setOpen, type, data, relatedData) : (
+        <div className="p-4 text-center">
+          <p className="text-gray-500">Form for {table} is not yet implemented.</p>
+          <button 
+            onClick={() => setOpen(false)}
+            className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md"
+          >
+            Close
+          </button>
+        </div>
+      )
     ) : (
       "Form not found!"
     );

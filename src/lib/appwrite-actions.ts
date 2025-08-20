@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { Client as WebClient, Account as WebAccount } from "appwrite";
 import {
   ClassSchema,
@@ -55,8 +55,35 @@ const getServerUserRole = async (): Promise<string | null> => {
 };
 
 const ensureRole = async (...allowed: string[]) => {
+  // First try to get role from the x-user-role header (set by middleware)
+  const headerList = headers();
+  const headerRole = headerList.get('x-user-role');
+  
+  console.log('ensureRole: Header role:', headerRole, 'Allowed roles:', allowed);
+  
+  if (headerRole && allowed.includes(headerRole)) {
+    console.log('ensureRole: Using header role:', headerRole);
+    return headerRole;
+  }
+  
+  // Fallback to Appwrite session cookie method
   const role = await getServerUserRole();
+  console.log('ensureRole: Session role:', role, 'Allowed roles:', allowed);
+  
   if (!role || !allowed.includes(role)) {
+    console.log('ensureRole: Access denied. Role:', role, 'Allowed:', allowed);
+    throw new Error('forbidden');
+  }
+  return role;
+};
+
+// New function to check role from form data
+const ensureRoleFromForm = (formData: FormData, ...allowed: string[]) => {
+  const role = formData.get('userRole') as string;
+  console.log('ensureRoleFromForm: Form role:', role, 'Allowed roles:', allowed);
+  
+  if (!role || !allowed.includes(role)) {
+    console.log('ensureRoleFromForm: Access denied. Role:', role, 'Allowed:', allowed);
     throw new Error('forbidden');
   }
   return role;
@@ -120,8 +147,12 @@ export const deleteSubject = async (
   data: FormData
 ) => {
   const id = data.get("id") as string;
+  if (!id) {
+    console.error('Delete subject: No ID provided');
+    return { success: false, error: true };
+  }
   try {
-    await ensureRole('admin');
+    ensureRoleFromForm(data, 'admin');
     await deleteDocument(COLLECTIONS.SUBJECTS, id);
 
     revalidatePath("/list/subjects");
@@ -179,8 +210,12 @@ export const deleteClass = async (
   data: FormData
 ) => {
   const id = data.get("id") as string;
+  if (!id) {
+    console.error('Delete class: No ID provided');
+    return { success: false, error: true };
+  }
   try {
-    await ensureRole('admin');
+    ensureRoleFromForm(data, 'admin');
     await deleteDocument(COLLECTIONS.CLASSES, id);
 
     revalidatePath("/list/classes");
@@ -252,8 +287,12 @@ export const deleteTeacher = async (
   data: FormData
 ) => {
   const id = data.get("id") as string;
+  if (!id) {
+    console.error('Delete teacher: No ID provided');
+    return { success: false, error: true };
+  }
   try {
-    await ensureRole('admin');
+    ensureRoleFromForm(data, 'admin');
     await deleteDocument(COLLECTIONS.TEACHERS, id);
 
     revalidatePath("/list/teachers");
@@ -345,8 +384,12 @@ export const deleteStudent = async (
   data: FormData
 ) => {
   const id = data.get("id") as string;
+  if (!id) {
+    console.error('Delete student: No ID provided');
+    return { success: false, error: true };
+  }
   try {
-    await ensureRole('admin');
+    ensureRoleFromForm(data, 'admin');
     await deleteDocument(COLLECTIONS.STUDENTS, id);
 
     revalidatePath("/list/students");
@@ -408,8 +451,12 @@ export const deleteExam = async (
   data: FormData
 ) => {
   const id = data.get("id") as string;
+  if (!id) {
+    console.error('Delete exam: No ID provided');
+    return { success: false, error: true };
+  }
   try {
-    await ensureRole('admin');
+    ensureRoleFromForm(data, 'admin');
     await deleteDocument(COLLECTIONS.EXAMS, id);
 
     revalidatePath("/list/exams");
@@ -539,10 +586,187 @@ export const deleteEvent = async (
   data: FormData
 ) => {
   const id = data.get('id') as string;
+  if (!id) {
+    console.error('Delete event: No ID provided');
+    return { success: false, error: true };
+  }
   try {
-    await ensureRole('admin');
+    ensureRoleFromForm(data, 'admin');
     await deleteDocument(COLLECTIONS.EVENTS, id);
     revalidatePath('/list/events');
+    return { success: true, error: false };
+  } catch (err) {
+    return handleAppwriteError(err);
+  }
+};
+
+// Additional delete functions for other entities
+export const deleteAnnouncement = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  const id = data.get('id') as string;
+  if (!id) {
+    console.error('Delete announcement: No ID provided');
+    return { success: false, error: true };
+  }
+  try {
+    ensureRoleFromForm(data, 'admin');
+    await deleteDocument(COLLECTIONS.ANNOUNCEMENTS, id);
+    revalidatePath('/list/announcements');
+    return { success: true, error: false };
+  } catch (err) {
+    return handleAppwriteError(err);
+  }
+};
+
+export const deleteLesson = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  const id = data.get('id') as string;
+  if (!id) {
+    console.error('Delete lesson: No ID provided');
+    return { success: false, error: true };
+  }
+  try {
+    ensureRoleFromForm(data, 'admin');
+    await deleteDocument(COLLECTIONS.LESSONS, id);
+    revalidatePath('/list/lessons');
+    return { success: true, error: false };
+  } catch (err) {
+    return handleAppwriteError(err);
+  }
+};
+
+export const deleteAssignment = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  const id = data.get('id') as string;
+  if (!id) {
+    console.error('Delete assignment: No ID provided');
+    return { success: false, error: true };
+  }
+  try {
+    ensureRoleFromForm(data, 'admin');
+    await deleteDocument(COLLECTIONS.ASSIGNMENTS, id);
+    revalidatePath('/list/assignments');
+    return { success: true, error: false };
+  } catch (err) {
+    return handleAppwriteError(err);
+  }
+};
+
+export const deleteResult = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  const id = data.get('id') as string;
+  if (!id) {
+    console.error('Delete result: No ID provided');
+    return { success: false, error: true };
+  }
+  try {
+    ensureRoleFromForm(data, 'admin');
+    await deleteDocument(COLLECTIONS.RESULTS, id);
+    revalidatePath('/list/results');
+    return { success: true, error: false };
+  } catch (err) {
+    return handleAppwriteError(err);
+  }
+};
+
+export const deleteAttendance = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  const id = data.get('id') as string;
+  if (!id) {
+    console.error('Delete attendance: No ID provided');
+    return { success: false, error: true };
+  }
+  try {
+    ensureRoleFromForm(data, 'admin');
+    await deleteDocument(COLLECTIONS.ATTENDANCES, id);
+    revalidatePath('/list/attendances');
+    return { success: true, error: false };
+  } catch (err) {
+    return handleAppwriteError(err);
+  }
+};
+
+// Announcements CRUD
+export const createAnnouncement = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  try {
+    ensureRoleFromForm(data, 'admin');
+    const basePayload = {
+      title: data.get('title') as string,
+      description: data.get('description') as string,
+      date: new Date(data.get('date') as string).toISOString(),
+    };
+    
+    const extendedPayload = {
+      ...basePayload,
+      priority: data.get('priority') as string,
+      targetAudience: data.get('targetAudience') as string,
+    };
+    
+    try {
+      await createDocument(COLLECTIONS.ANNOUNCEMENTS, extendedPayload);
+    } catch (err: any) {
+      // If collection doesn't have priority/targetAudience attributes yet, retry without them
+      const msg = err?.message || err?.response || '';
+      if (msg.includes('Unknown attribute') || msg.includes('document_invalid_structure')) {
+        console.log('Announcement: Retrying without extended attributes');
+        await createDocument(COLLECTIONS.ANNOUNCEMENTS, basePayload);
+      } else {
+        throw err;
+      }
+    }
+    revalidatePath('/list/announcements');
+    return { success: true, error: false };
+  } catch (err) {
+    return handleAppwriteError(err);
+  }
+};
+
+export const updateAnnouncement = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  const id = data.get('id') as string;
+  if (!id) return { success: false, error: true };
+  try {
+    ensureRoleFromForm(data, 'admin');
+    const basePayload = {
+      title: data.get('title') as string,
+      description: data.get('description') as string,
+      date: new Date(data.get('date') as string).toISOString(),
+    };
+    
+    const extendedPayload = {
+      ...basePayload,
+      priority: data.get('priority') as string,
+      targetAudience: data.get('targetAudience') as string,
+    };
+    
+    try {
+      await updateDocument(COLLECTIONS.ANNOUNCEMENTS, id, extendedPayload);
+    } catch (err: any) {
+      // If collection doesn't have priority/targetAudience attributes yet, retry without them
+      const msg = err?.message || err?.response || '';
+      if (msg.includes('Unknown attribute') || msg.includes('document_invalid_structure')) {
+        console.log('Announcement: Retrying update without extended attributes');
+        await updateDocument(COLLECTIONS.ANNOUNCEMENTS, id, basePayload);
+      } else {
+        throw err;
+      }
+    }
+    revalidatePath('/list/announcements');
     return { success: true, error: false };
   } catch (err) {
     return handleAppwriteError(err);

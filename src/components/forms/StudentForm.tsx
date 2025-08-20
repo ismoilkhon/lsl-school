@@ -21,6 +21,7 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { storage, BUCKET_ID } from "@/lib/appwrite";
+import { Permission, Role } from "appwrite";
 
 const StudentForm = ({
   type,
@@ -57,7 +58,12 @@ const StudentForm = ({
     try {
       if (file) {
         setUploading(true);
-        const created = await storage.createFile(BUCKET_ID, "unique()", file);
+        const created = await storage.createFile(
+          BUCKET_ID,
+          "unique()",
+          file,
+          [Permission.read(Role.any())]
+        );
         img = created.$id;
       }
       formAction({ ...formData, img });

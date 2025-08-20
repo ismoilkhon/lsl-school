@@ -113,3 +113,4 @@ const AssignmentListPage = async ({
 };
 
 export default AssignmentListPage;
+export const dynamic = 'force-dynamic';

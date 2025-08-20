@@ -20,6 +20,13 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         const authPromise = useAuthStore.getState().checkAuth();
         await Promise.race([authPromise, timeoutPromise]);
         console.log('AuthProvider: Authentication check completed');
+
+        // After auth, propagate role via cookie for middleware fallback on next SSR request
+        const state = useAuthStore.getState();
+        const role = (state.user?.prefs?.role || 'student').toLowerCase();
+        try {
+          document.cookie = `role=${role}; path=/; max-age=${60 * 60 * 24 * 7}`;
+        } catch {}
       } catch (error) {
         console.error('AuthProvider: Authentication check failed or timed out:', error);
         // Set loading to false so pages can render

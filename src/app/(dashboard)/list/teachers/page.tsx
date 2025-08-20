@@ -146,3 +146,4 @@ const TeacherListPage = async ({
 };
 
 export default TeacherListPage;
+export const dynamic = 'force-dynamic';

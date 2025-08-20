@@ -99,3 +99,4 @@ const SubjectListPage = async ({
 };
 
 export default SubjectListPage;
+export const dynamic = 'force-dynamic';

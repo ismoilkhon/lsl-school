@@ -1,14 +1,22 @@
 import { adminListDocuments } from "@/lib/appwrite-admin";
 import { COLLECTIONS } from "@/lib/appwrite";
 import { Query } from "node-appwrite";
+import FormContainer from "@/components/FormContainer";
+import { headers } from "next/headers";
 
 const LessonsListPage = async () => {
+  const role = headers().get('x-user-role') || 'student';
   const res = await adminListDocuments(COLLECTIONS.LESSONS, [Query.limit(50), Query.offset(0)]);
   const data = (res.documents as any[]) || [];
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
-      <h1 className="text-lg font-semibold mb-4">Lessons</h1>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-lg font-semibold">Lessons</h1>
+        {role === 'admin' && (
+          <FormContainer table="lesson" type="create" />
+        )}
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>

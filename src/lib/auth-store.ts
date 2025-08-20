@@ -103,7 +103,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   getUserRole: () => {
     const { user } = get();
-    const role = user?.prefs?.role || 'student';
+    const role = (user?.prefs?.role || 'student').toLowerCase();
     console.log('AuthStore: getUserRole: Returning role:', role);
     return role;
   }

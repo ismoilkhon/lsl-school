@@ -4,12 +4,22 @@ import CountChartContainer from "@/components/CountChartContainer";
 import EventCalendarContainer from "@/components/EventCalendarContainer";
 import FinanceChart from "@/components/FinanceChart";
 import StatsCards from "@/components/StatsCards";
+import { headers, cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export default function AdminPage({
   searchParams,
 }: {
   searchParams: { [keys: string]: string | undefined };
 }) {
+  // Enforce role-based access at page level (middleware skips auth for dashboards)
+  const hdrs = headers();
+  const roleHeader = hdrs.get('x-user-role');
+  const roleCookie = cookies().get('role')?.value;
+  const role = (roleHeader || roleCookie || 'student').toLowerCase();
+  if (role !== 'admin') {
+    redirect(`/${role}`);
+  }
   return (
     <div className="p-4 flex gap-4 flex-col">
       {/* Welcome Message */}
@@ -51,3 +61,5 @@ export default function AdminPage({
     </div>
   );
 }
+
+export const dynamic = 'force-dynamic';

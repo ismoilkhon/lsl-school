@@ -18,4 +18,11 @@ export {
   createEvent,
   updateEvent,
   deleteEvent,
+  createAnnouncement,
+  updateAnnouncement,
+  deleteAnnouncement,
+  deleteLesson,
+  deleteAssignment,
+  deleteResult,
+  deleteAttendance,
 } from "./appwrite-actions";

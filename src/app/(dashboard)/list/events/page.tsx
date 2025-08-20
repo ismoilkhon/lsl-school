@@ -30,7 +30,7 @@ const EventsListPage = async () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {data.length > 0 ? (
           data.map((event: any) => (
-            <div key={event.$id} className="border rounded-lg p-4">
+            <div key={event.$id} className="border rounded-lg p-4 relative">
               {event.img && (
                 <div className="mb-3">
                   <Image src={getAppwriteFilePreviewUrl(event.img, 480, 240)} alt={event.title} width={480} height={240} className="w-full h-40 object-cover rounded" />
@@ -42,6 +42,11 @@ const EventsListPage = async () => {
                 <p className="text-sm text-gray-500 mt-2">
                   {new Date(event.startTime).toLocaleDateString()}
                 </p>
+              )}
+              {role === 'admin' && (
+                <div className="absolute top-2 right-2">
+                  <FormContainer table="event" type="delete" id={event.$id} />
+                </div>
               )}
             </div>
           ))

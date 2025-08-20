@@ -116,3 +116,4 @@ const renderRow = (item: any) => (
 };
 
 export default ClassListPage;
+export const dynamic = 'force-dynamic';

@@ -60,12 +60,17 @@ export default function SignInPage() {
                     await new Promise(resolve => setTimeout(resolve, 100));
                     
                     // Get the user role and determine redirect path
-                    const role = result.user.prefs?.role || 'student';
+                    const role = (result.user.prefs?.role || 'student').toLowerCase();
                     const redirectPath = redirectTo !== '/admin' ? redirectTo : `/${role}`;
                     
                     console.log('SignInPage: About to redirect to:', redirectPath);
                     console.log('SignInPage: Current auth state:', useAuthStore.getState());
                     
+                    // Hint middleware about role (Appwrite session cookie is not readable on our domain)
+                    try {
+                        document.cookie = `role=${role}; path=/; max-age=${60 * 60 * 24 * 7}`;
+                    } catch {}
+
                     // Use router.push for navigation
                     router.push(redirectPath);
                     
