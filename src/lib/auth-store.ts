@@ -54,10 +54,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       loading: false
     });
     
-    // Set role cookie when user is set
+    // Set role cookie when user is set, clear it when user is null
     if (user) {
       const role = (user.prefs?.role || 'student').toLowerCase();
       setRoleCookie(role);
+    } else {
+      clearRoleCookie();
     }
     
     console.log('AuthStore: State updated, isAuthenticated:', !!user);
@@ -126,6 +128,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         error: null 
       });
       console.log('AuthStore: logout: Logout successful');
+      
+      // Redirect to home page to show welcome screen
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      }
     } catch (error: any) {
       console.error('AuthStore: logout: Error occurred:', error);
       set({ 

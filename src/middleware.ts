@@ -113,12 +113,15 @@ function hasAccess(userRole: string, pathname: string): boolean {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  console.log('Middleware: Processing path:', pathname);
+
   // Allow public routes (match exact or subpaths)
   if (
     publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/')) ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api')
   ) {
+    console.log('Middleware: Allowing public route:', pathname);
     return NextResponse.next();
   }
 
@@ -129,13 +132,15 @@ export async function middleware(request: NextRequest) {
     const userRole = await getUserRole(request);
     console.log('Middleware: User role retrieved:', userRole);
 
-    // If no user role (not authenticated), redirect to sign-in
+    // If no user role (not authenticated), allow access to home page, redirect others to sign-in
     if (!userRole) {
+      if (pathname === '/') {
+        console.log('Middleware: No user role found, allowing access to home page');
+        return NextResponse.next();
+      }
       console.log('Middleware: No user role found, redirecting to sign-in');
       const signInUrl = new URL('/sign-in', request.url);
-      if (pathname && pathname !== '/' && pathname !== '/sign-in') {
-        signInUrl.searchParams.set('redirect', pathname);
-      }
+      signInUrl.searchParams.set('redirect', pathname);
       return NextResponse.redirect(signInUrl);
     }
 
@@ -169,9 +174,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
-    "/(api|trpc)(.*)",
+    // Match all routes except static files and Next.js internals
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)).*)',
   ],
 };

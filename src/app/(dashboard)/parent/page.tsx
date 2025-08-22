@@ -55,16 +55,19 @@ export default async function ParentPage() {
     );
   }
 
+  // At this point, parent is guaranteed to be non-null
+  const parentData = parent as any;
+
   // Get children for this parent
-  const childrenResponse = await getChildrenForParent(parent.$id);
+  const childrenResponse = await getChildrenForParent(parentData.$id);
   const children = childrenResponse.data || [];
 
   // Get recent results for children
-  const resultsResponse = await getResultsForParent(parent.$id, 1, 5);
+  const resultsResponse = await getResultsForParent(parentData.$id, 1, 5);
   const recentResults = resultsResponse.data || [];
 
   // Get recent attendance for children
-  const attendanceResponse = await getAttendanceForParent(parent.$id, 1, 10);
+  const attendanceResponse = await getAttendanceForParent(parentData.$id, 1, 10);
   const recentAttendance = attendanceResponse.data || [];
 
   // Calculate attendance statistics
@@ -77,7 +80,7 @@ export default async function ParentPage() {
       {/* Welcome Message */}
       <div className="w-full">
         <div className="bg-white p-4 rounded-md shadow-sm">
-          <h1 className="text-2xl font-bold text-gray-800">Welcome back, {parent.name}!</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Welcome back, {parentData.name}!</h1>
           <p className="text-gray-600">Parent Dashboard</p>
           {children.length ? (
             <p className="text-sm text-gray-500 mt-2">Monitoring {children.length} {children.length === 1 ? 'child' : 'children'}</p>

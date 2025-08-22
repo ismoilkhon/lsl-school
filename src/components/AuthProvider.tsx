@@ -14,7 +14,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       try {
         // Add a timeout to prevent hanging
         const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Authentication check timeout')), 5000);
+          setTimeout(() => reject(new Error('Authentication check timeout')), 2000);
         });
         
         const authPromise = useAuthStore.getState().checkAuth();
@@ -29,8 +29,10 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         } catch {}
       } catch (error) {
         console.error('AuthProvider: Authentication check failed or timed out:', error);
-        // Set loading to false so pages can render
-        useAuthStore.getState().setLoading(false);
+        // Set loading to false and ensure user is null so pages can render
+        const store = useAuthStore.getState();
+        store.setLoading(false);
+        store.setUser(null);
       }
     };
     

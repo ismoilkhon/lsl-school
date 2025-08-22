@@ -147,9 +147,9 @@ export const getCurrentUser = async (): Promise<AppwriteUser | null> => {
     try {
         console.log('appwrite-auth: getCurrentUser: Attempting to get current user...');
         
-        // Add a timeout to prevent hanging
+        // Add a shorter timeout to prevent hanging
         const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('getCurrentUser timeout')), 5000);
+            setTimeout(() => reject(new Error('getCurrentUser timeout')), 2000);
         });
         
         const userPromise = account.get();

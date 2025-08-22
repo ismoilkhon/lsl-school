@@ -245,7 +245,7 @@ export default function SignInPage() {
                 {/* Back to Welcome */}
                 <div className="text-center">
                     <button
-                        onClick={() => router.push('/welcome')}
+                        onClick={() => router.push('/')}
                         className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
                     >
                         ← Back to Welcome Page
