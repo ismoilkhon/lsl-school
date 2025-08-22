@@ -122,26 +122,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // TEMP: Allow dashboard routes while we rely on client auth store to handle redirects
-  if (
-    pathname.startsWith('/admin') ||
-    pathname.startsWith('/teacher') ||
-    pathname.startsWith('/student') ||
-    pathname.startsWith('/parent') ||
-    pathname.startsWith('/list')
-  ) {
-    console.log('Middleware: Skipping auth for dashboard route:', pathname);
-    // Still attempt to read user role and pass it via header so server components can render role-gated UI
-    try {
-      const role = await getUserRole(request);
-      const resp = NextResponse.next();
-      if (role) resp.headers.set('x-user-role', role);
-      return resp;
-    } catch {
-      return NextResponse.next();
-    }
-  }
-
   try {
     console.log('Middleware: Processing request for path:', pathname);
     

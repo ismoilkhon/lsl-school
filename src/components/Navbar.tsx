@@ -13,7 +13,7 @@ const Navbar = () => {
     try {
       await logout();
       toast.success('Signed out successfully');
-      router.push('/sign-in');
+      router.push('/welcome');
     } catch (error) {
       toast.error('Failed to sign out');
     }

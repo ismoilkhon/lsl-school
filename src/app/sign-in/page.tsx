@@ -4,16 +4,28 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/lib/auth-store";
 import { signIn } from "@/lib/appwrite-auth";
 import { toast } from "react-toastify";
+import Image from "next/image";
 
 export default function SignInPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [selectedRole, setSelectedRole] = useState<string | null>(null);
     
     const { user, loading: authLoading, isAuthenticated, checkAuth, getUserRole } = useAuthStore();
     const router = useRouter();
     const searchParams = useSearchParams();
     const redirectTo = searchParams.get('redirect') || '/admin';
+
+    // Get selected role from localStorage on component mount
+    useEffect(() => {
+        const role = localStorage.getItem('selectedRole');
+        if (role) {
+            setSelectedRole(role);
+            // Clear the stored role after reading it
+            localStorage.removeItem('selectedRole');
+        }
+    }, []);
 
     // Check if user is already authenticated
     useEffect(() => {
@@ -100,10 +112,20 @@ export default function SignInPage() {
         }
     };
 
+    const getRoleInfo = (role: string) => {
+        const roleInfo = {
+            admin: { icon: "⚙️", title: "Administrator", color: "bg-purple-600" },
+            teacher: { icon: "👨‍🏫", title: "Teacher", color: "bg-blue-600" },
+            student: { icon: "📚", title: "Student", color: "bg-green-600" },
+            parent: { icon: "👨‍👩‍👧‍👦", title: "Parent", color: "bg-orange-600" }
+        };
+        return roleInfo[role as keyof typeof roleInfo] || roleInfo.student;
+    };
+
     // Show loading while checking authentication
     if (authLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
                     <p className="mt-4 text-gray-600">Checking authentication...</p>
@@ -115,7 +137,7 @@ export default function SignInPage() {
     // If user is already authenticated, show loading while redirecting
     if (user && isAuthenticated) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
                     <p className="mt-4 text-gray-600">Redirecting to dashboard...</p>
@@ -125,26 +147,48 @@ export default function SignInPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
-                <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                        Sign in to your account
+                <div className="text-center">
+                    {/* Logo */}
+                    <div className="flex justify-center mb-6">
+                        <div className="w-16 h-16 bg-slate-100 rounded-xl flex items-center justify-center">
+                            <Image src="/logo.png" alt="logo" width={60} height={60} />
+                        </div>
+                    </div>
+                    
+                    <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
+                        Welcome Back
                     </h2>
-                    <p className="mt-2 text-center text-sm text-gray-600">
+                    
+                    {/* Selected Role Display */}
+                    {selectedRole && (
+                        <div className="mb-6">
+                            <div className={`inline-flex items-center px-4 py-2 rounded-full text-white ${getRoleInfo(selectedRole).color}`}>
+                                <span className="text-lg mr-2">{getRoleInfo(selectedRole).icon}</span>
+                                <span className="font-medium">{getRoleInfo(selectedRole).title}</span>
+                            </div>
+                            <p className="text-sm text-gray-600 mt-2">
+                                Sign in to access your {getRoleInfo(selectedRole).title.toLowerCase()} dashboard
+                            </p>
+                        </div>
+                    )}
+                    
+                    <p className="text-sm text-gray-600">
                         Or{' '}
                         <button
                             onClick={() => router.push('/sign-up')}
-                            className="font-medium text-blue-600 hover:text-blue-500"
+                            className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
                         >
                             create a new account
                         </button>
                     </p>
                 </div>
-                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                    <div className="rounded-md shadow-sm -space-y-px">
+                
+                <div className="bg-white rounded-xl shadow-lg p-8">
+                    <form className="space-y-6" onSubmit={handleSubmit}>
                         <div>
-                            <label htmlFor="email" className="sr-only">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                                 Email address
                             </label>
                             <input
@@ -153,15 +197,16 @@ export default function SignInPage() {
                                 type="email"
                                 autoComplete="email"
                                 required
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                                placeholder="Email address"
+                                className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                                placeholder="Enter your email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 disabled={loading}
                             />
                         </div>
+                        
                         <div>
-                            <label htmlFor="password" className="sr-only">
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                                 Password
                             </label>
                             <input
@@ -170,32 +215,42 @@ export default function SignInPage() {
                                 type="password"
                                 autoComplete="current-password"
                                 required
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                                placeholder="Password"
+                                className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                                placeholder="Enter your password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 disabled={loading}
                             />
                         </div>
-                    </div>
 
-                    <div>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {loading ? (
-                                <div className="flex items-center">
-                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                    Signing in...
-                                </div>
-                            ) : (
-                                'Sign in'
-                            )}
-                        </button>
-                    </div>
-                </form>
+                        <div>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105"
+                            >
+                                {loading ? (
+                                    <div className="flex items-center">
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                        Signing in...
+                                    </div>
+                                ) : (
+                                    'Sign in to your account'
+                                )}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                {/* Back to Welcome */}
+                <div className="text-center">
+                    <button
+                        onClick={() => router.push('/welcome')}
+                        className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                        ← Back to Welcome Page
+                    </button>
+                </div>
             </div>
         </div>
     );

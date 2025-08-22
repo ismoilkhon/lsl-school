@@ -15,7 +15,7 @@ export default function HomePage() {
         const role = getUserRole();
         router.push(`/${role}`);
       } else {
-        // User is not authenticated, redirect to sign-in
+        // User is not authenticated, redirect to welcome page
         router.push('/welcome');
       }
     }

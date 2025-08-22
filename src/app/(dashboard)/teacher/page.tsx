@@ -1,8 +1,23 @@
 import Link from "next/link";
 import Announcements from "@/components/Announcements";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
+import { getCurrentServerUser } from "@/lib/server-auth";
+import { redirect } from "next/navigation";
 
 export default async function TeacherPage() {
+  // Get current user
+  const currentUser = await getCurrentServerUser();
+  
+  if (!currentUser) {
+    redirect('/sign-in');
+  }
+
+  // Check if user has teacher role
+  const userRole = (currentUser.prefs?.role || 'student').toLowerCase();
+  if (userRole !== 'teacher') {
+    redirect(`/${userRole}`);
+  }
+
   // If you have server auth, fetch teacherId here; fallback to no data
   const teacherId: string | number = "";
 
@@ -11,7 +26,7 @@ export default async function TeacherPage() {
       {/* Welcome Message */}
       <div className="w-full">
         <div className="bg-white p-4 rounded-md shadow-sm">
-          <h1 className="text-2xl font-bold text-gray-800">Welcome back!</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Welcome back, {currentUser.name}!</h1>
           <p className="text-gray-600">Teacher Dashboard</p>
         </div>
       </div>

@@ -342,6 +342,105 @@ export const getParents = async (
   }
 };
 
+export const getParentById = async (id: string) => {
+  try {
+    return await safeQuery(() => getDocument(COLLECTIONS.PARENTS, id), null as any);
+  } catch (error) {
+    console.error('Error fetching parent:', error);
+    return null;
+  }
+};
+
+export const getParentByUserId = async (userId: string) => {
+  try {
+    // Since there's no userId field in parents collection, return null
+    // This will trigger the setup message instead of infinite redirects
+    console.warn('getParentByUserId called but parents collection has no userId field');
+    return null;
+  } catch (error) {
+    console.error('Error fetching parent by user ID:', error);
+    return null;
+  }
+};
+
+// Get children for a parent
+export const getChildrenForParent = async (parentId: string) => {
+  try {
+    const queries = [Query.equal('parentId', parentId)];
+    const response = await safeQuery(() => listDocuments(COLLECTIONS.STUDENTS, queries), { documents: [], total: 0 } as any);
+    
+    return {
+      data: response.documents,
+      count: response.total,
+    };
+  } catch (error) {
+    console.error('Error fetching children for parent:', error);
+    return { data: [], count: 0 };
+  }
+};
+
+// Get results for a parent's children
+export const getResultsForParent = async (parentId: string, page: number = 1, limit: number = 10) => {
+  try {
+    // First get all children of this parent
+    const childrenResponse = await getChildrenForParent(parentId);
+    const childrenIds = childrenResponse.data.map((child: any) => child.$id);
+    
+    if (childrenIds.length === 0) {
+      return { data: [], count: 0 };
+    }
+    
+    // Get results for all children
+    const queries = [
+      Query.equal('studentId', childrenIds),
+      Query.limit(limit),
+      Query.offset((page - 1) * limit),
+      Query.orderDesc('$createdAt')
+    ];
+    
+    const response = await safeQuery(() => listDocuments(COLLECTIONS.RESULTS, queries), { documents: [], total: 0 } as any);
+    
+    return {
+      data: response.documents,
+      count: response.total,
+    };
+  } catch (error) {
+    console.error('Error fetching results for parent:', error);
+    return { data: [], count: 0 };
+  }
+};
+
+// Get attendance for a parent's children
+export const getAttendanceForParent = async (parentId: string, page: number = 1, limit: number = 10) => {
+  try {
+    // First get all children of this parent
+    const childrenResponse = await getChildrenForParent(parentId);
+    const childrenIds = childrenResponse.data.map((child: any) => child.$id);
+    
+    if (childrenIds.length === 0) {
+      return { data: [], count: 0 };
+    }
+    
+    // Get attendance for all children
+    const queries = [
+      Query.equal('studentId', childrenIds),
+      Query.limit(limit),
+      Query.offset((page - 1) * limit),
+      Query.orderDesc('$createdAt')
+    ];
+    
+    const response = await safeQuery(() => listDocuments(COLLECTIONS.ATTENDANCES, queries), { documents: [], total: 0 } as any);
+    
+    return {
+      data: response.documents,
+      count: response.total,
+    };
+  } catch (error) {
+    console.error('Error fetching attendance for parent:', error);
+    return { data: [], count: 0 };
+  }
+};
+
 // Grades
 export const getGrades = async (
   page: number = 1,

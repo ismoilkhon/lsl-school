@@ -2,8 +2,23 @@ import Link from "next/link";
 import Announcements from "@/components/Announcements";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import EventCalendar from "@/components/EventCalendar";
+import { getCurrentServerUser } from "@/lib/server-auth";
+import { redirect } from "next/navigation";
 
 export default async function StudentPage() {
+  // Get current user
+  const currentUser = await getCurrentServerUser();
+  
+  if (!currentUser) {
+    redirect('/sign-in');
+  }
+
+  // Check if user has student role
+  const userRole = (currentUser.prefs?.role || 'student').toLowerCase();
+  if (userRole !== 'student') {
+    redirect(`/${userRole}`);
+  }
+
   // In a real app, fetch student's classId server-side
   const classId = 1;
 
@@ -12,7 +27,7 @@ export default async function StudentPage() {
       {/* Welcome Message */}
       <div className="w-full">
         <div className="bg-white p-4 rounded-md shadow-sm">
-          <h1 className="text-2xl font-bold text-gray-800">Welcome back!</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Welcome back, {currentUser.name}!</h1>
           <p className="text-gray-600">Student Dashboard</p>
         </div>
       </div>

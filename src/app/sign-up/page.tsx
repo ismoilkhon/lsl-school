@@ -78,10 +78,20 @@ export default function SignUpPage() {
         }
     };
 
+    const getRoleInfo = (role: string) => {
+        const roleInfo = {
+            admin: { icon: "⚙️", title: "Administrator", color: "bg-purple-600", description: "Complete system management" },
+            teacher: { icon: "👨‍🏫", title: "Teacher", color: "bg-blue-600", description: "Class and lesson management" },
+            student: { icon: "📚", title: "Student", color: "bg-green-600", description: "Academic portal access" },
+            parent: { icon: "👨‍👩‍👧‍👦", title: "Parent", color: "bg-orange-600", description: "Child monitoring" }
+        };
+        return roleInfo[role as keyof typeof roleInfo] || roleInfo.student;
+    };
+
     // Show loading while checking authentication
     if (checkingAuth) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
                     <p className="mt-4 text-gray-600">Checking authentication...</p>
@@ -91,134 +101,165 @@ export default function SignUpPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
-                <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                        Create your account
+                <div className="text-center">
+                    {/* Logo */}
+                    <div className="flex justify-center mb-6">
+                        <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                            <span className="text-white font-bold text-2xl">L</span>
+                        </div>
+                    </div>
+                    
+                    <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
+                        Join LSL School
                     </h2>
-                    <p className="mt-2 text-center text-sm text-gray-600">
+                    <p className="text-sm text-gray-600">
                         Or{' '}
                         <button
                             onClick={() => router.push('/sign-in')}
-                            className="font-medium text-blue-600 hover:text-blue-500"
+                            className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
                         >
                             sign in to your existing account
                         </button>
                     </p>
                 </div>
-                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                    <div className="space-y-4">
-                        <div>
-                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                                Full Name
-                            </label>
-                            <input
-                                id="name"
-                                name="name"
-                                type="text"
-                                autoComplete="name"
-                                required
-                                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                placeholder="Enter your full name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                disabled={loading}
-                            />
-                        </div>
-                        
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                                Email Address
-                            </label>
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                autoComplete="email"
-                                required
-                                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                placeholder="Enter your email address"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                                disabled={loading}
-                            />
-                        </div>
+                
+                <div className="bg-white rounded-xl shadow-lg p-8">
+                    <form className="space-y-6" onSubmit={handleSubmit}>
+                        <div className="space-y-4">
+                            <div>
+                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                                    Full Name
+                                </label>
+                                <input
+                                    id="name"
+                                    name="name"
+                                    type="text"
+                                    autoComplete="name"
+                                    required
+                                    className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                                    placeholder="Enter your full name"
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                    disabled={loading}
+                                />
+                            </div>
+                            
+                            <div>
+                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                                    Email Address
+                                </label>
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    autoComplete="email"
+                                    required
+                                    className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                                    placeholder="Enter your email address"
+                                    value={formData.email}
+                                    onChange={handleInputChange}
+                                    disabled={loading}
+                                />
+                            </div>
 
-                        <div>
-                            <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-                                Role
-                            </label>
-                            <select
-                                id="role"
-                                name="role"
-                                required
-                                className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                value={formData.role}
-                                onChange={handleInputChange}
-                                disabled={loading}
-                            >
-                                <option value="student">Student</option>
-                                <option value="teacher">Teacher</option>
-                                <option value="parent">Parent</option>
-                                <option value="admin">Administrator</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                                Password
-                            </label>
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                autoComplete="new-password"
-                                required
-                                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                placeholder="Enter your password (min. 8 characters)"
-                                value={formData.password}
-                                onChange={handleInputChange}
-                                disabled={loading}
-                            />
-                        </div>
-                        
-                        <div>
-                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                                Confirm Password
-                            </label>
-                            <input
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                type="password"
-                                autoComplete="new-password"
-                                required
-                                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                placeholder="Confirm your password"
-                                value={formData.confirmPassword}
-                                onChange={handleInputChange}
-                                disabled={loading}
-                            />
-                        </div>
-                    </div>
-
-                    <div>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {loading ? (
-                                <div className="flex items-center">
-                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                    Creating account...
+                            <div>
+                                <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+                                    Select Your Role
+                                </label>
+                                <select
+                                    id="role"
+                                    name="role"
+                                    required
+                                    className="appearance-none relative block w-full px-3 py-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                                    value={formData.role}
+                                    onChange={handleInputChange}
+                                    disabled={loading}
+                                >
+                                    <option value="student">📚 Student</option>
+                                    <option value="teacher">👨‍🏫 Teacher</option>
+                                    <option value="parent">👨‍👩‍👧‍👦 Parent</option>
+                                    <option value="admin">⚙️ Administrator</option>
+                                </select>
+                                
+                                {/* Role Description */}
+                                <div className="mt-2 p-3 rounded-lg bg-gray-50 border border-gray-200">
+                                    <div className="flex items-center space-x-2">
+                                        <span className="text-lg">{getRoleInfo(formData.role).icon}</span>
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-900">{getRoleInfo(formData.role).title}</p>
+                                            <p className="text-xs text-gray-600">{getRoleInfo(formData.role).description}</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            ) : (
-                                'Create Account'
-                            )}
-                        </button>
-                    </div>
-                </form>
+                            </div>
+                            
+                            <div>
+                                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                                    Password
+                                </label>
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    autoComplete="new-password"
+                                    required
+                                    className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                                    placeholder="Enter your password (min. 8 characters)"
+                                    value={formData.password}
+                                    onChange={handleInputChange}
+                                    disabled={loading}
+                                />
+                            </div>
+                            
+                            <div>
+                                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                                    Confirm Password
+                                </label>
+                                <input
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    type="password"
+                                    autoComplete="new-password"
+                                    required
+                                    className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                                    placeholder="Confirm your password"
+                                    value={formData.confirmPassword}
+                                    onChange={handleInputChange}
+                                    disabled={loading}
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105"
+                            >
+                                {loading ? (
+                                    <div className="flex items-center">
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                        Creating account...
+                                    </div>
+                                ) : (
+                                    'Create Your Account'
+                                )}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                {/* Back to Welcome */}
+                <div className="text-center">
+                    <button
+                        onClick={() => router.push('/welcome')}
+                        className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                        ← Back to Welcome Page
+                    </button>
+                </div>
             </div>
         </div>
     );
