@@ -30,10 +30,10 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-blue-50 dark:bg-blue-900">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-blue-600 dark:text-blue-300">Loading...</p>
         </div>
       </div>
     );
@@ -43,7 +43,7 @@ export default function HomePage() {
   if (!user) {
     console.log('HomePage: Rendering welcome screen for unauthenticated user');
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 dark:from-blue-900 dark:via-blue-800 dark:to-blue-700">
         <SmoothScrolling />
         <NavigationBar />
         <HeroSection />
@@ -59,10 +59,10 @@ export default function HomePage() {
 
   // This should not be reached, but just in case
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-blue-50 dark:bg-blue-900">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Redirecting...</p>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+        <p className="mt-4 text-blue-600 dark:text-blue-300">Redirecting...</p>
       </div>
     </div>
   );

@@ -90,7 +90,7 @@ export default function EventsSection() {
   };
 
   return (
-    <section id="events" className="py-20 bg-white">
+    <section id="events" className="py-20 bg-blue-50 dark:bg-blue-900">
       <div className="container mx-auto px-4">
         {/* Header */}
         <motion.div
@@ -111,7 +111,7 @@ export default function EventsSection() {
           </Typography>
           <Typography
             variant="lead"
-            className="text-gray-600 max-w-3xl mx-auto"
+            className="text-blue-700 dark:text-blue-200 max-w-3xl mx-auto"
             placeholder=""
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
@@ -159,7 +159,7 @@ export default function EventsSection() {
                   </Typography>
                   
                   <Typography
-                    className="text-gray-600 mb-4 line-clamp-2"
+                    className="text-blue-700 dark:text-blue-200 mb-4 line-clamp-2"
                     placeholder=""
                     onPointerEnterCapture={() => {}}
                     onPointerLeaveCapture={() => {}}
@@ -168,20 +168,20 @@ export default function EventsSection() {
                   </Typography>
 
                   <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-gray-600">
-                      <Calendar className="h-4 w-4 mr-2 text-orange-500" />
+                    <div className="flex items-center text-blue-700 dark:text-blue-200">
+                      <Calendar className="h-4 w-4 mr-2 text-blue-600" />
                       <span>{event.date}</span>
                     </div>
-                    <div className="flex items-center text-gray-600">
-                      <Clock className="h-4 w-4 mr-2 text-orange-500" />
+                    <div className="flex items-center text-blue-700 dark:text-blue-200">
+                      <Clock className="h-4 w-4 mr-2 text-blue-600" />
                       <span>{event.time}</span>
                     </div>
-                    <div className="flex items-center text-gray-600">
-                      <MapPin className="h-4 w-4 mr-2 text-orange-500" />
+                    <div className="flex items-center text-blue-700 dark:text-blue-200">
+                      <MapPin className="h-4 w-4 mr-2 text-blue-600" />
                       <span>{event.location}</span>
                     </div>
-                    <div className="flex items-center text-gray-600">
-                      <Users className="h-4 w-4 mr-2 text-orange-500" />
+                    <div className="flex items-center text-blue-700 dark:text-blue-200">
+                      <Users className="h-4 w-4 mr-2 text-blue-600" />
                       <span>{event.attendees} expected attendees</span>
                     </div>
                   </div>

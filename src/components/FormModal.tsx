@@ -124,22 +124,22 @@ const forms: {
   ),
   // Placeholder forms for unimplemented types
   parent: (setOpen, type, data, relatedData) => (
-    <div className="p-4 text-center">
-      <p className="text-gray-500">Parent form is not yet implemented.</p>
-      <button 
-        onClick={() => setOpen(false)}
-        className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md"
-      >
-        Close
-      </button>
-    </div>
+            <div className="p-4 text-center">
+          <p className="text-blue-600 dark:text-blue-300">Parent form is not yet implemented.</p>
+          <button 
+            onClick={() => setOpen(false)}
+            className="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
+          >
+            Close
+          </button>
+        </div>
   ),
   lesson: (setOpen, type, data, relatedData) => (
     <div className="p-4 text-center">
-      <p className="text-gray-500">Lesson form is not yet implemented.</p>
+      <p className="text-blue-600 dark:text-blue-300">Lesson form is not yet implemented.</p>
       <button 
         onClick={() => setOpen(false)}
-        className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md"
+        className="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
       >
         Close
       </button>
@@ -147,10 +147,10 @@ const forms: {
   ),
   assignment: (setOpen, type, data, relatedData) => (
     <div className="p-4 text-center">
-      <p className="text-gray-500">Assignment form is not yet implemented.</p>
+      <p className="text-blue-600 dark:text-blue-300">Assignment form is not yet implemented.</p>
       <button 
         onClick={() => setOpen(false)}
-        className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md"
+        className="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
       >
         Close
       </button>
@@ -158,10 +158,10 @@ const forms: {
   ),
   result: (setOpen, type, data, relatedData) => (
     <div className="p-4 text-center">
-      <p className="text-gray-500">Result form is not yet implemented.</p>
+      <p className="text-blue-600 dark:text-blue-300">Result form is not yet implemented.</p>
       <button 
         onClick={() => setOpen(false)}
-        className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md"
+        className="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
       >
         Close
       </button>
@@ -169,10 +169,10 @@ const forms: {
   ),
   attendance: (setOpen, type, data, relatedData) => (
     <div className="p-4 text-center">
-      <p className="text-gray-500">Attendance form is not yet implemented.</p>
+      <p className="text-blue-600 dark:text-blue-300">Attendance form is not yet implemented.</p>
       <button 
         onClick={() => setOpen(false)}
-        className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md"
+        className="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
       >
         Close
       </button>
@@ -197,10 +197,10 @@ const FormModal = ({
   const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
   const bgColor =
     type === "create"
-      ? "bg-lamaYellow"
+      ? "bg-blue-400 dark:bg-blue-500"
       : type === "update"
-      ? "bg-lamaSky"
-      : "bg-lamaPurple";
+      ? "bg-blue-300 dark:bg-blue-600"
+      : "bg-blue-500 dark:bg-blue-400";
 
   const [open, setOpen] = useState(false);
 
@@ -259,20 +259,20 @@ const FormModal = ({
       <form action={formAction} className="p-4 flex flex-col gap-4">
         <input type="hidden" name="id" value={id} />
         <input type="hidden" name="userRole" value={finalRole} />
-        <span className="text-center font-medium">
+        <span className="text-center font-medium text-blue-800 dark:text-blue-100 text-lg">
           All data will be lost. Are you sure you want to delete this {table}?
         </span>
-        <button className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center">
+        <button className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center transition-colors">
           Delete
         </button>
       </form>
     ) : type === "create" || type === "update" ? (
       forms[table] ? forms[table](setOpen, type, data, relatedData) : (
         <div className="p-4 text-center">
-          <p className="text-gray-500">Form for {table} is not yet implemented.</p>
+          <p className="text-blue-600 dark:text-blue-300">Form for {table} is not yet implemented.</p>
           <button 
             onClick={() => setOpen(false)}
-            className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md"
+            className="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
           >
             Close
           </button>
@@ -293,7 +293,7 @@ const FormModal = ({
       </button>
       {open && (
         <div className="w-screen h-screen absolute left-0 top-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-md relative w-[90%] md:w-[70%] lg:w-[60%] xl:w-[50%] 2xl:w-[40%]">
+          <div className="bg-blue-50 dark:bg-blue-800 p-4 rounded-md relative w-[90%] md:w-[70%] lg:w-[60%] xl:w-[50%] 2xl:w-[40%]">
             <Form />
             <div
               className="absolute top-4 right-4 cursor-pointer"

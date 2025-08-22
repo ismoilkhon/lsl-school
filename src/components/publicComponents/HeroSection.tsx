@@ -13,10 +13,10 @@ export default function HeroSection() {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          backgroundImage: 'linear-gradient(135deg, hsl(var(--blue-600)) 0%, hsl(var(--blue-800)) 100%)',
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-blue-600/60"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-800/80 to-blue-600/60"></div>
       </div>
 
       {/* Content */}
@@ -34,7 +34,7 @@ export default function HeroSection() {
             onPointerLeaveCapture={() => {}}
           >
             Shaping Tomorrow's
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-400">
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-blue-100">
               Leaders Today
             </span>
           </Typography>
@@ -53,7 +53,7 @@ export default function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button
               size="lg"
-              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 transition-all duration-300 transform hover:scale-105"
+              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105"
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
@@ -64,7 +64,7 @@ export default function HeroSection() {
             <Button
               variant="outlined"
               size="lg"
-              className="border-white text-white hover:bg-white hover:text-blue-900 transition-all duration-300"
+              className="border-blue-200 text-blue-200 hover:bg-blue-200 hover:text-blue-800 transition-all duration-300"
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
@@ -83,7 +83,7 @@ export default function HeroSection() {
         >
           <div className="text-center">
             <div className="flex justify-center mb-2">
-              <Users className="h-8 w-8 text-orange-400" />
+              <Users className="h-8 w-8 text-blue-300" />
             </div>
             <Typography
               variant="h3"
@@ -106,7 +106,7 @@ export default function HeroSection() {
 
           <div className="text-center">
             <div className="flex justify-center mb-2">
-              <Award className="h-8 w-8 text-orange-400" />
+              <Award className="h-8 w-8 text-blue-300" />
             </div>
             <Typography
               variant="h3"
@@ -129,7 +129,7 @@ export default function HeroSection() {
 
           <div className="text-center">
             <div className="flex justify-center mb-2">
-              <BookOpen className="h-8 w-8 text-orange-400" />
+              <BookOpen className="h-8 w-8 text-blue-300" />
             </div>
             <Typography
               variant="h3"

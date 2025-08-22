@@ -30,7 +30,7 @@ export default function ContactSection() {
   ];
 
   return (
-    <section id="contact" className="py-20 bg-white">
+    <section id="contact" className="py-20 bg-blue-50 dark:bg-blue-900">
       <div className="container mx-auto px-4">
         {/* Header */}
         <motion.div
@@ -51,7 +51,7 @@ export default function ContactSection() {
           </Typography>
           <Typography
             variant="lead"
-            className="text-gray-600 max-w-3xl mx-auto"
+            className="text-blue-700 dark:text-blue-200 max-w-3xl mx-auto"
             placeholder=""
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
@@ -107,7 +107,7 @@ export default function ContactSection() {
                           {info.details.map((detail, idx) => (
                             <Typography
                               key={idx}
-                              className="text-gray-600 mb-1"
+                              className="text-blue-700 dark:text-blue-200 mb-1"
                               placeholder=""
                               onPointerEnterCapture={() => {}}
                               onPointerLeaveCapture={() => {}}
@@ -146,7 +146,7 @@ export default function ContactSection() {
                         Interactive Map
                       </Typography>
                       <Typography
-                        className="text-gray-600"
+                        className="text-blue-700 dark:text-blue-200"
                         placeholder=""
                         onPointerEnterCapture={() => {}}
                         onPointerLeaveCapture={() => {}}

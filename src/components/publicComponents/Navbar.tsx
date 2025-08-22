@@ -9,8 +9,9 @@ import {
   IconButton,
   Collapse,
 } from '@material-tailwind/react';
-import { Menu, X, GraduationCap } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const navItems = [
   { name: 'Home', href: '#home' },
@@ -61,20 +62,20 @@ export default function NavigationBar() {
 
   return (
     <Navbar 
-      className="sticky top-0 z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4 bg-sky-900 backdrop-blur-sm border-0 shadow-md"
+      className="sticky top-0 z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4 bg-blue-800 dark:bg-blue-900 backdrop-blur-sm border-0 shadow-md"
       placeholder=""
       onResize={() => {}}
       onResizeCapture={() => {}}
       onPointerEnterCapture={() => {}}
       onPointerLeaveCapture={() => {}}
     >
-      <div className="flex items-center justify-between text-blue-gray-900">
+      <div className="flex items-center justify-between text-blue-100 dark:text-blue-50">
         <div className="flex items-center gap-2">
           <Image src="/logo.png" alt="logo" width={40} height={40} />
           <Typography
             as="a"
             href="#"
-            className="mr-4 cursor-pointer py-1.5 font-semibold text-xl text-[#4363a6] font-sans"
+            className="mr-4 cursor-pointer py-1.5 font-semibold text-xl text-blue-200 dark:text-blue-100 font-sans"
             placeholder=""
             onResize={() => {}}
             onResizeCapture={() => {}}
@@ -86,10 +87,11 @@ export default function NavigationBar() {
         </div>
         <div className="flex items-center gap-4">
           <div className="mr-4 hidden lg:block">{navList}</div>
+          <ThemeToggle size="sm" />
           <Button
             variant="gradient"
             size="sm"
-            className="hidden text-[#4363a6] lg:inline-block bg-gradient-to-r from-blue-600 to-blue-800"
+            className="hidden text-blue-100 lg:inline-block bg-gradient-to-r from-blue-600 to-blue-700"
             placeholder=""
             onResize={() => {}}
             onResizeCapture={() => {}}
@@ -120,20 +122,20 @@ export default function NavigationBar() {
       </div>
       <Collapse open={openNav}>
         {navList}
-        <Button 
-          variant="gradient" 
-          size="sm" 
-          fullWidth 
-          className="mb-2 bg-gradient-to-r from-blue-600 to-blue-800"
-          placeholder=""
-          onResize={() => {}}
-          onResizeCapture={() => {}}
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
-          onClick={() => router.push('/sign-up')}
-        >
-          Apply Now
-        </Button>
+                        <Button
+                  variant="gradient"
+                  size="sm"
+                  fullWidth
+                  className="mb-2 bg-gradient-to-r from-blue-600 to-blue-700"
+                  placeholder=""
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                  onClick={() => router.push('/sign-up')}
+                >
+                  Apply Now
+                </Button>
       </Collapse>
     </Navbar>
   );

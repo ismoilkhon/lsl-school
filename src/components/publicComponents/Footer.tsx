@@ -50,7 +50,7 @@ export default function Footer() {
               </Typography>
             </div>
             <Typography
-              className="text-blue-200 mb-6 leading-relaxed"
+              className="text-blue-100 mb-6 leading-relaxed"
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
@@ -90,7 +90,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <a
                     href={link.href}
-                    className="text-blue-200 hover:text-orange-400 transition-colors duration-200"
+                    className="text-blue-100 hover:text-orange-300 transition-colors duration-200"
                   >
                     {link.name}
                   </a>
@@ -115,7 +115,7 @@ export default function Footer() {
                 <li key={program.name}>
                   <a
                     href={program.href}
-                    className="text-blue-200 hover:text-orange-400 transition-colors duration-200"
+                    className="text-blue-100 hover:text-orange-300 transition-colors duration-200"
                   >
                     {program.name}
                   </a>
@@ -135,7 +135,7 @@ export default function Footer() {
             >
               Contact Info
             </Typography>
-            <div className="space-y-3 text-blue-200">
+            <div className="space-y-3 text-blue-100">
               <div>
                 <Typography
                   className="font-medium text-white mb-1"
@@ -200,23 +200,23 @@ export default function Footer() {
         {/* Bottom Bar */}
         <hr className="my-8 border-blue-800" />
         <div className="flex flex-col md:flex-row justify-between items-center">
-          <Typography
-            variant="small"
-            className="text-blue-200 mb-4 md:mb-0"
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
-          >
-            © 2025 Bright Valley Academy. All rights reserved.
-          </Typography>
+                      <Typography
+              variant="small"
+              className="text-blue-100 mb-4 md:mb-0"
+              placeholder=""
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
+            >
+              © 2025 Bright Valley Academy. All rights reserved.
+            </Typography>
           <div className="flex space-x-6">
-            <a href="#" className="text-blue-200 hover:text-orange-400 transition-colors duration-200 text-sm">
+            <a href="#" className="text-blue-100 hover:text-orange-300 transition-colors duration-200 text-sm">
               Privacy Policy
             </a>
-            <a href="#" className="text-blue-200 hover:text-orange-400 transition-colors duration-200 text-sm">
+            <a href="#" className="text-blue-100 hover:text-orange-300 transition-colors duration-200 text-sm">
               Terms of Service
             </a>
-            <a href="#" className="text-blue-200 hover:text-orange-400 transition-colors duration-200 text-sm">
+            <a href="#" className="text-blue-100 hover:text-orange-300 transition-colors duration-200 text-sm">
               Accessibility
             </a>
           </div>

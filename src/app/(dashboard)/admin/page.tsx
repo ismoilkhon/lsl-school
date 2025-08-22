@@ -24,9 +24,9 @@ export default function AdminPage({
     <div className="p-4 flex gap-4 flex-col">
       {/* Welcome Message */}
       <div className="w-full">
-        <div className="bg-white p-4 rounded-md shadow-sm">
-          <h1 className="text-2xl font-bold text-gray-800">Welcome back!</h1>
-          <p className="text-gray-600">Administrator Dashboard</p>
+        <div className="bg-blue-50 dark:bg-blue-800 p-4 rounded-md shadow-sm">
+          <h1 className="text-2xl font-bold text-blue-800 dark:text-blue-100">Welcome back!</h1>
+          <p className="text-blue-600 dark:text-blue-300">Administrator Dashboard</p>
         </div>
       </div>
 

@@ -64,7 +64,7 @@ export default function ProgramsSection() {
   ];
 
   return (
-    <section id="programs" className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+    <section id="programs" className="py-20 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800">
       <div className="container mx-auto px-4">
         {/* Header */}
         <motion.div
@@ -85,7 +85,7 @@ export default function ProgramsSection() {
           </Typography>
           <Typography
             variant="lead"
-            className="text-gray-600 max-w-3xl mx-auto"
+            className="text-blue-700 dark:text-blue-200 max-w-3xl mx-auto"
             placeholder=""
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
@@ -132,7 +132,7 @@ export default function ProgramsSection() {
 
                 <CardBody className="p-6">
                   <Typography
-                    className="text-gray-600 mb-6 leading-relaxed"
+                    className="text-blue-700 dark:text-blue-200 mb-6 leading-relaxed"
                     placeholder=""
                     onPointerEnterCapture={() => {}}
                     onPointerLeaveCapture={() => {}}
@@ -153,8 +153,8 @@ export default function ProgramsSection() {
                     </Typography>
                     <ul className="space-y-2">
                       {program.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center text-gray-600">
-                          <div className="w-2 h-2 bg-orange-500 rounded-full mr-3"></div>
+                        <li key={idx} className="flex items-center text-blue-700 dark:text-blue-200">
+                          <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
                           {feature}
                         </li>
                       ))}
@@ -194,7 +194,7 @@ export default function ProgramsSection() {
             Ready to Explore Our Programs?
           </Typography>
           <Typography
-            className="text-gray-600 mb-6 max-w-2xl mx-auto"
+            className="text-blue-700 dark:text-blue-200 mb-6 max-w-2xl mx-auto"
             placeholder=""
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}

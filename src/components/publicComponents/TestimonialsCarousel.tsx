@@ -121,8 +121,10 @@ export default function TestimonialsCarousel() {
         >
           <Typography
             variant="h2"
-            className="mb-4 text-4xl md:text-5xl font-bold text-blue-900"
+            className="mb-4 text-4xl md:text-5xl font-bold text-blue-800 dark:text-blue-100"
             placeholder=""
+            onResize={() => {}}
+            onResizeCapture={() => {}}
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
@@ -130,8 +132,10 @@ export default function TestimonialsCarousel() {
           </Typography>
           <Typography
             variant="lead"
-            className="text-gray-600 max-w-3xl mx-auto"
+            className="text-blue-600 dark:text-blue-300 max-w-3xl mx-auto"
             placeholder=""
+            onResize={() => {}}
+            onResizeCapture={() => {}}
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
@@ -146,9 +150,11 @@ export default function TestimonialsCarousel() {
           <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 z-10">
             <IconButton
               variant="filled"
-              className="bg-white/90 text-blue-900 shadow-lg hover:bg-white"
+              className="bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 shadow-lg hover:bg-blue-200 dark:hover:bg-blue-700"
               onClick={goToPrevious}
               placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
             >
@@ -159,7 +165,7 @@ export default function TestimonialsCarousel() {
           <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 z-10">
             <IconButton
               variant="filled"
-              className="bg-white/90 text-blue-900 shadow-lg hover:bg-white"
+              className="bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 shadow-lg hover:bg-blue-200 dark:hover:bg-blue-700"
               onClick={goToNext}
               placeholder=""
               onPointerEnterCapture={() => {}}
@@ -170,16 +176,17 @@ export default function TestimonialsCarousel() {
           </div>
 
           {/* Testimonial Cards */}
-          <div className="overflow-hidden">
-            <AnimatePresence mode="wait">
+          <div className="overflow-hidden h-[400px] flex items-center">
+            <AnimatePresence>
               <motion.div
                 key={currentIndex}
-                initial={{ opacity: 0, x: 300 }}
+                initial={{ opacity: 0, x: 100 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -300 }}
-                transition={{ duration: 0.5, ease: "easeInOut" }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                className="w-full absolute inset-0"
               >
-                <Card className="hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+                <Card className="hover:shadow-xl transition-all duration-300 bg-blue-50 dark:bg-blue-800 backdrop-blur-sm">
                   <CardBody className="p-8 text-center">
                     {/* Quote Icon */}
                     <div className="flex justify-center mb-6">
