@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Typography, Card, CardBody, Avatar, IconButton } from '@material-tailwind/react';
 import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocale } from '@/lib/locale-context';
+import { useTranslation } from '@/lib/translations';
 
 interface Testimonial {
   id: number;
@@ -66,8 +68,13 @@ const testimonials: Testimonial[] = [
 ];
 
 export default function TestimonialsCarousel() {
+  const { locale } = useLocale();
+  const { t } = useTranslation(locale);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+  // Get testimonials from translations
+  const testimonials = t('testimonials.items');
 
   // Auto-play functionality
   useEffect(() => {
@@ -80,7 +87,7 @@ export default function TestimonialsCarousel() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, testimonials.length]);
 
   const goToPrevious = () => {
     setIsAutoPlaying(false);
@@ -128,7 +135,7 @@ export default function TestimonialsCarousel() {
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
-            What Our Community Says
+            {t('testimonials.title')}
           </Typography>
           <Typography
             variant="lead"
@@ -139,8 +146,7 @@ export default function TestimonialsCarousel() {
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
-            Hear from our students, parents, and alumni about their experiences 
-            at Bright Valley Academy and how we've made a difference in their lives.
+            {t('testimonials.description')}
           </Typography>
         </motion.div>
 

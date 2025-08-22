@@ -4,27 +4,32 @@ import React from 'react';
 import { Typography, Card, CardBody, Input, Textarea, Button } from '@material-tailwind/react';
 import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLocale } from '@/lib/locale-context';
+import { useTranslation } from '@/lib/translations';
 
 export default function ContactSection() {
+  const { locale } = useLocale();
+  const { t } = useTranslation(locale);
+
   const contactInfo = [
     {
       icon: <Phone className="h-6 w-6" />,
-      title: "Phone",
+      title: t('contact.contactInfo'),
       details: ["+1 (555) 123-4567", "+1 (555) 123-4568"]
     },
     {
       icon: <Mail className="h-6 w-6" />,
-      title: "Email",
+      title: t('contact.email'),
       details: ["info@brightvalley.edu", "admissions@brightvalley.edu"]
     },
     {
       icon: <MapPin className="h-6 w-6" />,
-      title: "Address",
+      title: t('contact.address'),
       details: ["123 Education Lane", "Bright Valley, CA 90210"]
     },
     {
       icon: <Clock className="h-6 w-6" />,
-      title: "Office Hours",
+      title: t('contact.officeHours'),
       details: ["Mon-Fri: 7:30 AM - 4:30 PM", "Sat: 9:00 AM - 2:00 PM"]
     }
   ];
@@ -47,7 +52,7 @@ export default function ContactSection() {
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
-            Get In Touch
+            {t('contact.title')}
           </Typography>
           <Typography
             variant="lead"
@@ -56,8 +61,7 @@ export default function ContactSection() {
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
-            Have questions about our programs or admissions process? We'd love to hear from you. 
-            Reach out to us and discover how Bright Valley Academy can be the perfect fit for your child.
+            {t('contact.description')}
           </Typography>
         </motion.div>
 
@@ -76,7 +80,7 @@ export default function ContactSection() {
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
             >
-              Contact Information
+              {t('contact.contactInfo')}
             </Typography>
 
             <div className="space-y-6">
@@ -143,7 +147,7 @@ export default function ContactSection() {
                         onPointerEnterCapture={() => {}}
                         onPointerLeaveCapture={() => {}}
                       >
-                        Interactive Map
+                        {t('contact.map.title')}
                       </Typography>
                       <Typography
                         className="text-blue-700 dark:text-blue-200"
@@ -151,7 +155,7 @@ export default function ContactSection() {
                         onPointerEnterCapture={() => {}}
                         onPointerLeaveCapture={() => {}}
                       >
-                        Click to view directions
+                        {t('contact.map.description')}
                       </Typography>
                     </div>
                   </div>
@@ -174,7 +178,7 @@ export default function ContactSection() {
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
             >
-              Send us a Message
+              {t('contact.sendMessage')}
             </Typography>
 
             <Card>
@@ -182,14 +186,14 @@ export default function ContactSection() {
                 <form className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Input
-                      label="First Name"
+                      label={t('contact.form.firstName')}
                       size="lg"
                       crossOrigin=""
                       onPointerEnterCapture={() => {}}
                       onPointerLeaveCapture={() => {}}
                     />
                     <Input
-                      label="Last Name"
+                      label={t('contact.form.lastName')}
                       size="lg"
                       crossOrigin=""
                       onPointerEnterCapture={() => {}}
@@ -198,7 +202,7 @@ export default function ContactSection() {
                   </div>
                   
                   <Input
-                    label="Email Address"
+                    label={t('contact.form.email')}
                     size="lg"
                     type="email"
                     crossOrigin=""
@@ -207,7 +211,7 @@ export default function ContactSection() {
                   />
                   
                   <Input
-                    label="Phone Number"
+                    label={t('contact.form.phone')}
                     size="lg"
                     type="tel"
                     crossOrigin=""
@@ -216,7 +220,7 @@ export default function ContactSection() {
                   />
                   
                   <Input
-                    label="Subject"
+                    label={t('contact.form.subject')}
                     size="lg"
                     crossOrigin=""
                     onPointerEnterCapture={() => {}}
@@ -224,7 +228,7 @@ export default function ContactSection() {
                   />
                   
                   <Textarea
-                    label="Message"
+                    label={t('contact.form.message')}
                     rows={6}
                     onPointerEnterCapture={() => {}}
                     onPointerLeaveCapture={() => {}}
@@ -238,7 +242,7 @@ export default function ContactSection() {
                     onPointerLeaveCapture={() => {}}
                   >
                     <Send className="h-5 w-5" />
-                    Send Message
+                    {t('contact.form.send')}
                   </Button>
                 </form>
               </CardBody>

@@ -5,15 +5,23 @@ import { Typography, Button } from '@material-tailwind/react';
 import { ArrowRight, Users, Award, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AnimatedCounter from './AnimatedCounter';
+import { useLocale } from '@/lib/locale-context';
+import { useTranslation } from '@/lib/translations';
 
 export default function HeroSection() {
+  const { locale } = useLocale();
+  const { t } = useTranslation(locale);
+
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: 'linear-gradient(135deg, hsl(var(--blue-600)) 0%, hsl(var(--blue-800)) 100%)',
+          backgroundImage: 'url(/DEmFgqRO4iZk.jpg)',
+          backgroundSize: '100% 100%',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-blue-800/80 to-blue-600/60"></div>
@@ -30,12 +38,14 @@ export default function HeroSection() {
             variant="h1"
             className="mb-6 text-4xl md:text-6xl lg:text-7xl font-bold leading-tight"
             placeholder=""
+            onResize={() => {}}
+            onResizeCapture={() => {}}
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
-            Shaping Tomorrow's
+            {t('hero.title')}
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-blue-100">
-              Leaders Today
+              {t('hero.subtitle')}
             </span>
           </Typography>
 
@@ -43,11 +53,12 @@ export default function HeroSection() {
             variant="lead"
             className="mb-8 text-xl md:text-2xl max-w-4xl mx-auto text-blue-100"
             placeholder=""
+            onResize={() => {}}
+            onResizeCapture={() => {}}
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
-            At Bright Valley Academy, we nurture young minds through innovative education, 
-            fostering creativity, critical thinking, and character development in a supportive environment.
+            {t('hero.description')}
           </Typography>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -58,7 +69,7 @@ export default function HeroSection() {
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
             >
-              Explore Programs
+              {t('hero.explorePrograms')}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button
@@ -69,7 +80,7 @@ export default function HeroSection() {
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
             >
-              Schedule a Tour
+              {t('hero.scheduleTour')}
             </Button>
           </div>
         </motion.div>
@@ -100,7 +111,7 @@ export default function HeroSection() {
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
             >
-              Happy Students
+              {t('hero.stats.students')}
             </Typography>
           </div>
 
@@ -123,7 +134,7 @@ export default function HeroSection() {
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
             >
-              Years of Excellence
+              {t('hero.stats.years')}
             </Typography>
           </div>
 
@@ -146,7 +157,7 @@ export default function HeroSection() {
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
             >
-              Programs Offered
+              {t('hero.stats.programs')}
             </Typography>
           </div>
         </motion.div>

@@ -6,11 +6,15 @@ import FinanceChart from "@/components/FinanceChart";
 import StatsCards from "@/components/StatsCards";
 import { headers, cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { getTranslation } from "@/lib/translations";
+import { type Locale } from "@/lib/translations";
 
 export default function AdminPage({
   searchParams,
+  params,
 }: {
   searchParams: { [keys: string]: string | undefined };
+  params: { locale: Locale };
 }) {
   // Enforce role-based access at page level (middleware skips auth for dashboards)
   const hdrs = headers();
@@ -20,13 +24,17 @@ export default function AdminPage({
   if (role !== 'admin') {
     redirect(`/${role}`);
   }
+
+  const locale = params.locale;
+  const t = (key: string) => getTranslation(locale, key);
+
   return (
     <div className="p-4 flex gap-4 flex-col">
       {/* Welcome Message */}
       <div className="w-full">
         <div className="bg-blue-50 dark:bg-blue-800 p-4 rounded-md shadow-sm">
-          <h1 className="text-2xl font-bold text-blue-800 dark:text-blue-100">Welcome back!</h1>
-          <p className="text-blue-600 dark:text-blue-300">Administrator Dashboard</p>
+          <h1 className="text-2xl font-bold text-blue-800 dark:text-blue-100">{t('dashboard.welcome')}</h1>
+          <p className="text-blue-600 dark:text-blue-300">{t('dashboard.admin.title')}</p>
         </div>
       </div>
 

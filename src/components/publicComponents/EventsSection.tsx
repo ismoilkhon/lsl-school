@@ -5,69 +5,16 @@ import { Typography, Card, CardBody, Button, Chip } from '@material-tailwind/rea
 import { Calendar, Clock, MapPin, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import EventModal from './EventModal';
+import { useLocale } from '@/lib/locale-context';
+import { useTranslation } from '@/lib/translations';
 
 export default function EventsSection() {
+  const { locale } = useLocale();
+  const { t } = useTranslation(locale);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const events = [
-    {
-      id: 1,
-      title: "Annual Science Fair",
-      date: "March 15, 2025",
-      time: "9:00 AM - 4:00 PM",
-      location: "Main Auditorium",
-      category: "Academic",
-      description: "Students showcase their innovative science projects and experiments.",
-      attendees: 500,
-      image: "/0WJDnS1sZOiv.png",
-      details: "Join us for our most anticipated academic event of the year! Students from all grade levels will present their innovative science projects, ranging from environmental studies to robotics. This event showcases the creativity and scientific thinking of our students while providing an opportunity for peer learning and community engagement.",
-      organizer: "Science Department",
-      requirements: ["Open to all students", "Projects must be submitted by March 10", "Parents and community members welcome"]
-    },
-    {
-      id: 2,
-      title: "Spring Sports Day",
-      date: "March 22, 2025",
-      time: "8:00 AM - 5:00 PM",
-      location: "Athletic Field",
-      category: "Sports",
-      description: "Annual inter-house sports competition featuring track and field events.",
-      attendees: 800,
-      image: "/Su8rdyb70UGm.jpg",
-      details: "Our annual Spring Sports Day brings together students from all houses in friendly competition. Events include track and field, team sports, and fun activities for all age groups. This day promotes physical fitness, teamwork, and school spirit while celebrating athletic achievement.",
-      organizer: "Physical Education Department",
-      requirements: ["All students encouraged to participate", "Medical clearance required for competitive events", "Spectators welcome"]
-    },
-    {
-      id: 3,
-      title: "Parent-Teacher Conference",
-      date: "March 28, 2025",
-      time: "2:00 PM - 6:00 PM",
-      location: "Classrooms",
-      category: "Meeting",
-      description: "Individual meetings to discuss student progress and development.",
-      attendees: 300,
-      image: "/yFx8haCPmgHC.jpg",
-      details: "These important one-on-one meetings provide an opportunity for parents and teachers to discuss student progress, address any concerns, and collaborate on strategies to support each child's academic and personal development. Appointments can be scheduled online.",
-      organizer: "Academic Affairs Office",
-      requirements: ["Appointments must be scheduled in advance", "15-minute time slots available", "Both parents encouraged to attend"]
-    },
-    {
-      id: 4,
-      title: "Art Exhibition Opening",
-      date: "April 5, 2025",
-      time: "6:00 PM - 8:00 PM",
-      location: "Art Gallery",
-      category: "Arts",
-      description: "Showcasing student artwork from various grades and art programs.",
-      attendees: 200,
-      image: "/0WJDnS1sZOiv.png",
-      details: "Celebrate the artistic talents of our students at this special exhibition featuring paintings, sculptures, digital art, and mixed media pieces. The evening will include light refreshments and an opportunity to meet the young artists and learn about their creative process.",
-      organizer: "Arts Department",
-      requirements: ["Open to all community members", "Light refreshments provided", "Artwork available for purchase"]
-    }
-  ];
+  const events = t('events.items');
 
   const handleEventClick = (event: any) => {
     setSelectedEvent(event);
@@ -107,7 +54,7 @@ export default function EventsSection() {
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
-            Upcoming Events
+            {t('events.title')}
           </Typography>
           <Typography
             variant="lead"
@@ -116,8 +63,7 @@ export default function EventsSection() {
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
-            Stay connected with our vibrant school community through exciting events, 
-            competitions, and educational activities throughout the year.
+            {t('events.description')}
           </Typography>
         </motion.div>
 

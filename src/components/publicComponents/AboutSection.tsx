@@ -4,28 +4,33 @@ import React from 'react';
 import { Typography, Card, CardBody } from '@material-tailwind/react';
 import { Target, Eye, Heart, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLocale } from '@/lib/locale-context';
+import { useTranslation } from '@/lib/translations';
 
 export default function AboutSection() {
+  const { locale } = useLocale();
+  const { t } = useTranslation(locale);
+
   const values = [
     {
       icon: <Target className="h-8 w-8" />,
-      title: "Excellence",
-      description: "We strive for academic excellence and personal growth in every student."
+      title: t('about.values.excellence.title'),
+      description: t('about.values.excellence.description')
     },
     {
       icon: <Eye className="h-8 w-8" />,
-      title: "Innovation",
-      description: "Embracing modern teaching methods and technology for effective learning."
+      title: t('about.values.innovation.title'),
+      description: t('about.values.innovation.description')
     },
     {
       icon: <Heart className="h-8 w-8" />,
-      title: "Compassion",
-      description: "Creating a caring environment where every student feels valued and supported."
+      title: t('about.values.compassion.title'),
+      description: t('about.values.compassion.description')
     },
     {
       icon: <Star className="h-8 w-8" />,
-      title: "Integrity",
-      description: "Building character and ethical values that last a lifetime."
+      title: t('about.values.integrity.title'),
+      description: t('about.values.integrity.description')
     }
   ];
 
@@ -47,7 +52,7 @@ export default function AboutSection() {
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
-            About Bright Valley Academy
+            {t('about.title')}
           </Typography>
           <Typography
             variant="lead"
@@ -56,8 +61,7 @@ export default function AboutSection() {
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
-            For over 25 years, we have been dedicated to providing exceptional education 
-            that prepares students for success in an ever-changing world.
+            {t('about.description')}
           </Typography>
         </motion.div>
 
@@ -97,7 +101,7 @@ export default function AboutSection() {
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
             >
-              Our Mission
+              {t('about.mission.title')}
             </Typography>
             <Typography
               className="text-blue-700 dark:text-blue-200 text-lg leading-relaxed"
@@ -105,10 +109,7 @@ export default function AboutSection() {
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
             >
-              To provide a nurturing and challenging educational environment that empowers 
-              students to reach their full potential academically, socially, and emotionally. 
-              We believe in fostering critical thinking, creativity, and character development 
-              while preparing students for lifelong learning and responsible citizenship.
+              {t('about.mission.content')}
             </Typography>
             
             <Typography
@@ -118,7 +119,7 @@ export default function AboutSection() {
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
             >
-              Our Vision
+              {t('about.vision.title')}
             </Typography>
             <Typography
               className="text-blue-700 dark:text-blue-200 text-lg leading-relaxed"
@@ -126,9 +127,7 @@ export default function AboutSection() {
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
             >
-              To be recognized as a leading educational institution that inspires students 
-              to become confident, compassionate, and capable leaders who make positive 
-              contributions to their communities and the world.
+              {t('about.vision.content')}
             </Typography>
           </motion.div>
         </div>
@@ -147,7 +146,7 @@ export default function AboutSection() {
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
-            Our Core Values
+            {t('about.values.title')}
           </Typography>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

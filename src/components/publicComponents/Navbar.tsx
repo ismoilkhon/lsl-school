@@ -12,6 +12,8 @@ import {
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import ThemeToggle from '@/components/ThemeToggle';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useLocale } from '@/lib/locale-context';
 
 const navItems = [
   { name: 'Home', href: '#home' },
@@ -26,6 +28,7 @@ const navItems = [
 export default function NavigationBar() {
   const [openNav, setOpenNav] = React.useState(false);
   const router = useRouter();
+  const { locale } = useLocale();
 
   React.useEffect(() => {
     window.addEventListener(
@@ -88,6 +91,7 @@ export default function NavigationBar() {
         <div className="flex items-center gap-4">
           <div className="mr-4 hidden lg:block">{navList}</div>
           <ThemeToggle size="sm" />
+          <LanguageSwitcher currentLocale={locale} />
           <Button
             variant="gradient"
             size="sm"

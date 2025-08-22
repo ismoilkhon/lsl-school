@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { Client, Account } from 'appwrite';
 
+// Define supported locales
+const locales = ['en', 'uz', 'ru'];
+const defaultLocale = 'en';
+
 // Initialize Appwrite client for server-side operations
 const client = new Client()
   .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1')
@@ -115,9 +119,25 @@ export async function middleware(request: NextRequest) {
 
   console.log('Middleware: Processing path:', pathname);
 
+  // Check if the pathname has a locale
+  const pathnameHasLocale = locales.some(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+  );
+
+  // If the pathname doesn't have a locale, redirect to the default locale
+  if (!pathnameHasLocale) {
+    const locale = defaultLocale;
+    const newUrl = new URL(`/${locale}${pathname}`, request.url);
+    console.log('Middleware: Redirecting to locale:', newUrl.pathname);
+    return NextResponse.redirect(newUrl);
+  }
+
+  // Extract locale from pathname
+  const pathnameLocale = pathname.split('/')[1];
+
   // Allow public routes (match exact or subpaths)
   if (
-    publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/')) ||
+    publicRoutes.some(route => pathname.includes(route)) ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api')
   ) {
@@ -134,12 +154,12 @@ export async function middleware(request: NextRequest) {
 
     // If no user role (not authenticated), allow access to home page, redirect others to sign-in
     if (!userRole) {
-      if (pathname === '/') {
+      if (pathname.endsWith('/') || pathname.match(/\/[a-z]{2}$/)) {
         console.log('Middleware: No user role found, allowing access to home page');
         return NextResponse.next();
       }
       console.log('Middleware: No user role found, redirecting to sign-in');
-      const signInUrl = new URL('/sign-in', request.url);
+      const signInUrl = new URL(`/${pathnameLocale}/sign-in`, request.url);
       signInUrl.searchParams.set('redirect', pathname);
       return NextResponse.redirect(signInUrl);
     }
@@ -148,7 +168,7 @@ export async function middleware(request: NextRequest) {
     if (!hasAccess(userRole, pathname)) {
       console.log('Middleware: User does not have access to route, redirecting to dashboard');
       // Redirect to appropriate dashboard based on role
-      const dashboardUrl = new URL(`/${userRole}`, request.url);
+      const dashboardUrl = new URL(`/${pathnameLocale}/${userRole}`, request.url);
       return NextResponse.redirect(dashboardUrl);
     }
 
@@ -164,7 +184,8 @@ export async function middleware(request: NextRequest) {
     console.error('Middleware error:', error);
     
     // On error, redirect to sign-in
-    const signInUrl = new URL('/sign-in', request.url);
+    const pathnameLocale = pathname.split('/')[1] || defaultLocale;
+    const signInUrl = new URL(`/${pathnameLocale}/sign-in`, request.url);
     if (pathname && pathname !== '/' && pathname !== '/sign-in') {
       signInUrl.searchParams.set('redirect', pathname);
     }
