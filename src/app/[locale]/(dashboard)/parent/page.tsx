@@ -1,95 +1,71 @@
+"use client";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Announcements from "@/components/Announcements";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
-import { getCurrentServerUser } from "@/lib/server-auth";
-import { getParentByUserId, getChildrenForParent, getResultsForParent, getAttendanceForParent } from "@/lib/appwrite-data";
-import { redirect } from "next/navigation";
-import { getTranslation } from "@/lib/translations";
+import { useAuthStore } from "@/lib/auth-store";
+import { useLocale } from "@/lib/locale-context";
+import { useTranslation } from "@/lib/translations";
 import { type Locale } from "@/lib/translations";
 
-export default async function ParentPage({
+export default function ParentPage({
   params,
 }: {
   params: { locale: Locale };
 }) {
-  // Get current user
-  const currentUser = await getCurrentServerUser();
-  
-  if (!currentUser) {
-    redirect('/sign-in');
-  }
+  const { user, loading, isAuthenticated, checkAuth, getUserRole } = useAuthStore();
+  const router = useRouter();
+  const { locale } = useLocale();
+  const { t } = useTranslation(locale);
+  const [isChecking, setIsChecking] = useState(true);
 
-  const locale = params.locale;
-  const t = (key: string, params?: Record<string, any>) => getTranslation(locale, key, undefined, params);
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      if (!loading) {
+        if (!user || !isAuthenticated) {
+          router.push(`/${locale}/sign-in`);
+          return;
+        }
 
-  // Get parent information for the current user
-  const parent = await getParentByUserId(currentUser.$id);
-  
-  if (!parent) {
-    // Instead of redirecting to welcome (which causes infinite loops), show a setup message
+        const userRole = getUserRole();
+        if (userRole !== 'parent') {
+          router.push(`/${locale}/${userRole}`);
+          return;
+        }
+
+        setIsChecking(false);
+      }
+    };
+
+    checkAuthentication();
+  }, [user, loading, isAuthenticated, router, locale, getUserRole]);
+
+  // Show loading while checking authentication
+  if (loading || isChecking) {
     return (
-      <div className="p-4 flex gap-4 flex-col">
-        <div className="w-full">
-          <div className="bg-white p-8 rounded-md shadow-sm text-center">
-            <h1 className="text-2xl font-bold text-gray-800 mb-4">{t('dashboard.parent.welcome', { name: currentUser.name || 'Parent' })}</h1>
-            <p className="text-gray-600 mb-6">Your parent account is not yet fully set up.</p>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-              <h2 className="text-lg font-semibold text-blue-800 mb-2">{t('dashboard.parent.setupRequired')}</h2>
-              <p className="text-blue-700 mb-4">
-                {t('dashboard.parent.setupDescription')}
-              </p>
-              <p className="text-blue-600 text-sm">
-                {t('dashboard.parent.setupContact')}
-              </p>
-            </div>
-            <div className="space-y-4">
-              <p className="text-sm text-gray-500">
-                {t('dashboard.parent.viewGeneralInfo')}
-              </p>
-              <Link 
-                href="/list/events" 
-                className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                {t('dashboard.parent.viewSchoolEvents')}
-              </Link>
-            </div>
-          </div>
-        </div>
-        
-        {/* Show announcements even without parent setup */}
-        <div className="w-full xl:w-1/3">
-          <Announcements />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading dashboard...</p>
         </div>
       </div>
     );
   }
 
-  // At this point, parent is guaranteed to be non-null
-  const parentData = parent as any;
-
-  // Get children for this parent
-  const childrenResponse = await getChildrenForParent(parentData.$id);
-  const children = childrenResponse.data || [];
-
-  // Get recent results for children
-  const resultsResponse = await getResultsForParent(parentData.$id, 1, 5);
-  const recentResults = resultsResponse.data || [];
-
-  // Get recent attendance for children
-  const attendanceResponse = await getAttendanceForParent(parentData.$id, 1, 10);
-  const recentAttendance = attendanceResponse.data || [];
-
-  // Calculate attendance statistics
-  const totalAttendance = recentAttendance.length;
-  const presentCount = recentAttendance.filter((a: any) => a.present).length;
-  const attendanceRate = totalAttendance > 0 ? Math.round((presentCount / totalAttendance) * 100) : 0;
+  // For now, show a simplified parent dashboard
+  // TODO: Add client-side data fetching for parent-specific data
+  const children = [];
+  const recentResults = [];
+  const recentAttendance = [];
+  const attendanceRate = 0;
 
   return (
     <div className="p-4 flex gap-4 flex-col">
       {/* Welcome Message */}
       <div className="w-full">
         <div className="bg-white p-4 rounded-md shadow-sm">
-          <h1 className="text-2xl font-bold text-gray-800">{t('dashboard.parent.welcome', { name: parentData.name })}</h1>
+          <h1 className="text-2xl font-bold text-gray-800">{t('dashboard.parent.welcome', { name: user?.name || 'Parent' })}</h1>
           <p className="text-gray-600">{t('dashboard.parent.title')}</p>
           {children.length ? (
             <p className="text-sm text-gray-500 mt-2">{t('dashboard.parent.monitoringChildren', { count: children.length })}</p>

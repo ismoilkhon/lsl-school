@@ -1,12 +1,15 @@
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Announcements from "@/components/Announcements";
 import AttendanceChartContainer from "@/components/AttendanceChartContainer";
 import CountChartContainer from "@/components/CountChartContainer";
 import EventCalendarContainer from "@/components/EventCalendarContainer";
 import FinanceChart from "@/components/FinanceChart";
 import StatsCards from "@/components/StatsCards";
-import { headers, cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { getTranslation } from "@/lib/translations";
+import { useAuthStore } from "@/lib/auth-store";
+import { useLocale } from "@/lib/locale-context";
+import { useTranslation } from "@/lib/translations";
 import { type Locale } from "@/lib/translations";
 
 export default function AdminPage({
@@ -16,17 +19,44 @@ export default function AdminPage({
   searchParams: { [keys: string]: string | undefined };
   params: { locale: Locale };
 }) {
-  // Enforce role-based access at page level (middleware skips auth for dashboards)
-  const hdrs = headers();
-  const roleHeader = hdrs.get('x-user-role');
-  const roleCookie = cookies().get('role')?.value;
-  const role = (roleHeader || roleCookie || 'student').toLowerCase();
-  if (role !== 'admin') {
-    redirect(`/${role}`);
-  }
+  const { user, loading, isAuthenticated, checkAuth, getUserRole } = useAuthStore();
+  const router = useRouter();
+  const { locale } = useLocale();
+  const { t } = useTranslation(locale);
+  const [isChecking, setIsChecking] = useState(true);
 
-  const locale = params.locale;
-  const t = (key: string) => getTranslation(locale, key);
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      if (!loading) {
+        if (!user || !isAuthenticated) {
+          router.push(`/${locale}/sign-in`);
+          return;
+        }
+
+        const userRole = getUserRole();
+        if (userRole !== 'admin') {
+          router.push(`/${locale}/${userRole}`);
+          return;
+        }
+
+        setIsChecking(false);
+      }
+    };
+
+    checkAuthentication();
+  }, [user, loading, isAuthenticated, router, locale, getUserRole]);
+
+  // Show loading while checking authentication
+  if (loading || isChecking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 flex gap-4 flex-col">

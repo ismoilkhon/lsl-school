@@ -12,6 +12,7 @@
     "verify:setup": "node scripts/verify-setup.js"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^3.9.0",
     "@material-tailwind/react": "^2.1.10",
     "@types/react-big-calendar": "^1.8.9",

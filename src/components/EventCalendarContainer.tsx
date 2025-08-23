@@ -1,8 +1,9 @@
+"use client";
 import Image from "next/image";
 import EventCalendar from "./EventCalendar";
 import EventList from "./EventList";
 
-const EventCalendarContainer = async ({
+const EventCalendarContainer = ({
   searchParams,
 }: {
   searchParams: { [keys: string]: string | undefined };

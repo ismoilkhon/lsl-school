@@ -1,14 +1,39 @@
+"use client";
+import { useEffect, useState } from "react";
 import { getAnnouncements } from "@/lib/appwrite-data";
 
-const Announcements = async () => {
-  let data: any[] = [];
-  
-  try {
-    const res = await getAnnouncements(1, 3, {});
-    data = res.data;
-  } catch (error) {
-    console.warn('Failed to fetch announcements:', error);
-    data = [];
+const Announcements = () => {
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      try {
+        const res = await getAnnouncements(1, 3, {});
+        setData(res.data);
+      } catch (error) {
+        console.warn('Failed to fetch announcements:', error);
+        setData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnnouncements();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="bg-white p-4 rounded-md">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-semibold">Announcements</h1>
+          <span className="text-xs text-gray-400">View All</span>
+        </div>
+        <div className="flex items-center justify-center h-32">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    );
   }
 
   return (

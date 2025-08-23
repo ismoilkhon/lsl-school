@@ -434,4 +434,35 @@ export const uz = {
     no: "Yo'q",
     ok: "OK",
   },
+
+  // Timetable
+  timetable: {
+    studentTitle: "O'quvchi jadvali",
+    teacherTitle: "O'qituvchi jadvali",
+    weekOf: "Hafta",
+    today: "Bugun",
+    weekView: "Hafta ko'rinishi",
+    dayView: "Kun ko'rinishi",
+    time: "Vaqt",
+    loading: "Jadval yuklanmoqda...",
+    error: "Xato",
+    errorLoading: "Jadvalni yuklashda xatolik yuz berdi. Iltimos, qayta urinib ko'ring.",
+    noLessons: "Darslar rejalashtirilmagan",
+    noLessonsDescription: "Bu kunda darslar rejalashtirilmagan.",
+    days: {
+      monday: "Dushanba",
+      tuesday: "Seshanba",
+      wednesday: "Chorshanba",
+      thursday: "Payshanba",
+      friday: "Juma",
+      saturday: "Shanba",
+      sunday: "Yakshanba",
+    },
+    lessonTypes: {
+      lecture: "Ma'ruza",
+      lab: "Laboratoriya",
+      seminar: "Seminar",
+      exam: "Imtihon",
+    },
+  },
 };

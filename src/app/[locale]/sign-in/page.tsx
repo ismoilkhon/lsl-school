@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/lib/auth-store";
 import { signIn } from "@/lib/appwrite-auth";
 import { toast } from "react-toastify";
+import { useLocale } from "@/lib/locale-context";
 import Image from "next/image";
 
 export default function SignInPage() {
@@ -15,7 +16,8 @@ export default function SignInPage() {
     const { user, loading: authLoading, isAuthenticated, checkAuth, getUserRole } = useAuthStore();
     const router = useRouter();
     const searchParams = useSearchParams();
-    const redirectTo = searchParams.get('redirect') || '/admin';
+    const { locale } = useLocale();
+    const redirectTo = searchParams.get('redirect') || `/${locale}/admin`;
 
     // Get selected role from localStorage on component mount
     useEffect(() => {
@@ -43,10 +45,10 @@ export default function SignInPage() {
             
             // Use a small delay to ensure the store is properly updated
             setTimeout(() => {
-                router.push(`/${role}`);
+                router.push(`/${locale}/${role}`);
             }, 100);
         }
-    }, [user, authLoading, isAuthenticated, router, getUserRole]);
+    }, [user, authLoading, isAuthenticated, router, getUserRole, locale]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -73,7 +75,7 @@ export default function SignInPage() {
                     
                     // Get the user role and determine redirect path
                     const role = (result.user.prefs?.role || 'student').toLowerCase();
-                    const redirectPath = redirectTo !== '/admin' ? redirectTo : `/${role}`;
+                    const redirectPath = redirectTo !== `/${locale}/admin` ? redirectTo : `/${locale}/${role}`;
                     
                     console.log('SignInPage: About to redirect to:', redirectPath);
                     console.log('SignInPage: Current auth state:', useAuthStore.getState());
@@ -88,7 +90,7 @@ export default function SignInPage() {
                     
                     // Add a fallback redirect after a short delay
                     setTimeout(() => {
-                        if (window.location.pathname === '/sign-in') {
+                        if (window.location.pathname.includes('/sign-in')) {
                             console.log('SignInPage: Fallback redirect needed');
                             console.log('SignInPage: Current path:', window.location.pathname);
                             console.log('SignInPage: Redirecting to:', redirectPath);
@@ -177,7 +179,7 @@ export default function SignInPage() {
                     <p className="text-sm text-gray-600">
                         Or{' '}
                         <button
-                            onClick={() => router.push('/sign-up')}
+                            onClick={() => router.push(`/${locale}/sign-up`)}
                             className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
                         >
                             create a new account
@@ -245,7 +247,7 @@ export default function SignInPage() {
                 {/* Back to Welcome */}
                 <div className="text-center">
                     <button
-                        onClick={() => router.push('/')}
+                        onClick={() => router.push(`/${locale}`)}
                         className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
                     >
                         ← Back to Welcome Page

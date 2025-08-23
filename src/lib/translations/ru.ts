@@ -434,4 +434,35 @@ export const ru = {
     no: "Нет",
     ok: "OK",
   },
+
+  // Timetable
+  timetable: {
+    studentTitle: "Расписание студента",
+    teacherTitle: "Расписание учителя",
+    weekOf: "Неделя",
+    today: "Сегодня",
+    weekView: "Вид недели",
+    dayView: "Вид дня",
+    time: "Время",
+    loading: "Загрузка расписания...",
+    error: "Ошибка",
+    errorLoading: "Не удалось загрузить расписание. Пожалуйста, попробуйте снова.",
+    noLessons: "Уроки не запланированы",
+    noLessonsDescription: "На этот день уроки не запланированы.",
+    days: {
+      monday: "Понедельник",
+      tuesday: "Вторник",
+      wednesday: "Среда",
+      thursday: "Четверг",
+      friday: "Пятница",
+      saturday: "Суббота",
+      sunday: "Воскресенье",
+    },
+    lessonTypes: {
+      lecture: "Лекция",
+      lab: "Лаборатория",
+      seminar: "Семинар",
+      exam: "Экзамен",
+    },
+  },
 };

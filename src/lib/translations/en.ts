@@ -434,4 +434,35 @@ export const en = {
     no: "No",
     ok: "OK",
   },
+
+  // Timetable
+  timetable: {
+    studentTitle: "Student Timetable",
+    teacherTitle: "Teacher Timetable",
+    weekOf: "Week of",
+    today: "Today",
+    weekView: "Week View",
+    dayView: "Day View",
+    time: "Time",
+    loading: "Loading timetable...",
+    error: "Error",
+    errorLoading: "Failed to load timetable. Please try again.",
+    noLessons: "No lessons scheduled",
+    noLessonsDescription: "There are no lessons scheduled for this day.",
+    days: {
+      monday: "Monday",
+      tuesday: "Tuesday",
+      wednesday: "Wednesday",
+      thursday: "Thursday",
+      friday: "Friday",
+      saturday: "Saturday",
+      sunday: "Sunday",
+    },
+    lessonTypes: {
+      lecture: "Lecture",
+      lab: "Laboratory",
+      seminar: "Seminar",
+      exam: "Exam",
+    },
+  },
 };

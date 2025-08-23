@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/lib/appwrite-auth";
 import { useAuthStore } from "@/lib/auth-store";
+import { useLocale } from "@/lib/locale-context";
 import { toast } from "react-toastify";
 
 export default function SignUpPage() {
@@ -17,6 +18,7 @@ export default function SignUpPage() {
     const [checkingAuth, setCheckingAuth] = useState(false); // Start with false to show form immediately
     
     const router = useRouter();
+    const { locale } = useLocale();
 
     // Check if user is already authenticated
     useEffect(() => {
@@ -65,7 +67,7 @@ export default function SignUpPage() {
                 useAuthStore.getState().setUser(result.user);
 
                 // Redirect directly
-                router.push(`/${formData.role}`);
+                router.push(`/${locale}/${formData.role}`);
             } else {
                 toast.error(result.error || "Sign up failed");
                 console.error('Sign up failed:', result.error);
@@ -117,7 +119,7 @@ export default function SignUpPage() {
                     <p className="text-sm text-gray-600">
                         Or{' '}
                         <button
-                            onClick={() => router.push('/sign-in')}
+                            onClick={() => router.push(`/${locale}/sign-in`)}
                             className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
                         >
                             sign in to your existing account
@@ -254,7 +256,7 @@ export default function SignUpPage() {
                 {/* Back to Welcome */}
                 <div className="text-center">
                     <button
-                        onClick={() => router.push('/')}
+                        onClick={() => router.push(`/${locale}`)}
                         className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
                     >
                         ← Back to Welcome Page

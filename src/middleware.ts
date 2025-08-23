@@ -108,10 +108,13 @@ function hasAccess(userRole: string, pathname: string): boolean {
     return true;
   }
 
+  // Remove locale prefix from pathname for route checking
+  const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}/, '');
+  
   // Check if the route is allowed for the user's role
   const allowedRoutes = roleRoutes[userRole as keyof typeof roleRoutes] || [];
   
-  return allowedRoutes.some(route => pathname.startsWith(route));
+  return allowedRoutes.some(route => pathWithoutLocale.startsWith(route));
 }
 
 export async function middleware(request: NextRequest) {
@@ -135,62 +138,42 @@ export async function middleware(request: NextRequest) {
   // Extract locale from pathname
   const pathnameLocale = pathname.split('/')[1];
 
-  // Allow public routes (match exact or subpaths)
+  // Allow static and API routes
   if (
-    publicRoutes.some(route => pathname.includes(route)) ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api')
   ) {
+    console.log('Middleware: Allowing static/API route:', pathname);
+    return NextResponse.next();
+  }
+
+  // Check if this is a public route (sign-in, sign-up, home)
+  const isPublicRoute = publicRoutes.some(route => {
+    if (route === '/') {
+      // Only match exact home page or locale home page
+      return pathname === '/' || pathname.match(/^\/[a-z]{2}$/);
+    }
+    return pathname.includes(route);
+  });
+  
+  // Get user role
+  const userRole = await getUserRole(request);
+  console.log('Middleware: User role retrieved:', userRole);
+
+  // Allow public routes for everyone
+  if (isPublicRoute) {
     console.log('Middleware: Allowing public route:', pathname);
     return NextResponse.next();
   }
 
-  try {
-    console.log('Middleware: Processing request for path:', pathname);
-    
-    // Get user role
-    const userRole = await getUserRole(request);
-    console.log('Middleware: User role retrieved:', userRole);
-
-    // If no user role (not authenticated), allow access to home page, redirect others to sign-in
-    if (!userRole) {
-      if (pathname.endsWith('/') || pathname.match(/\/[a-z]{2}$/)) {
-        console.log('Middleware: No user role found, allowing access to home page');
-        return NextResponse.next();
-      }
-      console.log('Middleware: No user role found, redirecting to sign-in');
-      const signInUrl = new URL(`/${pathnameLocale}/sign-in`, request.url);
-      signInUrl.searchParams.set('redirect', pathname);
-      return NextResponse.redirect(signInUrl);
-    }
-
-    // Check if user has access to the route
-    if (!hasAccess(userRole, pathname)) {
-      console.log('Middleware: User does not have access to route, redirecting to dashboard');
-      // Redirect to appropriate dashboard based on role
-      const dashboardUrl = new URL(`/${pathnameLocale}/${userRole}`, request.url);
-      return NextResponse.redirect(dashboardUrl);
-    }
-
-    console.log('Middleware: User authorized, allowing access to:', pathname);
-    
-    // Add user role to headers for use in components
-    const response = NextResponse.next();
+  // For all other routes, let client-side handle authentication
+  // This allows the client-side components to handle auth properly
+  console.log('Middleware: Allowing access to:', pathname, 'letting client-side handle auth');
+  const response = NextResponse.next();
+  if (userRole) {
     response.headers.set('x-user-role', userRole);
-    
-    return response;
-
-  } catch (error) {
-    console.error('Middleware error:', error);
-    
-    // On error, redirect to sign-in
-    const pathnameLocale = pathname.split('/')[1] || defaultLocale;
-    const signInUrl = new URL(`/${pathnameLocale}/sign-in`, request.url);
-    if (pathname && pathname !== '/' && pathname !== '/sign-in') {
-      signInUrl.searchParams.set('redirect', pathname);
-    }
-    return NextResponse.redirect(signInUrl);
   }
+  return response;
 }
 
 export const config = {

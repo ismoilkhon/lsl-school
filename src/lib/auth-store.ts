@@ -131,7 +131,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       
       // Redirect to home page to show welcome screen
       if (typeof window !== 'undefined') {
-        window.location.href = '/';
+        // Get current locale from URL or default to 'en'
+        const currentPath = window.location.pathname;
+        const localeMatch = currentPath.match(/^\/([a-z]{2})/);
+        const locale = localeMatch ? localeMatch[1] : 'en';
+        window.location.href = `/${locale}`;
       }
     } catch (error: any) {
       console.error('AuthStore: logout: Error occurred:', error);
