@@ -1,15 +1,103 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Typography, Card, CardBody, Input, Textarea, Button } from '@material-tailwind/react';
-import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLocale } from '@/lib/locale-context';
 import { useTranslation } from '@/lib/translations';
+import LeafletMap from './LeafletMap';
 
 export default function ContactSection() {
   const { locale } = useLocale();
   const { t } = useTranslation(locale);
+
+  // Form state
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: ''
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitMessage, setSubmitMessage] = useState('');
+
+  // Handle form input changes
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    console.log('🎯 Form submit triggered!');
+    e.preventDefault();
+    
+    console.log('📋 Form data:', formData);
+    
+    // Validate required fields
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.message) {
+      console.log('❌ Validation failed - missing required fields');
+      setSubmitStatus('error');
+      setSubmitMessage('Please fill in all required fields.');
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setSubmitStatus('error');
+      setSubmitMessage('Please enter a valid email address.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      console.log('📤 Sending form data:', formData);
+      
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      console.log('📥 Response status:', response.status);
+      const data = await response.json();
+      console.log('📥 Response data:', data);
+
+      if (data.success) {
+        setSubmitStatus('success');
+        setSubmitMessage('Message sent successfully! We will get back to you soon.');
+        // Reset form
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        });
+      } else {
+        setSubmitStatus('error');
+        setSubmitMessage(data.error || 'Failed to send message. Please try again.');
+      }
+    } catch (error) {
+      setSubmitStatus('error');
+      setSubmitMessage('Network error. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const contactInfo = [
     {
@@ -20,12 +108,12 @@ export default function ContactSection() {
     {
       icon: <Mail className="h-6 w-6" />,
       title: t('contact.email'),
-      details: ["info@brightvalley.edu", "admissions@brightvalley.edu"]
+      details: ["info@lslschool.edu", "admissions@lslschool.edu"]
     },
     {
       icon: <MapPin className="h-6 w-6" />,
       title: t('contact.address'),
-      details: ["123 Education Lane", "Bright Valley, CA 90210"]
+      details: ["LSL School", "New Location, Central Asia"]
     },
     {
       icon: <Clock className="h-6 w-6" />,
@@ -127,7 +215,7 @@ export default function ContactSection() {
               ))}
             </div>
 
-            {/* Map placeholder */}
+            {/* Interactive Map */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -135,32 +223,12 @@ export default function ContactSection() {
               viewport={{ once: true }}
               className="mt-8"
             >
-              <Card>
-                <CardBody className="p-0">
-                  <div className="h-64 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-lg flex items-center justify-center">
-                    <div className="text-center">
-                      <MapPin className="h-12 w-12 text-blue-600 mx-auto mb-2" />
-                      <Typography
-                        variant="h6"
-                        className="text-blue-900 font-semibold"
-                        placeholder=""
-                        onPointerEnterCapture={() => {}}
-                        onPointerLeaveCapture={() => {}}
-                      >
-                        {t('contact.map.title')}
-                      </Typography>
-                      <Typography
-                        className="text-blue-700 dark:text-blue-200"
-                        placeholder=""
-                        onPointerEnterCapture={() => {}}
-                        onPointerLeaveCapture={() => {}}
-                      >
-                        {t('contact.map.description')}
-                      </Typography>
-                    </div>
-                  </div>
-                </CardBody>
-              </Card>
+              <LeafletMap
+                latitude={40.993861}
+                longitude={71.668722}
+                address="LSL School, New Location, Central Asia"
+                schoolName="LSL School"
+              />
             </motion.div>
           </motion.div>
 
@@ -183,67 +251,131 @@ export default function ContactSection() {
 
             <Card>
               <CardBody className="p-8">
-                <form className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Input
-                      label={t('contact.form.firstName')}
-                      size="lg"
-                      crossOrigin=""
-                      onPointerEnterCapture={() => {}}
-                      onPointerLeaveCapture={() => {}}
-                    />
-                    <Input
-                      label={t('contact.form.lastName')}
-                      size="lg"
-                      crossOrigin=""
-                      onPointerEnterCapture={() => {}}
-                      onPointerLeaveCapture={() => {}}
+                    <div>
+                      <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+                        {t('contact.form.firstName')} *
+                      </label>
+                      <input
+                        id="firstName"
+                        type="text"
+                        value={formData.firstName}
+                        onChange={(e) => handleInputChange('firstName', e.target.value)}
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder="Enter your first name"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+                        {t('contact.form.lastName')} *
+                      </label>
+                      <input
+                        id="lastName"
+                        type="text"
+                        value={formData.lastName}
+                        onChange={(e) => handleInputChange('lastName', e.target.value)}
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder="Enter your last name"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('contact.form.email')} *
+                    </label>
+                    <input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      placeholder="Enter your email address"
                     />
                   </div>
                   
-                  <Input
-                    label={t('contact.form.email')}
-                    size="lg"
-                    type="email"
-                    crossOrigin=""
-                    onPointerEnterCapture={() => {}}
-                    onPointerLeaveCapture={() => {}}
-                  />
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('contact.form.phone')}
+                    </label>
+                    <input
+                      id="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      placeholder="Enter your phone number (optional)"
+                    />
+                  </div>
                   
-                  <Input
-                    label={t('contact.form.phone')}
-                    size="lg"
-                    type="tel"
-                    crossOrigin=""
-                    onPointerEnterCapture={() => {}}
-                    onPointerLeaveCapture={() => {}}
-                  />
+                  <div>
+                    <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('contact.form.subject')}
+                    </label>
+                    <input
+                      id="subject"
+                      type="text"
+                      value={formData.subject}
+                      onChange={(e) => handleInputChange('subject', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      placeholder="Enter subject (optional)"
+                    />
+                  </div>
                   
-                  <Input
-                    label={t('contact.form.subject')}
-                    size="lg"
-                    crossOrigin=""
-                    onPointerEnterCapture={() => {}}
-                    onPointerLeaveCapture={() => {}}
-                  />
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('contact.form.message')} *
+                    </label>
+                    <textarea
+                      id="message"
+                      rows={6}
+                      value={formData.message}
+                      onChange={(e) => handleInputChange('message', e.target.value)}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-vertical"
+                      placeholder="Enter your message"
+                    />
+                  </div>
+
+                  {/* Status Message */}
+                  {submitStatus !== 'idle' && (
+                    <div className={`p-4 rounded-lg flex items-center gap-3 ${
+                      submitStatus === 'success' 
+                        ? 'bg-green-50 border border-green-200 text-green-800' 
+                        : 'bg-red-50 border border-red-200 text-red-800'
+                    }`}>
+                      {submitStatus === 'success' ? (
+                        <CheckCircle className="h-5 w-5 text-green-600" />
+                      ) : (
+                        <AlertCircle className="h-5 w-5 text-red-600" />
+                      )}
+                      <span className="text-sm font-medium">{submitMessage}</span>
+                    </div>
+                  )}
                   
-                  <Textarea
-                    label={t('contact.form.message')}
-                    rows={6}
-                    onPointerEnterCapture={() => {}}
-                    onPointerLeaveCapture={() => {}}
-                  />
-                  
-                  <Button
-                    size="lg"
-                    className="w-full bg-gradient-to-r from-blue-600 to-blue-800 flex items-center justify-center gap-2"
-                    placeholder=""
-                    onPointerEnterCapture={() => {}}
-                    onPointerLeaveCapture={() => {}}
+                  {/* Temporary test button */}
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    onClick={() => console.log('🔘 Simple button clicked!')}
+                    className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    <Send className="h-5 w-5" />
-                    {t('contact.form.send')}
-                  </Button>
+                    {isSubmitting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="h-5 w-5" />
+                        Send Message (Test)
+                      </>
+                    )}
+                  </button>
                 </form>
               </CardBody>
             </Card>

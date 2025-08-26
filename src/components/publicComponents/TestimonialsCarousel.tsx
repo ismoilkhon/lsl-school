@@ -21,7 +21,7 @@ const testimonials: Testimonial[] = [
     id: 1,
     name: "Sarah Johnson",
     role: "Parent of Emma (Grade 8)",
-    content: "Bright Valley Academy has exceeded our expectations. The teachers are incredibly dedicated, and the personalized attention Emma receives has helped her flourish both academically and socially. The school's emphasis on character development is truly remarkable.",
+    content: "LSL School has exceeded our expectations. The teachers are incredibly dedicated, and the personalized attention Emma receives has helped her flourish both academically and socially. The school's emphasis on character development is truly remarkable.",
     rating: 5,
     avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
   },
@@ -29,7 +29,7 @@ const testimonials: Testimonial[] = [
     id: 2,
     name: "Michael Chen",
     role: "Alumni, Class of 2020",
-    content: "The education I received at Bright Valley Academy prepared me exceptionally well for university. The critical thinking skills, leadership opportunities, and supportive environment gave me the confidence to pursue my dreams. I'm now studying engineering at MIT.",
+    content: "The education I received at LSL School prepared me exceptionally well for university. The critical thinking skills, leadership opportunities, and supportive environment gave me the confidence to pursue my dreams. I'm now studying engineering at MIT.",
     rating: 5,
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
   },
@@ -37,7 +37,7 @@ const testimonials: Testimonial[] = [
     id: 3,
     name: "Lisa Rodriguez",
     role: "Parent of twins Alex & Maya (Grade 6)",
-    content: "Having twins with different learning styles, I was concerned about finding the right school. Bright Valley Academy's individualized approach has been perfect. Both children are thriving, and the teachers truly understand each child's unique needs.",
+    content: "Having twins with different learning styles, I was concerned about finding the right school. LSL School's individualized approach has been perfect. Both children are thriving, and the teachers truly understand each child's unique needs.",
     rating: 5,
     avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
   },
@@ -45,7 +45,7 @@ const testimonials: Testimonial[] = [
     id: 4,
     name: "David Thompson",
     role: "Parent of Jake (Grade 10)",
-    content: "The STEM program at Bright Valley Academy is outstanding. Jake has developed a passion for robotics and programming that I never expected. The school's modern facilities and innovative teaching methods make learning exciting and relevant.",
+    content: "The STEM program at LSL School is outstanding. Jake has developed a passion for robotics and programming that I never expected. The school's modern facilities and innovative teaching methods make learning exciting and relevant.",
     rating: 5,
     avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
   },
@@ -53,7 +53,7 @@ const testimonials: Testimonial[] = [
     id: 5,
     name: "Amanda Foster",
     role: "Current Student (Grade 11)",
-    content: "I love being part of the Bright Valley community! The teachers push us to think critically and creatively. The variety of clubs and activities means there's something for everyone. I feel prepared and excited about my future.",
+    content: "I love being part of the LSL School community! The teachers push us to think critically and creatively. The variety of clubs and activities means there's something for everyone. I feel prepared and excited about my future.",
     rating: 5,
     avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face"
   },
@@ -61,7 +61,7 @@ const testimonials: Testimonial[] = [
     id: 6,
     name: "Robert Kim",
     role: "Parent of Sophie (Grade 4)",
-    content: "The transition to Bright Valley Academy was seamless for Sophie. The warm, welcoming environment and the school's focus on building confidence has helped her become more outgoing and eager to learn. We couldn't be happier with our choice.",
+    content: "The transition to LSL School was seamless for Sophie. The warm, welcoming environment and the school's focus on building confidence has helped her become more outgoing and eager to learn. We couldn't be happier with our choice.",
     rating: 5,
     avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face"
   }

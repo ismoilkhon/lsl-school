@@ -100,6 +100,33 @@
   color: black !important;
 }
 
+/* Leaflet Map Styles */
+.leaflet-container {
+  z-index: 1;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.leaflet-popup-content {
+  margin: 12px 16px;
+  font-family: inherit;
+}
+
+.leaflet-control-attribution {
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.custom-marker {
+  background: transparent;
+  border: none;
+}
+
 .rbc-btn-group:first-child {
   display: none !important;
 }

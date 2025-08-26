@@ -46,7 +46,7 @@ export default function Footer() {
                 onPointerEnterCapture={() => {}}
                 onPointerLeaveCapture={() => {}}
               >
-                Bright Valley Academy
+                LSL School
               </Typography>
             </div>
             <Typography
@@ -152,7 +152,7 @@ export default function Footer() {
                   onPointerLeaveCapture={() => {}}
                 >
                   123 Education Lane<br />
-                  Bright Valley, CA 90210
+                  LSL School, CA 90210
                 </Typography>
               </div>
               
@@ -190,7 +190,7 @@ export default function Footer() {
                   onPointerEnterCapture={() => {}}
                   onPointerLeaveCapture={() => {}}
                 >
-                  info@brightvalley.edu
+                  info@LSL School.edu
                 </Typography>
               </div>
             </div>
@@ -207,7 +207,7 @@ export default function Footer() {
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
             >
-              © 2025 Bright Valley Academy. All rights reserved.
+              © 2025 LSL School. All rights reserved.
             </Typography>
           <div className="flex space-x-6">
             <a href="#" className="text-blue-100 hover:text-orange-300 transition-colors duration-200 text-sm">

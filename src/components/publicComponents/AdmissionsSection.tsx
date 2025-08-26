@@ -306,7 +306,7 @@ export default function AdmissionsSection() {
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
-            Ready to Join Bright Valley Academy?
+            Ready to Join LSL School?
           </Typography>
           <Typography
             className="text-blue-700 dark:text-blue-200 mb-8 max-w-2xl mx-auto"

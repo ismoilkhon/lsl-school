@@ -122,6 +122,15 @@ export async function middleware(request: NextRequest) {
 
   console.log('Middleware: Processing path:', pathname);
 
+  // Allow static and API routes first (before locale redirect)
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api')
+  ) {
+    console.log('Middleware: Allowing static/API route:', pathname);
+    return NextResponse.next();
+  }
+
   // Check if the pathname has a locale
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
@@ -137,15 +146,6 @@ export async function middleware(request: NextRequest) {
 
   // Extract locale from pathname
   const pathnameLocale = pathname.split('/')[1];
-
-  // Allow static and API routes
-  if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/api')
-  ) {
-    console.log('Middleware: Allowing static/API route:', pathname);
-    return NextResponse.next();
-  }
 
   // Check if this is a public route (sign-in, sign-up, home)
   const isPublicRoute = publicRoutes.some(route => {

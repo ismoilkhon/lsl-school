@@ -14,7 +14,7 @@ export const en = {
   hero: {
     title: "Shaping Tomorrow's",
     subtitle: "Leaders Today",
-    description: "At Bright Valley Academy, we nurture young minds through innovative education, fostering creativity, critical thinking, and character development in a supportive environment.",
+    description: "At LSL School, we nurture young minds through innovative education, fostering creativity, critical thinking, and character development in a supportive environment.",
     explorePrograms: "Explore Programs",
     scheduleTour: "Schedule a Tour",
     stats: {
@@ -26,7 +26,7 @@ export const en = {
 
   // About Section
   about: {
-    title: "About Bright Valley Academy",
+    title: "About LSL School",
     description: "For over 25 years, we have been dedicated to providing exceptional education that prepares students for success in an ever-changing world.",
     mission: {
       title: "Our Mission",
@@ -182,7 +182,7 @@ export const en = {
   // Student Life Section
   studentLife: {
     title: "Student Life",
-    description: "Discover the vibrant and enriching student experience at Bright Valley Academy, where learning extends beyond the classroom.",
+    description: "Discover the vibrant and enriching student experience at LSL School, where learning extends beyond the classroom.",
     activities: {
       title: "Extracurricular Activities",
       clubs: {
@@ -211,7 +211,7 @@ export const en = {
   // Admissions Section
   admissions: {
     title: "Admissions",
-    description: "Join our community of learners and discover how Bright Valley Academy can help your child reach their full potential.",
+    description: "Join our community of learners and discover how LSL School can help your child reach their full potential.",
     process: {
       title: "Admission Process",
       steps: [
@@ -257,7 +257,7 @@ export const en = {
   // Contact Section
   contact: {
     title: "Get In Touch",
-    description: "Have questions about our programs or admissions process? We'd love to hear from you. Reach out to us and discover how Bright Valley Academy can be the perfect fit for your child.",
+    description: "Have questions about our programs or admissions process? We'd love to hear from you. Reach out to us and discover how LSL School can be the perfect fit for your child.",
     contactInfo: "Contact Information",
     email: "Email",
     address: "Address",
@@ -287,7 +287,7 @@ export const en = {
     address: "Address",
     phone: "Phone",
     email: "Email",
-    copyright: "© 2025 Bright Valley Academy. All rights reserved.",
+    copyright: "© 2025 LSL School. All rights reserved.",
     privacy: "Privacy Policy",
     terms: "Terms of Service",
     accessibility: "Accessibility",
@@ -377,37 +377,37 @@ export const en = {
   // Testimonials Section
   testimonials: {
     title: "What Our Community Says",
-    description: "Hear from our students, parents, and alumni about their experiences at Bright Valley Academy and how we've made a difference in their lives.",
+    description: "Hear from our students, parents, and alumni about their experiences at LSL School and how we've made a difference in their lives.",
     items: [
       {
         name: "Sarah Johnson",
         role: "Parent of Emma (Grade 8)",
-        content: "Bright Valley Academy has exceeded our expectations. The teachers are incredibly dedicated, and the personalized attention Emma receives has helped her flourish both academically and socially. The school's emphasis on character development is truly remarkable.",
+        content: "LSL School has exceeded our expectations. The teachers are incredibly dedicated, and the personalized attention Emma receives has helped her flourish both academically and socially. The school's emphasis on character development is truly remarkable.",
       },
       {
         name: "Michael Chen",
         role: "Alumni, Class of 2020",
-        content: "The education I received at Bright Valley Academy prepared me exceptionally well for university. The critical thinking skills, leadership opportunities, and supportive environment gave me the confidence to pursue my dreams. I'm now studying engineering at MIT.",
+        content: "The education I received at LSL School prepared me exceptionally well for university. The critical thinking skills, leadership opportunities, and supportive environment gave me the confidence to pursue my dreams. I'm now studying engineering at MIT.",
       },
       {
         name: "Lisa Rodriguez",
         role: "Parent of twins Alex & Maya (Grade 6)",
-        content: "Having twins with different learning styles, I was concerned about finding the right school. Bright Valley Academy's individualized approach has been perfect. Both children are thriving, and the teachers truly understand each child's unique needs.",
+        content: "Having twins with different learning styles, I was concerned about finding the right school. LSL School's individualized approach has been perfect. Both children are thriving, and the teachers truly understand each child's unique needs.",
       },
       {
         name: "David Thompson",
         role: "Parent of Jake (Grade 10)",
-        content: "The STEM program at Bright Valley Academy is outstanding. Jake has developed a passion for robotics and programming that I never expected. The school's modern facilities and innovative teaching methods make learning exciting and relevant.",
+        content: "The STEM program at LSL School is outstanding. Jake has developed a passion for robotics and programming that I never expected. The school's modern facilities and innovative teaching methods make learning exciting and relevant.",
       },
       {
         name: "Amanda Foster",
         role: "Current Student (Grade 11)",
-        content: "I love being part of the Bright Valley community! The teachers push us to think critically and creatively. The variety of clubs and activities means there's something for everyone. I feel prepared and excited about my future.",
+        content: "I love being part of the LSL School community! The teachers push us to think critically and creatively. The variety of clubs and activities means there's something for everyone. I feel prepared and excited about my future.",
       },
       {
         name: "Robert Kim",
         role: "Parent of Sophie (Grade 4)",
-        content: "The transition to Bright Valley Academy was seamless for Sophie. The warm, welcoming environment and the school's focus on building confidence has helped her become more outgoing and eager to learn. We couldn't be happier with our choice.",
+        content: "The transition to LSL School was seamless for Sophie. The warm, welcoming environment and the school's focus on building confidence has helped her become more outgoing and eager to learn. We couldn't be happier with our choice.",
       },
     ],
   },

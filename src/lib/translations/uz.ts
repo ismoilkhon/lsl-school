@@ -14,7 +14,7 @@ export const uz = {
   hero: {
     title: "Ertangi",
     subtitle: "Rahbarlarni shakllantirish",
-    description: "Bright Valley Academy-da biz innovatsion ta'lim orqali yosh aqllarni tarbiyalaymiz, ijodkorlik, tanqidiy fikrlash va xarakter rivojlanishini qo'llab-quvvatlovchi muhitda rag'batlantiramiz.",
+    description: "LSL School-da biz innovatsion ta'lim orqali yosh aqllarni tarbiyalaymiz, ijodkorlik, tanqidiy fikrlash va xarakter rivojlanishini qo'llab-quvvatlovchi muhitda rag'batlantiramiz.",
     explorePrograms: "Dasturlarni o'rganing",
     scheduleTour: "Ekskursiya rejalashtiring",
     stats: {
@@ -26,7 +26,7 @@ export const uz = {
 
   // About Section
   about: {
-    title: "Bright Valley Academy haqida",
+    title: "LSL School haqida",
     description: "25 yildan ortiq vaqt davomida biz o'quvchilarni o'zgaruvchan dunyoda muvaffaqiyatga tayyorlovchi ajoyib ta'limni taqdim etishga bag'ishlanganmiz.",
     mission: {
       title: "Bizning missiyamiz",
@@ -182,7 +182,7 @@ export const uz = {
   // Student Life Section
   studentLife: {
     title: "O'quvchi hayoti",
-    description: "O'qish sinfdan tashqarida davom etadigan Bright Valley Academy-da jonli va boyitilgan o'quvchi tajribasini kashf eting.",
+    description: "O'qish sinfdan tashqarida davom etadigan LSL School-da jonli va boyitilgan o'quvchi tajribasini kashf eting.",
     activities: {
       title: "Sinfdagi faoliyatdan tashqari mashg'ulotlar",
       clubs: {
@@ -211,7 +211,7 @@ export const uz = {
   // Admissions Section
   admissions: {
     title: "Qabul qilish",
-    description: "O'quvchilar jamiyatimizga qo'shiling va Bright Valley Academy qanday qilib bolangizning to'liq potentsialiga erishishiga yordam berishini kashf eting.",
+    description: "O'quvchilar jamiyatimizga qo'shiling va LSL School qanday qilib bolangizning to'liq potentsialiga erishishiga yordam berishini kashf eting.",
     process: {
       title: "Qabul qilish jarayoni",
       steps: [
@@ -257,7 +257,7 @@ export const uz = {
   // Contact Section
   contact: {
     title: "Biz bilan bog'laning",
-    description: "Dasturlarimiz yoki qabul jarayoni haqida savollaringiz bormi? Sizdan eshitishni xohlaymiz. Biz bilan bog'laning va Bright Valley Academy qanday qilib bolangiz uchun eng yaxshi mos kelishini kashf eting.",
+    description: "Dasturlarimiz yoki qabul jarayoni haqida savollaringiz bormi? Sizdan eshitishni xohlaymiz. Biz bilan bog'laning va LSL School qanday qilib bolangiz uchun eng yaxshi mos kelishini kashf eting.",
     contactInfo: "Aloqa ma'lumotlari",
     email: "Elektron pochta",
     address: "Manzil",
@@ -287,7 +287,7 @@ export const uz = {
     address: "Manzil",
     phone: "Telefon",
     email: "Elektron pochta",
-    copyright: "© 2025 Bright Valley Academy. Barcha huquqlar himoyalangan.",
+    copyright: "© 2025 LSL School. Barcha huquqlar himoyalangan.",
     privacy: "Maxfiylik siyosati",
     terms: "Xizmat shartlari",
     accessibility: "Qulaylik",
@@ -377,37 +377,37 @@ export const uz = {
   // Testimonials Section
   testimonials: {
     title: "Bizning jamiyatimiz nima deydi",
-    description: "O'quvchilarimiz, ota-onalarimiz va bitiruvchilarimizdan Bright Valley Academy-dagi tajribalari va biz ularning hayotida qanday farq qaratganimiz haqida eshiting.",
+    description: "O'quvchilarimiz, ota-onalarimiz va bitiruvchilarimizdan LSL School-dagi tajribalari va biz ularning hayotida qanday farq qaratganimiz haqida eshiting.",
     items: [
       {
         name: "Sarah Johnson",
         role: "Emma ota-onasi (8-sinf)",
-        content: "Bright Valley Academy bizning kutishlarimizdan oshib ketdi. O'qituvchilar juda sadoqatli va Emma olgan individual e'tibor uning ham akademik, ham ijtimoiy jihatdan gullab-yashnashiga yordam berdi. Maktabning xarakter rivojlanishiga qaratilgan e'tibori haqiqatan ham ajoyib.",
+        content: "LSL School bizning kutishlarimizdan oshib ketdi. O'qituvchilar juda sadoqatli va Emma olgan individual e'tibor uning ham akademik, ham ijtimoiy jihatdan gullab-yashnashiga yordam berdi. Maktabning xarakter rivojlanishiga qaratilgan e'tibori haqiqatan ham ajoyib.",
       },
       {
         name: "Michael Chen",
         role: "Bitiruvchi, 2020-yil sinfi",
-        content: "Bright Valley Academy-da olgan ta'limim meni universitet uchun juda yaxshi tayyorladi. Tanqidiy fikrlash ko'nikmalari, rahbarlik imkoniyatlari va qo'llab-quvvatlovchi muhit menga orzularimni amalga oshirish uchun ishonch berdi. Men hozir MIT-da muhandislik o'qiyapman.",
+        content: "LSL School-da olgan ta'limim meni universitet uchun juda yaxshi tayyorladi. Tanqidiy fikrlash ko'nikmalari, rahbarlik imkoniyatlari va qo'llab-quvvatlovchi muhit menga orzularimni amalga oshirish uchun ishonch berdi. Men hozir MIT-da muhandislik o'qiyapman.",
       },
       {
         name: "Lisa Rodriguez",
         role: "Alex va Maya ota-onasi (6-sinf)",
-        content: "Turli xil o'qish usullariga ega egizaklarim borligi sababli, to'g'ri maktabni topish haqida tashvishlangan edim. Bright Valley Academy-ning individual yondashuvi mukammal bo'ldi. Ikkala bola ham gullab-yashnayapti va o'qituvchilar har bir bolaning noyob ehtiyojlarini haqiqatan ham tushunadilar.",
+        content: "Turli xil o'qish usullariga ega egizaklarim borligi sababli, to'g'ri maktabni topish haqida tashvishlangan edim. LSL School-ning individual yondashuvi mukammal bo'ldi. Ikkala bola ham gullab-yashnayapti va o'qituvchilar har bir bolaning noyob ehtiyojlarini haqiqatan ham tushunadilar.",
       },
       {
         name: "David Thompson",
         role: "Jake ota-onasi (10-sinf)",
-        content: "Bright Valley Academy-dagi STEM dasturi ajoyib. Jake men hech kutmaganim robototexnika va dasturlashga qiziqish rivojlantirdi. Maktabning zamonaviy binolari va innovatsion o'qitish usullari o'qishni qiziqarli va muhim qiladi.",
+        content: "LSL School-dagi STEM dasturi ajoyib. Jake men hech kutmaganim robototexnika va dasturlashga qiziqish rivojlantirdi. Maktabning zamonaviy binolari va innovatsion o'qitish usullari o'qishni qiziqarli va muhim qiladi.",
       },
       {
         name: "Amanda Foster",
         role: "Hozirgi o'quvchi (11-sinf)",
-        content: "Bright Valley jamiyatining bir qismi bo'lishni yaxshi ko'raman! O'qituvchilar bizni tanqidiy va ijodiy fikrlashga undaydilar. Klublar va faoliyatlar xilma-xilligi har kim uchun biror narsa borligini anglatadi. Men kelajakka tayyor va hayajonli his qilyapman.",
+        content: "LSL School jamiyatining bir qismi bo'lishni yaxshi ko'raman! O'qituvchilar bizni tanqidiy va ijodiy fikrlashga undaydilar. Klublar va faoliyatlar xilma-xilligi har kim uchun biror narsa borligini anglatadi. Men kelajakka tayyor va hayajonli his qilyapman.",
       },
       {
         name: "Robert Kim",
         role: "Sophie ota-onasi (4-sinf)",
-        content: "Bright Valley Academy-ga o'tish Sophie uchun silliq bo'ldi. Issiq, qabul qiluvchi muhit va maktabning ishonch o'rnatishga qaratilgan e'tibori uning yanada ochiq va o'qishga intilishiga yordam berdi. Biz tanlovimizdan xursand bo'lamiz.",
+        content: "LSL School-ga o'tish Sophie uchun silliq bo'ldi. Issiq, qabul qiluvchi muhit va maktabning ishonch o'rnatishga qaratilgan e'tibori uning yanada ochiq va o'qishga intilishiga yordam berdi. Biz tanlovimizdan xursand bo'lamiz.",
       },
     ],
   },

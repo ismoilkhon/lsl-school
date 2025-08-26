@@ -315,7 +315,7 @@ export default function StudentLifeSection() {
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
-            Join our vibrant community and discover all the opportunities waiting for you at Bright Valley Academy.
+            Join our vibrant community and discover all the opportunities waiting for you at LSL School.
           </Typography>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
