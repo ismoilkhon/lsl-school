@@ -1,46 +1,52 @@
-import { adminGetDocument, adminListDocuments } from "@/lib/appwrite-admin";
+"use client";
+
+import { useStudent, useResults, useAttendances, useLessons } from "@/lib/hooks/useQueries";
 import { COLLECTIONS } from "@/lib/appwrite";
-import { Query } from "node-appwrite";
 import Image from "next/image";
 import { getAppwriteFilePreviewUrl } from "@/lib/utils";
 import FormContainer from "@/components/FormContainer";
-import { headers } from "next/headers";
+import { useAuthStore } from "@/lib/auth-store";
 
-const StudentDetailPage = async ({ params }: { params: { id: string } }) => {
-  const student = await adminGetDocument(COLLECTIONS.STUDENTS, params.id);
-
-  if (!student) {
-    return <div>Student not found</div>;
-  }
-
-  // Related data
-  const [resultsRes, attendanceRes, lessonsRes] = await Promise.all([
-    adminListDocuments(COLLECTIONS.RESULTS, [
-      Query.equal('studentId', params.id),
-      Query.orderDesc('$createdAt'),
-      Query.limit(5),
-    ]),
-    adminListDocuments(COLLECTIONS.ATTENDANCES, [
-      Query.equal('studentId', params.id),
-      Query.limit(200),
-    ]),
-    student.classId
-      ? adminListDocuments(COLLECTIONS.LESSONS, [
-          Query.equal('classId', Number(student.classId)),
-          Query.limit(5),
-        ])
-      : Promise.resolve({ documents: [] as any[] }),
-  ]);
-
-  const results = (resultsRes?.documents as any[]) || [];
-  const attendances = (attendanceRes?.documents as any[]) || [];
-  const lessons = (lessonsRes?.documents as any[]) || [];
-
+const StudentDetailPage = ({ params }: { params: { id: string } }) => {
+  const { getUserRole } = useAuthStore();
+  const { data: student, isLoading: studentLoading, error: studentError } = useStudent(params.id);
+  
+  // Get related data using TanStack Query
+  const { data: allResults = [], isLoading: resultsLoading } = useResults();
+  const { data: allAttendances = [], isLoading: attendancesLoading } = useAttendances();
+  const { data: allLessons = [], isLoading: lessonsLoading } = useLessons();
+  
+  // Filter related data
+  const results = allResults.filter(r => r.studentId === params.id);
+  const attendances = allAttendances.filter(a => a.studentId === params.id);
+  const lessons = student?.classId ? allLessons.filter(l => l.classId === student.classId) : [];
+  
   const totalAttendance = attendances.length;
   const presentCount = attendances.filter((a: any) => a.present).length;
   const attendanceRate = totalAttendance > 0 ? Math.round((presentCount / totalAttendance) * 100) : 0;
+  
+  const role = getUserRole();
+  const isLoading = studentLoading || resultsLoading || attendancesLoading || lessonsLoading;
 
-  const role = headers().get('x-user-role') || 'student';
+  if (isLoading) {
+    return (
+      <div className="p-4 flex-1 m-4 mt-0">
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (studentError || !student) {
+    return (
+      <div className="p-4 flex-1 m-4 mt-0">
+        <div className="text-center py-8">
+          <p className="text-red-500">Failed to load student: {studentError?.message || 'Student not found'}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 flex-1 m-4 mt-0">
@@ -59,7 +65,6 @@ const StudentDetailPage = async ({ params }: { params: { id: string } }) => {
             <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
               <span className="bg-white/20 px-2 py-1 rounded-full">Username: {student.username}</span>
               {student.classId && <span className="bg-white/20 px-2 py-1 rounded-full">Class #{student.classId}</span>}
-              {student.gradeId && <span className="bg-white/20 px-2 py-1 rounded-full">Grade {student.gradeId}</span>}
             </div>
           </div>
           {role === 'admin' && (

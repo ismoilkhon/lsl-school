@@ -1,12 +1,20 @@
-import { Client, Databases, ID } from 'node-appwrite';
+import { Client, Databases, Storage, ID, Permission, Role } from 'node-appwrite';
 
-const endpoint = process.env.APPWRITE_ENDPOINT || process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1';
+const endpoint = process.env.APPWRITE_ENDPOINT || process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://syd.cloud.appwrite.io/v1';
 const projectId = process.env.APPWRITE_PROJECT_ID || process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '';
 const apiKey = process.env.APPWRITE_API_KEY || '';
 
+// Validate configuration
 if (!projectId || !apiKey) {
+  const missing = [];
+  if (!projectId) missing.push('APPWRITE_PROJECT_ID or NEXT_PUBLIC_APPWRITE_PROJECT_ID');
+  if (!apiKey) missing.push('APPWRITE_API_KEY');
+  
   // eslint-disable-next-line no-console
-  console.warn('Appwrite admin is missing credentials. Check APPWRITE_PROJECT_ID and APPWRITE_API_KEY in .env.local');
+  console.error(
+    `[Appwrite Admin] Missing required environment variables: ${missing.join(', ')}\n` +
+    'Please check your .env.local file and ensure these variables are set.'
+  );
 }
 
 const adminClient = new Client()
@@ -35,5 +43,23 @@ export const adminGetDocument = async (collectionId: string, documentId: string)
 };
 
 export const adminListDocuments = async (collectionId: string, queries?: string[]) => {
-  return databases.listDocuments(ADMIN_DATABASE_ID, collectionId, queries);
+  if (!projectId || !apiKey) {
+    throw new Error(
+      'Appwrite admin client is not properly configured. Missing APPWRITE_PROJECT_ID or APPWRITE_API_KEY environment variables.'
+    );
+  }
+  
+  try {
+    return await databases.listDocuments(ADMIN_DATABASE_ID, collectionId, queries);
+  } catch (error: any) {
+    console.error('[Appwrite Admin] Error listing documents:', {
+      collectionId,
+      databaseId: ADMIN_DATABASE_ID,
+      error: error.message || error,
+      endpoint,
+      hasProjectId: !!projectId,
+      hasApiKey: !!apiKey,
+    });
+    throw error;
+  }
 };

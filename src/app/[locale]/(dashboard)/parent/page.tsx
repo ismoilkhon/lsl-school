@@ -120,7 +120,7 @@ export default function ParentPage({
             <div className="space-y-2">
               <Link href="/list/students" className="block p-3 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors">{t('dashboard.parent.viewMyChildren')}</Link>
               <Link href="/list/results" className="block p-3 bg-green-50 hover:bg-green-100 rounded-md transition-colors">{t('dashboard.parent.academicResults')}</Link>
-              <Link href="/list/attendance" className="block p-3 bg-yellow-50 hover:bg-yellow-100 rounded-md transition-colors">{t('dashboard.parent.attendanceRecords')}</Link>
+              <Link href="/list/attendances" className="block p-3 bg-yellow-50 hover:bg-yellow-100 rounded-md transition-colors">{t('dashboard.parent.attendanceRecords')}</Link>
               <Link href="/list/events" className="block p-3 bg-purple-50 hover:bg-purple-100 rounded-md transition-colors">{t('dashboard.parent.schoolEvents')}</Link>
             </div>
           </div>
@@ -162,7 +162,7 @@ export default function ParentPage({
                   </div>
                 ))}
               </div>
-              <Link href="/list/attendance" className="block text-center text-sm text-blue-600 hover:text-blue-800 mt-3">
+              <Link href="/list/attendances" className="block text-center text-sm text-blue-600 hover:text-blue-800 mt-3">
                 {t('dashboard.parent.viewAllAttendance')}
               </Link>
             </div>

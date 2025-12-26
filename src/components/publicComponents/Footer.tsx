@@ -45,6 +45,8 @@ export default function Footer() {
                 placeholder=""
                 onPointerEnterCapture={() => {}}
                 onPointerLeaveCapture={() => {}}
+                onResize={() => {}}
+                onResizeCapture={() => {}}
               >
                 LSL School
               </Typography>
@@ -54,6 +56,8 @@ export default function Footer() {
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               Nurturing young minds through innovative education, fostering creativity, 
               critical thinking, and character development for over 25 years.
@@ -82,6 +86,8 @@ export default function Footer() {
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               Quick Links
             </Typography>
@@ -107,6 +113,8 @@ export default function Footer() {
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               Our Programs
             </Typography>
@@ -132,6 +140,8 @@ export default function Footer() {
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               Contact Info
             </Typography>
@@ -142,6 +152,8 @@ export default function Footer() {
                   placeholder=""
                   onPointerEnterCapture={() => {}}
                   onPointerLeaveCapture={() => {}}
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
                 >
                   Address
                 </Typography>
@@ -150,6 +162,8 @@ export default function Footer() {
                   placeholder=""
                   onPointerEnterCapture={() => {}}
                   onPointerLeaveCapture={() => {}}
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
                 >
                   123 Education Lane<br />
                   LSL School, CA 90210
@@ -162,6 +176,8 @@ export default function Footer() {
                   placeholder=""
                   onPointerEnterCapture={() => {}}
                   onPointerLeaveCapture={() => {}}
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
                 >
                   Phone
                 </Typography>
@@ -170,6 +186,8 @@ export default function Footer() {
                   placeholder=""
                   onPointerEnterCapture={() => {}}
                   onPointerLeaveCapture={() => {}}
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
                 >
                   +1 (555) 123-4567
                 </Typography>
@@ -181,6 +199,8 @@ export default function Footer() {
                   placeholder=""
                   onPointerEnterCapture={() => {}}
                   onPointerLeaveCapture={() => {}}
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
                 >
                   Email
                 </Typography>
@@ -189,6 +209,8 @@ export default function Footer() {
                   placeholder=""
                   onPointerEnterCapture={() => {}}
                   onPointerLeaveCapture={() => {}}
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
                 >
                   info@LSL School.edu
                 </Typography>
@@ -206,6 +228,8 @@ export default function Footer() {
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               © 2025 LSL School. All rights reserved.
             </Typography>

@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import ThemeProvider from "@/components/ThemeProvider";
+import QueryProvider from "@/components/QueryProvider";
 import { LocaleProvider } from "@/lib/locale-context";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -24,10 +25,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <LocaleProvider>
           <ThemeProvider>
-            <AuthProvider>
-              {children}
-              <ToastContainer position="bottom-right" theme="dark" />
-            </AuthProvider>
+            <QueryProvider>
+              <AuthProvider>
+                {children}
+                <ToastContainer position="bottom-right" theme="dark" />
+              </AuthProvider>
+            </QueryProvider>
           </ThemeProvider>
         </LocaleProvider>
       </body>

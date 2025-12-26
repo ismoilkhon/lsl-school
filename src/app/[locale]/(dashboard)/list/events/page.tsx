@@ -33,13 +33,20 @@ const EventsListPage = async () => {
             <div key={event.$id} className="border rounded-lg p-4 relative">
               {event.img && (
                 <div className="mb-3">
-                  <Image src={getAppwriteFilePreviewUrl(event.img, 480, 240)} alt={event.title} width={480} height={240} className="w-full h-40 object-cover rounded" />
+                  <Image 
+                    src={getAppwriteFilePreviewUrl(event.img, 480, 240)} 
+                    alt={event.title} 
+                    width={480} 
+                    height={240} 
+                    className="w-full h-40 object-cover rounded"
+                    style={{ width: 'auto', height: 'auto' }}
+                  />
                 </div>
               )}
               <h3 className="font-semibold">{event.title}</h3>
-              <p className="text-gray-600">{event.description}</p>
+              <p className="text-muted-foreground">{event.description}</p>
               {event.startTime && (
-                <p className="text-sm text-gray-500 mt-2">
+                <p className="text-sm text-muted-foreground mt-2">
                   {new Date(event.startTime).toLocaleDateString()}
                 </p>
               )}

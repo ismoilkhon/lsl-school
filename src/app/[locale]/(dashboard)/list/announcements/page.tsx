@@ -61,7 +61,7 @@ const AnnouncementListPage = async ({
   const renderRow = (item: AnnouncementList) => (
     <tr
       key={item.$id}
-      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
+      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-secondary"
     >
       <td className="flex items-center gap-4 p-4">
         <div className="flex flex-col">
@@ -140,10 +140,10 @@ const AnnouncementListPage = async ({
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
+            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-300">
               <Image src="/filter.png" alt="" width={14} height={14} />
             </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
+            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-300">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
             {role === "admin" && (
@@ -158,9 +158,9 @@ const AnnouncementListPage = async ({
         <Table columns={columns} renderRow={renderRow} data={data} />
       ) : (
         <div className="text-center py-8">
-          <p className="text-gray-500">No announcements found.</p>
+          <p className="text-muted-foreground">No announcements found.</p>
           {role === "admin" && (
-            <p className="text-sm text-gray-400 mt-2">Create your first announcement!</p>
+            <p className="text-sm text-muted-foreground mt-2">Create your first announcement!</p>
           )}
         </div>
       )}

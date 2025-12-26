@@ -25,8 +25,7 @@ type StudentList = {
   bloodType: string;
   sex: string;
   parentId: string;
-  classId: number;
-  gradeId: number;
+  classId: string;
   birthday: string;
   createdAt: string;
   class?: { $id: string; name: string };
@@ -77,7 +76,7 @@ const StudentListPage = async ({
   const renderRow = (item: StudentList) => (
     <tr
       key={item.$id}
-      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
+      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-secondary"
     >
       <td className="flex items-center gap-4 p-4">
         <Image
@@ -86,6 +85,7 @@ const StudentListPage = async ({
           width={40}
           height={40}
           className="md:hidden xl:block w-10 h-10 rounded-full object-cover"
+          style={{ width: 'auto', height: 'auto' }}
         />
         <div className="flex flex-col">
           <h3 className="font-semibold">{item.name}</h3>
@@ -99,7 +99,7 @@ const StudentListPage = async ({
       <td>
         <div className="flex items-center gap-2">
           <Link href={`/list/students/${item.$id}`}>
-            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaSky">
+            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-blue-200">
               <Image src="/view.png" alt="" width={16} height={16} />
             </button>
           </Link>
@@ -115,9 +115,19 @@ const StudentListPage = async ({
   const p = page ? parseInt(page) : 1;
   const offset = (p - 1) * ITEM_PER_PAGE;
   const queries: string[] = [Query.limit(ITEM_PER_PAGE), Query.offset(offset)];
-  const result = await adminListDocuments(COLLECTIONS.STUDENTS, queries);
-  const data = (result.documents as unknown as StudentList[]) || [];
-  const count = result.total || 0;
+  
+  let data: StudentList[] = [];
+  let count = 0;
+
+  try {
+    const result = await adminListDocuments(COLLECTIONS.STUDENTS, queries);
+    data = (result.documents as unknown as StudentList[]) || [];
+    count = result.total || 0;
+  } catch (error: any) {
+    console.error('Error fetching students:', error);
+    data = [];
+    count = 0;
+  }
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
@@ -127,10 +137,10 @@ const StudentListPage = async ({
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
+            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-300">
               <Image src="/filter.png" alt="" width={14} height={14} />
             </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
+            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-300">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
             {role === "admin" && (
@@ -140,9 +150,17 @@ const StudentListPage = async ({
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={data} />
-      {/* PAGINATION */}
-      <Pagination page={p} count={count} />
+      {data.length > 0 ? (
+        <>
+          <Table columns={columns} renderRow={renderRow} data={data} />
+          {/* PAGINATION */}
+          <Pagination page={p} count={count} />
+        </>
+      ) : (
+        <div className="flex items-center justify-center py-12">
+          <p className="text-muted-foreground">No students found.</p>
+        </div>
+      )}
     </div>
   );
 };

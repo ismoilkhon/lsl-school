@@ -1,6 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
-import { getLessons } from "@/lib/appwrite-data";
+import { useLessonsByTeacher, useLessonsByClass } from "@/lib/hooks/useQueries";
 import BigCalendar from "./BigCalender";
 import { adjustScheduleToCurrentWeek } from "@/lib/utils";
 
@@ -11,38 +10,36 @@ const BigCalendarContainer = ({
   type: "teacherId" | "classId";
   id: string | number;
 }) => {
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Call both hooks unconditionally (React Hooks rules)
+  const teacherLessonsResult = useLessonsByTeacher(type === "teacherId" ? id as string : "");
+  const classLessonsResult = useLessonsByClass(type === "classId" ? id as string : "");
+  
+  // Use appropriate hook result based on type
+  const { data: lessons = [], isLoading, error } = type === "teacherId" 
+    ? teacherLessonsResult
+    : classLessonsResult;
 
-  useEffect(() => {
-    const fetchLessons = async () => {
-      try {
-        const { data: lessons } = await getLessons(1, 100, { [type]: id });
+  // Transform lessons data for calendar
+  const lessonData = lessons.map((lesson: any) => ({
+    title: lesson.name,
+    start: new Date(lesson.startTime),
+    end: new Date(lesson.endTime),
+  }));
 
-        const lessonData = lessons.map((lesson: any) => ({
-          title: lesson.name,
-          start: new Date(lesson.startTime),
-          end: new Date(lesson.endTime),
-        }));
-        
-        setData(lessonData);
-      } catch (error) {
-        console.warn('Failed to fetch lessons:', error);
-        setData([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const schedule = adjustScheduleToCurrentWeek(lessonData);
 
-    fetchLessons();
-  }, [type, id]);
-
-  const schedule = adjustScheduleToCurrentWeek(data);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-32">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-32">
+        <p className="text-red-500 text-sm">Failed to load lessons</p>
       </div>
     );
   }

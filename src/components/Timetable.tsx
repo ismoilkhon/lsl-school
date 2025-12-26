@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card, CardBody, Typography, Chip, Button } from '@material-tailwind/react';
 import { ChevronLeft, ChevronRight, Calendar, Clock, MapPin, User } from 'lucide-react';
 import { useLocale } from '@/lib/locale-context';
@@ -61,16 +61,16 @@ const Timetable = React.memo(function Timetable({ lessons, userType, className =
     return weekStart;
   }, [currentWeek]);
 
-  const getDayName = (day: string) => {
+  const getDayName = useCallback((day: string) => {
     return t(`timetable.days.${day}`);
-  };
+  }, [t]);
 
-  const getSubjectColor = (subject: string) => {
+  const getSubjectColor = useCallback((subject: string) => {
     const subjectKey = subject.toLowerCase().replace(/\s+/g, '_');
     return subjectColors[subjectKey as keyof typeof subjectColors] || 'bg-gray-500';
-  };
+  }, []);
 
-  const getLessonTypeColor = (type: string) => {
+  const getLessonTypeColor = useCallback((type: string) => {
     switch (type) {
       case 'lecture': return 'bg-blue-100 text-blue-800';
       case 'lab': return 'bg-green-100 text-green-800';
@@ -78,11 +78,11 @@ const Timetable = React.memo(function Timetable({ lessons, userType, className =
       case 'exam': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
-  };
+  }, []);
 
-  const getLessonTypeText = (type: string) => {
+  const getLessonTypeText = useCallback((type: string) => {
     return t(`timetable.lessonTypes.${type}`);
-  };
+  }, [t]);
 
   const getLessonsForDay = useMemo(() => {
     return (day: string) => {
@@ -104,19 +104,35 @@ const Timetable = React.memo(function Timetable({ lessons, userType, className =
   };
 
   const WeekView = useMemo(() => {
-    return () => (
+    const WeekViewComponent = () => (
     <div className="overflow-x-auto">
       <div className="min-w-[800px]">
         {/* Header */}
         <div className="grid grid-cols-7 gap-2 mb-4">
           <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <Typography variant="small" className="font-semibold text-gray-700 dark:text-gray-300">
+            <Typography 
+              variant="small" 
+              className="font-semibold text-gray-700 dark:text-gray-300"
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
+            >
               {t('timetable.time')}
             </Typography>
           </div>
           {daysOfWeek.map(day => (
             <div key={day} className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <Typography variant="small" className="font-semibold text-gray-700 dark:text-gray-300">
+              <Typography 
+                variant="small" 
+                className="font-semibold text-gray-700 dark:text-gray-300"
+                placeholder=""
+                onResize={() => {}}
+                onResizeCapture={() => {}}
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
                 {getDayName(day)}
               </Typography>
             </div>
@@ -127,7 +143,15 @@ const Timetable = React.memo(function Timetable({ lessons, userType, className =
         {timeSlots.map(time => (
           <div key={time} className="grid grid-cols-7 gap-2 mb-2">
             <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-              <Typography variant="small" className="text-gray-600 dark:text-gray-400">
+              <Typography 
+                variant="small" 
+                className="text-gray-600 dark:text-gray-400"
+                placeholder=""
+                onResize={() => {}}
+                onResizeCapture={() => {}}
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
                 {formatTime(time)}
               </Typography>
             </div>
@@ -136,20 +160,59 @@ const Timetable = React.memo(function Timetable({ lessons, userType, className =
               return (
                 <div key={`${day}-${time}`} className="min-h-[60px] p-2">
                   {dayLessons.map(lesson => (
-                    <Card key={lesson.id} className="mb-1 shadow-sm">
-                      <CardBody className="p-2">
-                        <Typography variant="small" className="font-semibold text-gray-800 dark:text-gray-200">
+                    <Card 
+                      key={lesson.id} 
+                      className="mb-1 shadow-sm"
+                      placeholder=""
+                      onResize={() => {}}
+                      onResizeCapture={() => {}}
+                      onPointerEnterCapture={() => {}}
+                      onPointerLeaveCapture={() => {}}
+                    >
+                      <CardBody 
+                        className="p-2"
+                        placeholder=""
+                        onResize={() => {}}
+                        onResizeCapture={() => {}}
+                        onPointerEnterCapture={() => {}}
+                        onPointerLeaveCapture={() => {}}
+                      >
+                        <Typography 
+                          variant="small" 
+                          className="font-semibold text-gray-800 dark:text-gray-200"
+                          placeholder=""
+                          onResize={() => {}}
+                          onResizeCapture={() => {}}
+                          onPointerEnterCapture={() => {}}
+                          onPointerLeaveCapture={() => {}}
+                        >
                           {lesson.subject}
                         </Typography>
-                        <Typography variant="small" className="text-gray-600 dark:text-gray-400">
+                        <Typography 
+                          variant="small" 
+                          className="text-gray-600 dark:text-gray-400"
+                          placeholder=""
+                          onResize={() => {}}
+                          onResizeCapture={() => {}}
+                          onPointerEnterCapture={() => {}}
+                          onPointerLeaveCapture={() => {}}
+                        >
                           {lesson.teacher}
                         </Typography>
-                                                 <div className="flex items-center gap-1 mt-1">
-                           <MapPin className="w-3 h-3 text-gray-500" />
-                           <Typography variant="small" className="text-gray-500">
-                             {lesson.room}
-                           </Typography>
-                         </div>
+                        <div className="flex items-center gap-1 mt-1">
+                          <MapPin className="w-3 h-3 text-gray-500" />
+                          <Typography 
+                            variant="small" 
+                            className="text-gray-500"
+                            placeholder=""
+                            onResize={() => {}}
+                            onResizeCapture={() => {}}
+                            onPointerEnterCapture={() => {}}
+                            onPointerLeaveCapture={() => {}}
+                          >
+                            {lesson.room}
+                          </Typography>
+                        </div>
                         <Chip
                           value={getLessonTypeText(lesson.type)}
                           size="sm"
@@ -165,11 +228,13 @@ const Timetable = React.memo(function Timetable({ lessons, userType, className =
         ))}
       </div>
     </div>
-  );
-  }, [getLessonsForTimeSlot, getDayName, t, getSubjectColor, getLessonTypeText, getLessonTypeColor]);
+    );
+    WeekViewComponent.displayName = 'WeekView';
+    return WeekViewComponent;
+  }, [getLessonsForTimeSlot, getDayName, t, getLessonTypeText, getLessonTypeColor]);
 
   const DayView = useMemo(() => {
-    return () => {
+    const DayViewComponent = () => {
       const dayLessons = getLessonsForDay(selectedDay);
     
     return (
@@ -183,6 +248,11 @@ const Timetable = React.memo(function Timetable({ lessons, userType, className =
               size="sm"
               onClick={() => setSelectedDay(day)}
               className="whitespace-nowrap"
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
             >
               {getDayName(day)}
             </Button>
@@ -192,13 +262,42 @@ const Timetable = React.memo(function Timetable({ lessons, userType, className =
         {/* Lessons for selected day */}
         <div className="space-y-3">
           {dayLessons.length === 0 ? (
-            <Card className="p-6 text-center">
-              <CardBody>
+            <Card 
+              className="p-6 text-center"
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
+            >
+              <CardBody
+                placeholder=""
+                onResize={() => {}}
+                onResizeCapture={() => {}}
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
                 <Calendar className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                <Typography variant="h6" className="text-gray-600 dark:text-gray-400">
+                <Typography 
+                  variant="h6" 
+                  className="text-gray-600 dark:text-gray-400"
+                  placeholder=""
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
                   {t('timetable.noLessons')}
                 </Typography>
-                <Typography variant="small" className="text-gray-500">
+                <Typography 
+                  variant="small" 
+                  className="text-gray-500"
+                  placeholder=""
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
                   {t('timetable.noLessonsDescription')}
                 </Typography>
               </CardBody>
@@ -207,13 +306,36 @@ const Timetable = React.memo(function Timetable({ lessons, userType, className =
             dayLessons
               .sort((a, b) => a.startTime.localeCompare(b.startTime))
               .map(lesson => (
-                <Card key={lesson.id} className="shadow-sm">
-                  <CardBody className="p-4">
+                <Card 
+                  key={lesson.id} 
+                  className="shadow-sm"
+                  placeholder=""
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
+                  <CardBody 
+                    className="p-4"
+                    placeholder=""
+                    onResize={() => {}}
+                    onResizeCapture={() => {}}
+                    onPointerEnterCapture={() => {}}
+                    onPointerLeaveCapture={() => {}}
+                  >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <div className={`w-3 h-3 rounded-full ${getSubjectColor(lesson.subject)}`} />
-                          <Typography variant="h6" className="text-gray-800 dark:text-gray-200">
+                          <Typography 
+                            variant="h6" 
+                            className="text-gray-800 dark:text-gray-200"
+                            placeholder=""
+                            onResize={() => {}}
+                            onResizeCapture={() => {}}
+                            onPointerEnterCapture={() => {}}
+                            onPointerLeaveCapture={() => {}}
+                          >
                             {lesson.subject}
                           </Typography>
                         </div>
@@ -255,6 +377,8 @@ const Timetable = React.memo(function Timetable({ lessons, userType, className =
       </div>
     );
     };
+    DayViewComponent.displayName = 'DayView';
+    return DayViewComponent;
   }, [getLessonsForDay, selectedDay, getDayName, t, getSubjectColor, getLessonTypeText, getLessonTypeColor]);
 
   return (
@@ -263,10 +387,26 @@ const Timetable = React.memo(function Timetable({ lessons, userType, className =
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <Typography variant="h5" className="text-gray-800 dark:text-gray-200">
+            <Typography 
+              variant="h5" 
+              className="text-gray-800 dark:text-gray-200"
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
+            >
               {t(`timetable.${userType}Title`)}
             </Typography>
-            <Typography variant="small" className="text-gray-600 dark:text-gray-400">
+            <Typography 
+              variant="small" 
+              className="text-gray-600 dark:text-gray-400"
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
+            >
               {t('timetable.weekOf')} {weekStart.toLocaleDateString(locale, { 
                 year: 'numeric', 
                 month: 'long', 
@@ -280,6 +420,11 @@ const Timetable = React.memo(function Timetable({ lessons, userType, className =
               variant="outlined"
               size="sm"
               onClick={() => setCurrentWeek(prev => prev - 1)}
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>
@@ -289,6 +434,11 @@ const Timetable = React.memo(function Timetable({ lessons, userType, className =
               size="sm"
               onClick={() => setCurrentWeek(0)}
               className="px-4"
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
             >
               {t('timetable.today')}
             </Button>
@@ -297,6 +447,11 @@ const Timetable = React.memo(function Timetable({ lessons, userType, className =
               variant="outlined"
               size="sm"
               onClick={() => setCurrentWeek(prev => prev + 1)}
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
             >
               <ChevronRight className="w-4 h-4" />
             </Button>
@@ -309,6 +464,11 @@ const Timetable = React.memo(function Timetable({ lessons, userType, className =
             variant={viewMode === 'week' ? "filled" : "outlined"}
             size="sm"
             onClick={() => setViewMode('week')}
+            placeholder=""
+            onResize={() => {}}
+            onResizeCapture={() => {}}
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
           >
             {t('timetable.weekView')}
           </Button>
@@ -316,6 +476,11 @@ const Timetable = React.memo(function Timetable({ lessons, userType, className =
             variant={viewMode === 'day' ? "filled" : "outlined"}
             size="sm"
             onClick={() => setViewMode('day')}
+            placeholder=""
+            onResize={() => {}}
+            onResizeCapture={() => {}}
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
           >
             {t('timetable.dayView')}
           </Button>

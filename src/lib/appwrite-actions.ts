@@ -3,12 +3,15 @@
 import { revalidatePath } from "next/cache";
 import { cookies, headers } from "next/headers";
 import { Client as WebClient, Account as WebAccount } from "appwrite";
+import { Client, Users } from "node-appwrite";
 import {
   ClassSchema,
   ExamSchema,
   StudentSchema,
   SubjectSchema,
   TeacherSchema,
+  ParentSchema,
+  AttendanceSchema,
 } from "./formValidationSchemas";
 import { 
   COLLECTIONS,
@@ -24,11 +27,49 @@ import {
 
 type CurrentState = { success: boolean; error: boolean };
 
-// Helper function to handle Appwrite errors
-const handleAppwriteError = (error: any) => {
-  console.error('Appwrite error:', error);
-  return { success: false, error: true };
+const mapAppwriteError = (error: any) => {
+  const message =
+    error?.message ||
+    error?.response?.message ||
+    error?.response ||
+    error?.code ||
+    "Unknown error";
+  const status = error?.code || error?.response?.code;
+  const isForbidden =
+    status === 401 ||
+    status === 403 ||
+    message.toLowerCase().includes("forbidden");
+  const isNotFound = status === 404 || message.toLowerCase().includes("not found");
+  const errorType = isForbidden
+    ? "forbidden"
+    : isNotFound
+    ? "not_found"
+    : "generic";
+  return {
+    success: false,
+    error: true,
+    errorMessage: message,
+    errorCode: status,
+    errorType,
+  };
 };
+
+const logAppwriteError = (context: string, error: any) => {
+  console.error(`[${context}] Appwrite error:`, {
+    message: error?.message,
+    response: error?.response,
+    code: error?.code,
+  });
+};
+
+const handleAppwriteError = (context: string, error: any) => {
+  logAppwriteError(context, error);
+  return mapAppwriteError(error);
+};
+
+export async function revalidateDashboardPath(path: string) {
+  revalidatePath(path);
+}
 
 // Resolve current user's role on the server using the session cookie
 const getServerUserRole = async (): Promise<string | null> => {
@@ -112,13 +153,16 @@ export const createSubject = async (
     await ensureRole('admin');
     await createDocument(COLLECTIONS.SUBJECTS, {
       name: data.name,
+      code: data.code,
+      description: data.description || '',
+      credits: data.credits || 1, // Required field
       // Note: Teacher relationships will be handled separately in Appwrite
     });
 
     revalidatePath("/list/subjects");
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('createSubject', err);
   }
 };
 
@@ -133,12 +177,15 @@ export const updateSubject = async (
     await ensureRole('admin');
     await updateDocument(COLLECTIONS.SUBJECTS, data.id.toString(), {
       name: data.name,
+      code: data.code,
+      description: data.description || '',
+      credits: data.credits || 1, // Required field
     });
 
     revalidatePath("/list/subjects");
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('updateSubject', err);
   }
 };
 
@@ -158,7 +205,7 @@ export const deleteSubject = async (
     revalidatePath("/list/subjects");
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('deleteSubject', err);
   }
 };
 
@@ -172,13 +219,12 @@ export const createClass = async (
       name: data.name,
       capacity: data.capacity,
       supervisorId: data.supervisorId || null,
-      gradeId: data.gradeId,
     });
 
     revalidatePath("/list/classes");
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('createClass', err);
   }
 };
 
@@ -195,13 +241,12 @@ export const updateClass = async (
       name: data.name,
       capacity: data.capacity,
       supervisorId: data.supervisorId || null,
-      gradeId: data.gradeId,
     });
 
     revalidatePath("/list/classes");
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('updateClass', err);
   }
 };
 
@@ -221,7 +266,7 @@ export const deleteClass = async (
     revalidatePath("/list/classes");
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('deleteClass', err);
   }
 };
 
@@ -231,7 +276,34 @@ export const createTeacher = async (
 ) => {
   try {
     await ensureRole('admin');
-    // Create teacher document in Appwrite
+    
+    // Create Appwrite user account if password is provided
+    let userId = null;
+    if (data.password) {
+      const client = new Client()
+        .setEndpoint(process.env.APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1')
+        .setProject(process.env.APPWRITE_PROJECT_ID || '')
+        .setKey(process.env.APPWRITE_API_KEY || '');
+      
+      const users = new Users(client);
+      const user = await users.create(
+        ID.unique(),
+        data.email || `${data.username}@school.com`,
+        data.password,
+        data.name,
+        undefined // phone (optional)
+      );
+      
+      // Set user preferences
+      await users.updatePrefs(user.$id, {
+        role: 'teacher',
+        name: data.name,
+        surname: data.surname
+      });
+      
+      userId = user.$id;
+    }
+
     await createDocument(COLLECTIONS.TEACHERS, {
       username: data.username,
       name: data.name,
@@ -243,13 +315,14 @@ export const createTeacher = async (
       bloodType: data.bloodType,
       sex: data.sex,
       birthday: data.birthday,
+      userId: userId, // Link to Appwrite user account
       createdAt: new Date().toISOString(),
     });
 
     revalidatePath("/list/teachers");
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('createTeacher', err);
   }
 };
 
@@ -278,7 +351,7 @@ export const updateTeacher = async (
     revalidatePath("/list/teachers");
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('updateTeacher', err);
   }
 };
 
@@ -298,7 +371,7 @@ export const deleteTeacher = async (
     revalidatePath("/list/teachers");
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('deleteTeacher', err);
   }
 };
 
@@ -308,6 +381,7 @@ export const createStudent = async (
 ) => {
   try {
     await ensureRole('admin');
+    
     // Check class capacity
     const classDoc = await getDocument(COLLECTIONS.CLASSES, data.classId.toString());
     if (!classDoc) {
@@ -323,6 +397,33 @@ export const createStudent = async (
       return { success: false, error: true };
     }
 
+    // Create Appwrite user account if password is provided
+    let userId = null;
+    if (data.password) {
+      const client = new Client()
+        .setEndpoint(process.env.APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1')
+        .setProject(process.env.APPWRITE_PROJECT_ID || '')
+        .setKey(process.env.APPWRITE_API_KEY || '');
+      
+      const users = new Users(client);
+      const user = await users.create(
+        ID.unique(),
+        data.email || `${data.username}@school.com`,
+        data.password,
+        data.name,
+        undefined // phone (optional)
+      );
+      
+      // Set user preferences
+      await users.updatePrefs(user.$id, {
+        role: 'student',
+        name: data.name,
+        surname: data.surname
+      });
+      
+      userId = user.$id;
+    }
+
     await createDocument(COLLECTIONS.STUDENTS, {
       username: data.username,
       name: data.name,
@@ -334,16 +435,16 @@ export const createStudent = async (
       bloodType: data.bloodType,
       sex: data.sex,
       birthday: data.birthday,
-      gradeId: data.gradeId,
       classId: data.classId,
       parentId: data.parentId,
+      userId: userId, // Link to Appwrite user account
       createdAt: new Date().toISOString(),
     });
 
     revalidatePath("/list/students");
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('createStudent', err);
   }
 };
 
@@ -367,7 +468,6 @@ export const updateStudent = async (
       bloodType: data.bloodType,
       sex: data.sex,
       birthday: data.birthday,
-      gradeId: data.gradeId,
       classId: data.classId,
       parentId: data.parentId,
     });
@@ -375,7 +475,7 @@ export const updateStudent = async (
     revalidatePath("/list/students");
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('updateStudent', err);
   }
 };
 
@@ -395,7 +495,114 @@ export const deleteStudent = async (
     revalidatePath("/list/students");
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('deleteStudent', err);
+  }
+};
+
+export const createParent = async (
+  currentState: CurrentState,
+  data: ParentSchema
+) => {
+  try {
+    await ensureRole('admin');
+    
+    // Create Appwrite user account if password is provided
+    let userId = null;
+    if (data.password) {
+      const client = new Client()
+        .setEndpoint(process.env.APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1')
+        .setProject(process.env.APPWRITE_PROJECT_ID || '')
+        .setKey(process.env.APPWRITE_API_KEY || '');
+      
+      const users = new Users(client);
+      const user = await users.create(
+        ID.unique(),
+        data.email || `${data.username}@school.com`,
+        data.password,
+        data.name,
+        undefined // phone (optional)
+      );
+      
+      // Set user preferences
+      await users.updatePrefs(user.$id, {
+        role: 'parent',
+        name: data.name,
+        surname: data.surname
+      });
+      
+      userId = user.$id;
+    }
+
+    await createDocument(COLLECTIONS.PARENTS, {
+      username: data.username,
+      name: data.name,
+      surname: data.surname,
+      email: data.email || null,
+      phone: data.phone || null,
+      address: data.address,
+      img: data.img || null,
+      bloodType: data.bloodType,
+      sex: data.sex,
+      birthday: normalizeToISODateTime(data.birthday),
+      userId: userId, // Link to Appwrite user account
+      isActive: true,
+      role: 'parent',
+      createdAt: new Date().toISOString(),
+    });
+
+    revalidatePath("/list/parents");
+    return { success: true, error: false };
+  } catch (err) {
+    return handleAppwriteError('createParent', err);
+  }
+};
+
+export const updateParent = async (
+  currentState: CurrentState,
+  data: ParentSchema
+) => {
+  if (!data.id) {
+    return { success: false, error: true };
+  }
+  try {
+    await ensureRole('admin');
+    await updateDocument(COLLECTIONS.PARENTS, data.id, {
+      username: data.username,
+      name: data.name,
+      surname: data.surname,
+      email: data.email || null,
+      phone: data.phone || null,
+      address: data.address,
+      img: data.img || null,
+      bloodType: data.bloodType,
+      sex: data.sex,
+      birthday: normalizeToISODateTime(data.birthday),
+    });
+
+    revalidatePath("/list/parents");
+    return { success: true, error: false };
+  } catch (err) {
+    return handleAppwriteError('updateParent', err);
+  }
+};
+
+export const deleteParent = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  const id = data.get("id") as string;
+  if (!id) {
+    console.error('Delete parent: No ID provided');
+    return { success: false, error: true };
+  }
+  try {
+    ensureRoleFromForm(data, 'admin');
+    await deleteDocument(COLLECTIONS.PARENTS, id);
+
+    revalidatePath("/list/parents");
+    return { success: true, error: false };
+  } catch (err) {
+    return handleAppwriteError('deleteParent', err);
   }
 };
 
@@ -417,7 +624,7 @@ export const createExam = async (
     revalidatePath("/list/exams");
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('createExam', err);
   }
 };
 
@@ -442,7 +649,7 @@ export const updateExam = async (
     revalidatePath("/list/exams");
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('updateExam', err);
   }
 };
 
@@ -462,7 +669,7 @@ export const deleteExam = async (
     revalidatePath("/list/exams");
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('deleteAnnouncement', err);
   }
 };
 
@@ -512,6 +719,22 @@ export const getExams = async (queries?: string[]) => {
   }
 };
 
+// Helper function to fetch teachers for subject form
+export const getTeachersForSubject = async () => {
+  try {
+    await ensureRole('admin');
+    const teachers = await getDocuments(COLLECTIONS.TEACHERS, [Query.limit(100)]);
+    return teachers.documents.map((teacher: any) => ({
+      id: teacher.$id,
+      name: teacher.name,
+      surname: teacher.surname
+    }));
+  } catch (err) {
+    console.error('Error fetching teachers:', err);
+    return [];
+  }
+};
+
 // Events CRUD
 export const createEvent = async (
   currentState: CurrentState,
@@ -543,7 +766,7 @@ export const createEvent = async (
     revalidatePath('/list/events');
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('createEvent', err);
   }
 };
 
@@ -577,7 +800,7 @@ export const updateEvent = async (
     revalidatePath('/list/events');
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('updateEvent', err);
   }
 };
 
@@ -596,7 +819,7 @@ export const deleteEvent = async (
     revalidatePath('/list/events');
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('deleteEvent', err);
   }
 };
 
@@ -616,7 +839,7 @@ export const deleteAnnouncement = async (
     revalidatePath('/list/announcements');
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('deleteLesson', err);
   }
 };
 
@@ -635,7 +858,7 @@ export const deleteLesson = async (
     revalidatePath('/list/lessons');
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('deleteAssignment', err);
   }
 };
 
@@ -654,7 +877,7 @@ export const deleteAssignment = async (
     revalidatePath('/list/assignments');
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('deleteResult', err);
   }
 };
 
@@ -673,7 +896,50 @@ export const deleteResult = async (
     revalidatePath('/list/results');
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('deleteAttendance', err);
+  }
+};
+
+export const createAttendance = async (
+  currentState: CurrentState,
+  data: AttendanceSchema
+) => {
+  try {
+    await ensureRole('admin', 'teacher');
+    await createDocument(COLLECTIONS.ATTENDANCES, {
+      date: data.date.toISOString(),
+      present: data.present,
+      studentId: data.studentId,
+      lessonId: data.lessonId,
+      notes: data.notes || '',
+    });
+    revalidatePath('/list/attendances');
+    return { success: true, error: false };
+  } catch (err) {
+    return handleAppwriteError('createAnnouncement', err);
+  }
+};
+
+export const updateAttendance = async (
+  currentState: CurrentState,
+  data: AttendanceSchema
+) => {
+  if (!data.id) {
+    return { success: false, error: true };
+  }
+  try {
+    await ensureRole('admin', 'teacher');
+    await updateDocument(COLLECTIONS.ATTENDANCES, data.id, {
+      date: data.date.toISOString(),
+      present: data.present,
+      studentId: data.studentId,
+      lessonId: data.lessonId,
+      notes: data.notes || '',
+    });
+    revalidatePath('/list/attendances');
+    return { success: true, error: false };
+  } catch (err) {
+    return handleAppwriteError('updateAnnouncement', err);
   }
 };
 
@@ -687,12 +953,12 @@ export const deleteAttendance = async (
     return { success: false, error: true };
   }
   try {
-    ensureRoleFromForm(data, 'admin');
+    ensureRoleFromForm(data, 'admin', 'teacher');
     await deleteDocument(COLLECTIONS.ATTENDANCES, id);
     revalidatePath('/list/attendances');
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('createLesson', err);
   }
 };
 
@@ -730,7 +996,7 @@ export const createAnnouncement = async (
     revalidatePath('/list/announcements');
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('updateLesson', err);
   }
 };
 
@@ -769,6 +1035,7 @@ export const updateAnnouncement = async (
     revalidatePath('/list/announcements');
     return { success: true, error: false };
   } catch (err) {
-    return handleAppwriteError(err);
+    return handleAppwriteError('createAssignment', err);
+    return handleAppwriteError('updateAssignment', err);
   }
 };

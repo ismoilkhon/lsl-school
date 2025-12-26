@@ -35,7 +35,7 @@ const SubjectListPage = async ({
   const renderRow = (item: any) => (
     <tr
       key={item.$id}
-      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
+      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-secondary"
     >
       <td className="flex items-center gap-4 p-4">{item.name}</td>
       <td className="hidden md:table-cell">
@@ -66,9 +66,19 @@ const SubjectListPage = async ({
 
   // Fetch data from Appwrite
   const offset = (p - 1) * ITEM_PER_PAGE;
-  const res = await adminListDocuments(COLLECTIONS.SUBJECTS, [Query.limit(ITEM_PER_PAGE), Query.offset(offset)]);
-  const data = res.documents as any[];
-  const count = res.total;
+  
+  let data: any[] = [];
+  let count = 0;
+
+  try {
+    const res = await adminListDocuments(COLLECTIONS.SUBJECTS, [Query.limit(ITEM_PER_PAGE), Query.offset(offset)]);
+    data = res.documents as any[];
+    count = res.total;
+  } catch (error: any) {
+    console.error('Error fetching subjects:', error);
+    data = [];
+    count = 0;
+  }
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
@@ -78,10 +88,10 @@ const SubjectListPage = async ({
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
+            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-300">
               <Image src="/filter.png" alt="" width={14} height={14} />
             </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
+            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-300">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
             {role === "admin" && (
@@ -91,9 +101,17 @@ const SubjectListPage = async ({
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={data} />
-      {/* PAGINATION */}
-      <Pagination page={p} count={count} />
+      {data.length > 0 ? (
+        <>
+          <Table columns={columns} renderRow={renderRow} data={data} />
+          {/* PAGINATION */}
+          <Pagination page={p} count={count} />
+        </>
+      ) : (
+        <div className="flex items-center justify-center py-12">
+          <p className="text-muted-foreground">No subjects found.</p>
+        </div>
+      )}
     </div>
   );
 };

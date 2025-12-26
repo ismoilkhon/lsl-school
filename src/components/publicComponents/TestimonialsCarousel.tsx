@@ -176,6 +176,8 @@ export default function TestimonialsCarousel() {
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               <ChevronRight className="h-6 w-6" />
             </IconButton>
@@ -192,8 +194,22 @@ export default function TestimonialsCarousel() {
                 transition={{ duration: 0.4, ease: "easeInOut" }}
                 className="w-full absolute inset-0"
               >
-                <Card className="hover:shadow-xl transition-all duration-300 bg-blue-50 dark:bg-blue-800 backdrop-blur-sm">
-                  <CardBody className="p-8 text-center">
+                <Card 
+                  className="hover:shadow-xl transition-all duration-300 bg-blue-50 dark:bg-blue-800 backdrop-blur-sm"
+                  placeholder=""
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
+                  <CardBody 
+                    className="p-8 text-center"
+                    placeholder=""
+                    onResize={() => {}}
+                    onResizeCapture={() => {}}
+                    onPointerEnterCapture={() => {}}
+                    onPointerLeaveCapture={() => {}}
+                  >
                     {/* Quote Icon */}
                     <div className="flex justify-center mb-6">
                       <Quote className="h-12 w-12 text-orange-500" />
@@ -210,8 +226,10 @@ export default function TestimonialsCarousel() {
                       placeholder=""
                       onPointerEnterCapture={() => {}}
                       onPointerLeaveCapture={() => {}}
+                      onResize={() => {}}
+                      onResizeCapture={() => {}}
                     >
-                      "{testimonials[currentIndex].content}"
+                      &quot;{testimonials[currentIndex].content}&quot;
                     </Typography>
 
                     {/* Author */}
@@ -224,6 +242,8 @@ export default function TestimonialsCarousel() {
                         placeholder=""
                         onPointerEnterCapture={() => {}}
                         onPointerLeaveCapture={() => {}}
+                        onResize={() => {}}
+                        onResizeCapture={() => {}}
                       />
                       <div className="text-left">
                         <Typography
@@ -232,6 +252,8 @@ export default function TestimonialsCarousel() {
                           placeholder=""
                           onPointerEnterCapture={() => {}}
                           onPointerLeaveCapture={() => {}}
+                          onResize={() => {}}
+                          onResizeCapture={() => {}}
                         >
                           {testimonials[currentIndex].name}
                         </Typography>
@@ -240,6 +262,8 @@ export default function TestimonialsCarousel() {
                           placeholder=""
                           onPointerEnterCapture={() => {}}
                           onPointerLeaveCapture={() => {}}
+                          onResize={() => {}}
+                          onResizeCapture={() => {}}
                         >
                           {testimonials[currentIndex].role}
                         </Typography>
@@ -253,7 +277,7 @@ export default function TestimonialsCarousel() {
 
           {/* Dots Indicator */}
           <div className="flex justify-center mt-8 space-x-2">
-            {testimonials.map((_, index) => (
+            {testimonials.map((_: any, index: number) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}

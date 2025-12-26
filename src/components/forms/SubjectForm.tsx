@@ -24,6 +24,7 @@ const SubjectForm = ({
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<SubjectSchema>({
     resolver: zodResolver(subjectSchema),
@@ -54,21 +55,55 @@ const SubjectForm = ({
     }
   }, [state, router, type, setOpen]);
 
-  const { teachers } = relatedData;
+  const { teachers = [] } = relatedData || {};
+
+  // Pre-fill form data for updates
+  if (data && type === "update") {
+    setValue("name", data.name || "");
+    setValue("code", data.code || "");
+    setValue("description", data.description || "");
+    setValue("credits", data.credits || 1);
+    setValue("teachers", data.teachers || []);
+  }
 
   return (
-    <form className="flex flex-col gap-8" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">
-        {type === "create" ? "Create a new subject" : "Update the subject"}
-      </h1>
+    <div className="max-h-screen overflow-y-auto">
+      <form className="flex flex-col gap-4 max-w-4xl mx-auto p-4" onSubmit={onSubmit}>
+        <h1 className="text-lg font-semibold text-center text-gray-800 sticky top-0 bg-white py-2 border-b">
+          {type === "create" ? "Create a new subject" : "Update the subject"}
+        </h1>
 
-      <div className="flex justify-between flex-wrap gap-4">
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h2 className="text-base font-semibold mb-3 text-gray-700">Subject Information</h2>
+          <div className="flex justify-between flex-wrap gap-4">
         <InputField
           label="Subject name"
           name="name"
           defaultValue={data?.name}
           register={register}
           error={errors?.name}
+        />
+        <InputField
+          label="Subject code"
+          name="code"
+          defaultValue={data?.code}
+          register={register}
+          error={errors?.code}
+        />
+        <InputField
+          label="Description"
+          name="description"
+          defaultValue={data?.description}
+          register={register}
+          error={errors?.description}
+        />
+        <InputField
+          label="Credits"
+          name="credits"
+          defaultValue={data?.credits || 1}
+          register={register}
+          error={errors?.credits}
+          type="number"
         />
         {data && (
           <InputField
@@ -88,12 +123,16 @@ const SubjectForm = ({
             {...register("teachers")}
             defaultValue={data?.teachers}
           >
-            {teachers.map(
-              (teacher: { id: string; name: string; surname: string }) => (
-                <option value={teacher.id} key={teacher.id}>
-                  {teacher.name + " " + teacher.surname}
-                </option>
+            {teachers && teachers.length > 0 ? (
+              teachers.map(
+                (teacher: { id: string; name: string; surname: string }) => (
+                  <option value={teacher.id} key={teacher.id}>
+                    {teacher.name + " " + teacher.surname}
+                  </option>
+                )
               )
+            ) : (
+              <option value="" disabled>No teachers available</option>
             )}
           </select>
           {errors.teachers?.message && (
@@ -102,14 +141,22 @@ const SubjectForm = ({
             </p>
           )}
         </div>
-      </div>
-      {state.error && (
-        <span className="text-red-500">Something went wrong!</span>
-      )}
-      <button className="bg-blue-400 text-white p-2 rounded-md">
-        {type === "create" ? "Create" : "Update"}
-      </button>
-    </form>
+          </div>
+        </div>
+
+        {state.error && (
+          <div className="bg-red-50 p-3 rounded-lg">
+            <span className="text-red-500 text-sm">Something went wrong!</span>
+          </div>
+        )}
+
+        <div className="sticky bottom-0 bg-white py-4 border-t">
+          <button className="w-full bg-primary text-primary-foreground p-3 rounded-md font-medium">
+            {type === "create" ? "Create" : "Update"}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 

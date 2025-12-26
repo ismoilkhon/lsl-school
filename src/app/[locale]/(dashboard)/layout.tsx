@@ -16,7 +16,13 @@ export default function DashboardLayout({
           href="/"
           className="flex items-center justify-center lg:justify-start gap-2"
         >
-          <Image src="/logo.png" alt="logo" width={40} height={40} />
+          <Image 
+            src="/logo.png" 
+            alt="logo" 
+            width={40} 
+            height={40}
+            style={{ width: 'auto', height: 'auto' }}
+          />
           <span className="hidden lg:block text-xl text-blue-600 dark:text-blue-300 font-bold">LSL SCHOOL</span>
         </Link>
         <Menu />

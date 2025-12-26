@@ -1,58 +1,20 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { Client, Account } from 'appwrite';
+import { roleRoutes } from '@/lib/routes';
 
 // Define supported locales
 const locales = ['en', 'uz', 'ru'];
 const defaultLocale = 'en';
 
-// Initialize Appwrite client for server-side operations
+// Initialize Appwrite client for middleware
 const client = new Client()
-  .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1')
-  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '');
+    .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://syd.cloud.appwrite.io/v1')
+    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '');
 
 const account = new Account(client);
 
-// Define role-based access control (route prefixes)
-const roleRoutes = {
-  // Admin can access everything under /admin and /list
-  admin: ['/admin', '/list'],
-  // Teacher can see and manage classes, lessons, exams, assignments, results, attendance, plus events & announcements
-  teacher: [
-    '/teacher',
-    '/list/students',
-    '/list/classes',
-    '/list/lessons',
-    '/list/exams',
-    '/list/assignments',
-    '/list/results',
-    '/list/attendance',
-    '/list/events',
-    '/list/announcements',
-  ],
-  // Student can see timetable, exams, assignments, own results, events & announcements
-  student: [
-    '/student',
-    '/list/lessons',
-    '/list/exams',
-    '/list/assignments',
-    '/list/results',
-    '/list/events',
-    '/list/announcements',
-  ],
-  // Parent can see child's results, timetable, attendance, events & announcements
-  parent: [
-    '/parent',
-    '/list/lessons',
-    '/list/results',
-    '/list/attendance',
-    '/list/events',
-    '/list/announcements',
-  ],
-} as const;
-
 // Public routes that don't require authentication
-const publicRoutes = ['/sign-in', '/sign-up', '/'];
+const publicRoutes = ['/sign-in', '/'];
 
 // Get user role from session or user preferences
 async function getUserRole(request: NextRequest): Promise<string | null> {
@@ -147,7 +109,7 @@ export async function middleware(request: NextRequest) {
   // Extract locale from pathname
   const pathnameLocale = pathname.split('/')[1];
 
-  // Check if this is a public route (sign-in, sign-up, home)
+  // Check if this is a public route (sign-in, home)
   const isPublicRoute = publicRoutes.some(route => {
     if (route === '/') {
       // Only match exact home page or locale home page
@@ -178,7 +140,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Match all routes except static files and Next.js internals
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)).*)',
+    // Match all routes except static files, public folder, and Next.js internals
+    '/((?!_next/static|_next/image|public|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|mp4|webm|ogg)).*)',
   ],
 };

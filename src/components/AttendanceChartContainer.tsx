@@ -1,53 +1,72 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useAttendances } from "@/lib/hooks/useQueries";
 import Image from "next/image";
 import AttendanceChart from "./AttendanceChart";
 import { useAuthStore } from "@/lib/auth-store";
 
 const AttendanceChartContainer = () => {
   const { getUserRole } = useAuthStore();
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: attendances = [], isLoading, error } = useAttendances();
+  
+  // Only fetch data for admin users
+  const userRole = getUserRole();
+  if (userRole !== 'admin') {
+    return (
+      <div className="bg-white rounded-lg p-4 h-full">
+        <div className="flex justify-between items-center">
+          <h1 className="text-lg font-semibold">Attendance</h1>
+          <Image src="/moreDark.png" alt="" width={20} height={20} />
+        </div>
+        <div className="flex items-center justify-center h-32">
+          <p className="text-gray-500 text-sm">Access denied. Admin privileges required.</p>
+        </div>
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        // Only fetch data for admin users
-        const userRole = getUserRole();
-        if (userRole !== 'admin') {
-          setError('Access denied. Admin privileges required.');
-          setLoading(false);
-          return;
-        }
+  // Transform attendance data for chart
+  const transformAttendanceData = () => {
+    if (!attendances || attendances.length === 0) {
+      return [
+        { name: "Mon", present: 0, absent: 0 },
+        { name: "Tue", present: 0, absent: 0 },
+        { name: "Wed", present: 0, absent: 0 },
+        { name: "Thu", present: 0, absent: 0 },
+        { name: "Fri", present: 0, absent: 0 },
+        { name: "Sat", present: 0, absent: 0 },
+      ];
+    }
 
-        // For now, use mock data since admin functions require server-side execution
-        // In a real app, you would make an API call to a server endpoint
-        const mockData = [
-          { name: "Mon", present: 85, absent: 15 },
-          { name: "Tue", present: 90, absent: 10 },
-          { name: "Wed", present: 88, absent: 12 },
-          { name: "Thu", present: 92, absent: 8 },
-          { name: "Fri", present: 87, absent: 13 },
-          { name: "Sat", present: 45, absent: 5 },
-        ];
-        
-        setData(mockData);
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching attendance data:', err);
-        setError('Failed to load attendance data');
-        setLoading(false);
+    // Group by day and calculate present/absent counts
+    const dayMap = new Map();
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    
+    days.forEach(day => {
+      dayMap.set(day, { present: 0, absent: 0 });
+    });
+
+    attendances.forEach(attendance => {
+      const date = new Date(attendance.date);
+      const dayName = days[date.getDay() - 1] || 'monday';
+      const current = dayMap.get(dayName);
+      
+      if (attendance.present) {
+        current.present++;
+      } else {
+        current.absent++;
       }
-    };
+    });
 
-    fetchData();
-  }, [getUserRole]);
+    return days.map(day => ({
+      name: day.charAt(0).toUpperCase() + day.slice(1, 3),
+      present: dayMap.get(day).present,
+      absent: dayMap.get(day).absent,
+    }));
+  };
 
-  if (loading) {
+  const chartData = transformAttendanceData();
+
+  if (isLoading) {
     return (
       <div className="bg-white rounded-lg p-4 h-full">
         <div className="flex justify-between items-center">
@@ -69,7 +88,7 @@ const AttendanceChartContainer = () => {
           <Image src="/moreDark.png" alt="" width={20} height={20} />
         </div>
         <div className="flex items-center justify-center h-32">
-          <p className="text-gray-500 text-sm">{error}</p>
+          <p className="text-gray-500 text-sm">Failed to load attendance data</p>
         </div>
       </div>
     );
@@ -80,8 +99,8 @@ const AttendanceChartContainer = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-lg font-semibold">Attendance</h1>
         <Image src="/moreDark.png" alt="" width={20} height={20} />
-        </div>
-      <AttendanceChart data={data}/>
+      </div>
+      <AttendanceChart data={chartData}/>
     </div>
   );
 };

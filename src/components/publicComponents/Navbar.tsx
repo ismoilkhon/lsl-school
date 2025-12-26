@@ -11,8 +11,8 @@ import {
 } from '@material-tailwind/react';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
-import ThemeToggle from '@/components/ThemeToggle';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
+// import ThemeToggle from '@/components/ThemeToggle';
+// import LanguageSwitcher from '@/components/LanguageSwitcher'; 
 import { useLocale } from '@/lib/locale-context';
 
 const navItems = [
@@ -90,9 +90,9 @@ export default function NavigationBar() {
         </div>
         <div className="flex items-center gap-4">
           <div className="mr-4 hidden lg:block">{navList}</div>
-          <ThemeToggle size="sm" />
-          <LanguageSwitcher currentLocale={locale} />
-          <Button
+          {/* <ThemeToggle size="sm" /> */}
+          {/* <LanguageSwitcher currentLocale={locale} /> */}
+          {/* <Button
             variant="gradient"
             size="sm"
             className="hidden text-blue-100 lg:inline-block bg-gradient-to-r from-blue-600 to-blue-700"
@@ -104,7 +104,7 @@ export default function NavigationBar() {
             onClick={() => router.push('/sign-in')}
           >
             Log in
-          </Button>
+          </Button> */}
           <IconButton
             variant="text"
             className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
@@ -126,20 +126,6 @@ export default function NavigationBar() {
       </div>
       <Collapse open={openNav}>
         {navList}
-                        <Button
-                  variant="gradient"
-                  size="sm"
-                  fullWidth
-                  className="mb-2 bg-gradient-to-r from-blue-600 to-blue-700"
-                  placeholder=""
-                  onResize={() => {}}
-                  onResizeCapture={() => {}}
-                  onPointerEnterCapture={() => {}}
-                  onPointerLeaveCapture={() => {}}
-                  onClick={() => router.push('/sign-up')}
-                >
-                  Apply Now
-                </Button>
       </Collapse>
     </Navbar>
   );

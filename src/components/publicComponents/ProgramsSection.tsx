@@ -14,7 +14,7 @@ export default function ProgramsSection() {
       description: "Building strong foundations in literacy, numeracy, and social skills through play-based and experiential learning.",
       icon: <BookOpen className="h-8 w-8" />,
       features: ["Small class sizes", "Individualized attention", "Creative learning", "Character development"],
-      color: "from-blue-500 to-blue-600"
+      video: "/videos/art.mp4"
     },
     {
       id: 2,
@@ -23,16 +23,16 @@ export default function ProgramsSection() {
       description: "Preparing students for high school with rigorous academics, leadership opportunities, and personal growth.",
       icon: <Users className="h-8 w-8" />,
       features: ["Advanced curriculum", "Leadership training", "Peer mentoring", "College preparation"],
-      color: "from-green-500 to-green-600"
+      video: "/videos/sport.mp4"
     },
     {
       id: 3,
       title: "High School Program",
-      subtitle: "Grades 9-12",
+      subtitle: "Grades 9-11",
       description: "Comprehensive college preparatory program with AP courses, internships, and university partnerships.",
       icon: <Award className="h-8 w-8" />,
       features: ["AP courses", "University partnerships", "Career counseling", "Scholarship support"],
-      color: "from-purple-500 to-purple-600"
+      video: "/videos/robotics.mp4"
     },
     {
       id: 4,
@@ -41,7 +41,7 @@ export default function ProgramsSection() {
       description: "Cutting-edge science, technology, engineering, and mathematics programs with state-of-the-art facilities.",
       icon: <Microscope className="h-8 w-8" />,
       features: ["Modern labs", "Robotics club", "Coding bootcamps", "Science fairs"],
-      color: "from-orange-500 to-orange-600"
+      video: "/videos/fizika.mp4"
     },
     {
       id: 5,
@@ -50,7 +50,7 @@ export default function ProgramsSection() {
       description: "Comprehensive arts program including visual arts, music, theater, and digital media production.",
       icon: <Palette className="h-8 w-8" />,
       features: ["Art studios", "Music ensembles", "Theater productions", "Digital media"],
-      color: "from-pink-500 to-pink-600"
+      video: "/videos/art.mp4"
     },
     {
       id: 6,
@@ -59,7 +59,7 @@ export default function ProgramsSection() {
       description: "Competitive sports programs promoting teamwork, discipline, and physical fitness across multiple sports.",
       icon: <Trophy className="h-8 w-8" />,
       features: ["Team sports", "Individual training", "Fitness programs", "Championships"],
-      color: "from-red-500 to-red-600"
+      video: "/videos/sport.mp4"
     }
   ];
 
@@ -80,6 +80,8 @@ export default function ProgramsSection() {
             placeholder=""
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
+            onResize={() => {}}
+            onResizeCapture={() => {}}
           >
             Our Academic Programs
           </Typography>
@@ -89,9 +91,11 @@ export default function ProgramsSection() {
             placeholder=""
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
+            onResize={() => {}}
+            onResizeCapture={() => {}}
           >
             Discover our comprehensive range of programs designed to nurture every aspect 
-            of your child's development from kindergarten through high school graduation.
+            of your child&apos;s development from kindergarten through high school graduation.
           </Typography>
         </motion.div>
 
@@ -105,37 +109,70 @@ export default function ProgramsSection() {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
             >
-              <Card className="h-full hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
-                {/* Header with gradient */}
-                <div className={`bg-gradient-to-r ${program.color} p-6 text-white`}>
-                  <div className="flex items-center justify-center mb-4">
+              <Card 
+                className="h-full hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
+                placeholder=""
+                onResize={() => {}}
+                onResizeCapture={() => {}}
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
+                {/* Header with gradient or video */}
+                <div className={`relative p-6 text-white overflow-hidden h-56`}>
+                  {program.video && (
+                    <>
+                      <video
+                        autoPlay
+                        muted
+                        loop
+                        className="absolute inset-0 w-full h-full object-cover"
+                      >
+                        <source src={program.video} type="video/mp4" />
+                      </video>
+                      <div className="absolute inset-0 bg-black/40"></div>
+                    </>
+                  )}
+                  <div className="relative z-10 flex items-center justify-center mb-4">
                     {program.icon}
                   </div>
                   <Typography
                     variant="h4"
-                    className="text-center font-bold mb-2"
+                    className="text-center font-bold mb-2 relative z-10"
                     placeholder=""
                     onPointerEnterCapture={() => {}}
                     onPointerLeaveCapture={() => {}}
+                    onResize={() => {}}
+                    onResizeCapture={() => {}}
                   >
                     {program.title}
                   </Typography>
                   <Typography
-                    className="text-center text-white/90"
+                    className="text-center text-white/90 relative z-10"
                     placeholder=""
                     onPointerEnterCapture={() => {}}
                     onPointerLeaveCapture={() => {}}
+                    onResize={() => {}}
+                    onResizeCapture={() => {}}
                   >
                     {program.subtitle}
                   </Typography>
                 </div>
 
-                <CardBody className="p-6">
+                <CardBody 
+                  className="p-6"
+                  placeholder=""
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
                   <Typography
                     className="text-blue-700 dark:text-blue-200 mb-6 leading-relaxed"
                     placeholder=""
                     onPointerEnterCapture={() => {}}
                     onPointerLeaveCapture={() => {}}
+                    onResize={() => {}}
+                    onResizeCapture={() => {}}
                   >
                     {program.description}
                   </Typography>
@@ -148,6 +185,8 @@ export default function ProgramsSection() {
                       placeholder=""
                       onPointerEnterCapture={() => {}}
                       onPointerLeaveCapture={() => {}}
+                      onResize={() => {}}
+                      onResizeCapture={() => {}}
                     >
                       Key Features:
                     </Typography>
@@ -167,6 +206,8 @@ export default function ProgramsSection() {
                     placeholder=""
                     onPointerEnterCapture={() => {}}
                     onPointerLeaveCapture={() => {}}
+                    onResize={() => {}}
+                    onResizeCapture={() => {}}
                   >
                     Learn More
                   </Button>
@@ -190,6 +231,8 @@ export default function ProgramsSection() {
             placeholder=""
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
+            onResize={() => {}}
+            onResizeCapture={() => {}}
           >
             Ready to Explore Our Programs?
           </Typography>
@@ -198,6 +241,8 @@ export default function ProgramsSection() {
             placeholder=""
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
+            onResize={() => {}}
+            onResizeCapture={() => {}}
           >
             Schedule a personalized tour to see our facilities, meet our teachers, 
             and discover which program is the perfect fit for your child.
@@ -208,6 +253,8 @@ export default function ProgramsSection() {
             placeholder=""
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
+            onResize={() => {}}
+            onResizeCapture={() => {}}
           >
             Schedule a Tour
           </Button>

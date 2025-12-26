@@ -95,8 +95,22 @@ export default function AdmissionsSection() {
                 transition={{ duration: 0.6, delay: 0.1 * index }}
                 viewport={{ once: true }}
               >
-                <Card className="h-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                  <CardBody className="p-6 text-center">
+                <Card 
+                  className="h-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
+                  placeholder=""
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
+                  <CardBody 
+                    className="p-6 text-center"
+                    placeholder=""
+                    onResize={() => {}}
+                    onResizeCapture={() => {}}
+                    onPointerEnterCapture={() => {}}
+                    onPointerLeaveCapture={() => {}}
+                  >
                     <div className="flex items-center justify-center mb-4">
                       <div className="p-3 bg-blue-100 dark:bg-blue-800 rounded-full text-blue-600 dark:text-blue-300">
                         {stepIcons[index]}
@@ -162,8 +176,22 @@ export default function AdmissionsSection() {
               transition={{ duration: 0.6, delay: 0.3 }}
               viewport={{ once: true }}
             >
-              <Card className="h-full hover:shadow-lg transition-shadow duration-300">
-                <CardBody className="p-6">
+              <Card 
+                className="h-full hover:shadow-lg transition-shadow duration-300"
+                placeholder=""
+                onResize={() => {}}
+                onResizeCapture={() => {}}
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
+                <CardBody 
+                  className="p-6"
+                  placeholder=""
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
                   <div className="flex items-center mb-4 text-blue-600">
                     {requirementIcons[0]}
                     <Typography
@@ -197,8 +225,22 @@ export default function AdmissionsSection() {
               transition={{ duration: 0.6, delay: 0.4 }}
               viewport={{ once: true }}
             >
-              <Card className="h-full hover:shadow-lg transition-shadow duration-300">
-                <CardBody className="p-6">
+              <Card 
+                className="h-full hover:shadow-lg transition-shadow duration-300"
+                placeholder=""
+                onResize={() => {}}
+                onResizeCapture={() => {}}
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
+                <CardBody 
+                  className="p-6"
+                  placeholder=""
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
                   <div className="flex items-center mb-4 text-blue-600">
                     {requirementIcons[1]}
                     <Typography
@@ -267,8 +309,22 @@ export default function AdmissionsSection() {
                 transition={{ duration: 0.6, delay: 0.1 * index }}
                 viewport={{ once: true }}
               >
-                <Card className="hover:shadow-lg transition-shadow duration-300">
-                  <CardBody className="p-4 text-center">
+                <Card 
+                  className="hover:shadow-lg transition-shadow duration-300"
+                  placeholder=""
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
+                  <CardBody 
+                    className="p-4 text-center"
+                    placeholder=""
+                    onResize={() => {}}
+                    onResizeCapture={() => {}}
+                    onPointerEnterCapture={() => {}}
+                    onPointerLeaveCapture={() => {}}
+                  >
                     <div className="flex justify-center mb-3 text-blue-600">
                       {feeIcons[index]}
                     </div>
@@ -316,7 +372,7 @@ export default function AdmissionsSection() {
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
-            Start your child's journey to academic excellence and personal growth today.
+            Start your child&apos;s journey to academic excellence and personal growth today.
           </Typography>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button

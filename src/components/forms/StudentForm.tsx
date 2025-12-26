@@ -3,40 +3,28 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import InputField from "../InputField";
-import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import {
-  studentSchema,
-  StudentSchema,
-  teacherSchema,
-  TeacherSchema,
-} from "@/lib/formValidationSchemas";
-import { useFormState } from "react-dom";
-import {
-  createStudent,
-  createTeacher,
-  updateStudent,
-  updateTeacher,
-} from "@/lib/actions";
+import { Dispatch, SetStateAction, useState, useEffect } from "react";
+import { studentSchema, StudentSchema } from "@/lib/formValidationSchemas";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { useClasses, useParents, useCreateStudent, useUpdateStudent } from "@/lib/hooks/useQueries";
 import { storage, BUCKET_ID } from "@/lib/appwrite";
 import { Permission, Role } from "appwrite";
+import { useAuthStore } from "@/lib/auth-store";
 
 const StudentForm = ({
   type,
   data,
   setOpen,
-  relatedData,
 }: {
   type: "create" | "update";
   data?: any;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  relatedData?: any;
 }) => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<StudentSchema>({
     resolver: zodResolver(studentSchema),
@@ -45,16 +33,59 @@ const StudentForm = ({
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  const [state, formAction] = useFormState(
-    type === "create" ? createStudent : updateStudent,
-    {
-      success: false,
-      error: false,
+  const { data: classes = [] } = useClasses();
+  const { data: parents = [] } = useParents();
+  const createStudentMutation = useCreateStudent();
+  const updateStudentMutation = useUpdateStudent();
+  const { getUserRole } = useAuthStore();
+
+  const router = useRouter();
+
+  // Pre-fill form data for updates
+  useEffect(() => {
+  if (data && type === "update") {
+    setValue("username", data.username || "");
+    setValue("name", data.name || "");
+    setValue("surname", data.surname || "");
+    setValue("email", data.email || "");
+    setValue("phone", data.phone || "");
+    setValue("address", data.address || "");
+    setValue("bloodType", data.bloodType || "");
+    setValue("sex", data.sex || "");
+    setValue("parentId", data.parentId || "");
+    setValue("classId", data.classId || "");
+      // Handle birthday - convert to Date object for the form (schema expects Date)
+      if (data.birthday) {
+        let birthdayDate: Date;
+        if (typeof data.birthday === 'string') {
+          birthdayDate = new Date(data.birthday);
+        } else if (data.birthday instanceof Date) {
+          birthdayDate = data.birthday;
+        } else {
+          birthdayDate = new Date(String(data.birthday));
+        }
+        if (!isNaN(birthdayDate.getTime())) {
+          setValue("birthday", birthdayDate);
+        } else {
+          setValue("birthday", new Date());
+        }
+      }
     }
-  );
+  }, [data, type, setValue]);
+
+  // Check if user is admin - must be after all hooks
+  const userRole = getUserRole();
+  if (userRole !== 'admin') {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <p className="text-destructive text-sm">Access denied. Only administrators can manage students.</p>
+      </div>
+    );
+  }
 
   const onSubmit = handleSubmit(async (formData) => {
     let img: string | undefined = data?.img;
+    
     try {
       if (file) {
         setUploading(true);
@@ -66,35 +97,54 @@ const StudentForm = ({
         );
         img = created.$id;
       }
-      formAction({ ...formData, img });
-    } catch (e) {
-      toast.error("File upload failed");
+
+      const studentData = {
+        username: formData.username,
+        password: formData.password, // Add password for new students
+        name: formData.name,
+        surname: formData.surname,
+        email: formData.email || '',
+        phone: formData.phone || '',
+        address: formData.address,
+        img: img || '',
+        bloodType: formData.bloodType,
+        sex: formData.sex,
+        parentId: formData.parentId || '',
+        classId: formData.classId || '',
+        birthday: formData.birthday ? new Date(formData.birthday).toISOString() : new Date().toISOString(),
+        enrollmentDate: new Date().toISOString(),
+        isActive: true,
+        role: 'student',
+        createdAt: new Date().toISOString()
+      };
+
+      if (type === "create") {
+        await createStudentMutation.mutateAsync(studentData);
+        toast.success("Student has been created!");
+      } else {
+        await updateStudentMutation.mutateAsync({ id: data.$id, data: studentData });
+        toast.success("Student has been updated!");
+      }
+      
+      setOpen(false);
+      router.refresh();
+    } catch (error) {
+      toast.error("Operation failed");
+      console.error("Form submission error:", error);
     } finally {
       setUploading(false);
     }
   });
 
-  const router = useRouter();
-
-  useEffect(() => {
-    if (state.success) {
-      toast(`Student has been ${type === "create" ? "created" : "updated"}!`);
-      setOpen(false);
-      router.refresh();
-    }
-  }, [state, router, type, setOpen]);
-
-  const { grades, classes } = relatedData;
-
   return (
-    <form className="flex flex-col gap-8" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">
-        {type === "create" ? "Create a new student" : "Update the student"}
-      </h1>
-      <span className="text-xs text-gray-400 font-medium">
-        Authentication Information
-      </span>
-      <div className="flex justify-between flex-wrap gap-4">
+    <div className="max-h-screen overflow-y-auto">
+      <form className="flex flex-col gap-4 max-w-4xl mx-auto p-4" onSubmit={onSubmit}>
+        <h1 className="text-lg font-semibold text-center text-foreground sticky top-0 bg-background py-2 border-b">
+          {type === "create" ? "Create a new student" : "Update the student"}
+        </h1>
+        <div className="bg-muted p-4 rounded-lg">
+          <h2 className="text-base font-semibold mb-3 text-foreground">Authentication Information</h2>
+          <div className="flex justify-between flex-wrap gap-4">
         <InputField
           label="Username"
           name="username"
@@ -109,16 +159,27 @@ const StudentForm = ({
           register={register}
           error={errors?.email}
         />
-      </div>
-      <span className="text-xs text-gray-400 font-medium">
-        Personal Information
-      </span>
-      <div className="flex flex-col gap-2 w-full md:w-1/4">
-        <label className="text-xs text-gray-500">Photo</label>
-        <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-        {uploading && <p className="text-xs text-gray-500">Uploading...</p>}
-      </div>
-      <div className="flex justify-between flex-wrap gap-4">
+        {type === "create" && (
+          <InputField
+            label="Password"
+            name="password"
+            type="password"
+            defaultValue=""
+            register={register}
+            error={errors?.password}
+          />
+        )}
+          </div>
+        </div>
+
+        <div className="bg-muted p-4 rounded-lg">
+          <h2 className="text-base font-semibold mb-3 text-foreground">Personal Information</h2>
+          <div className="flex flex-col gap-2 w-full md:w-1/4 mb-4">
+            <label className="text-xs text-muted-foreground">Photo</label>
+            <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+            {uploading && <p className="text-xs text-muted-foreground">Uploading...</p>}
+          </div>
+          <div className="flex justify-between flex-wrap gap-4">
         <InputField
           label="First Name"
           name="name"
@@ -162,13 +223,26 @@ const StudentForm = ({
           error={errors.birthday}
           type="date"
         />
-        <InputField
-          label="Parent Id"
-          name="parentId"
-          defaultValue={data?.parentId}
-          register={register}
-          error={errors.parentId}
-        />
+        <div className="flex flex-col gap-2 w-full md:w-1/4">
+          <label className="text-xs text-muted-foreground">Parent</label>
+          <select
+            className="ring-[1.5px] ring-border p-2 rounded-md text-sm w-full"
+            {...register("parentId")}
+            defaultValue={data?.parentId}
+          >
+            <option value="">Select a parent</option>
+            {parents.map((parent) => (
+              <option value={parent.$id} key={parent.$id}>
+                {parent.name} {parent.surname}
+              </option>
+            ))}
+          </select>
+          {errors.parentId?.message && (
+            <p className="text-xs text-destructive">
+              {errors.parentId.message.toString()}
+            </p>
+          )}
+        </div>
         {data && (
           <InputField
             label="Id"
@@ -180,73 +254,60 @@ const StudentForm = ({
           />
         )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Sex</label>
+          <label className="text-xs text-muted-foreground">Gender</label>
           <select
-            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+            className="ring-[1.5px] ring-border p-2 rounded-md text-sm w-full"
             {...register("sex")}
             defaultValue={data?.sex}
           >
+            <option value="">Select gender</option>
             <option value="MALE">Male</option>
             <option value="FEMALE">Female</option>
           </select>
           {errors.sex?.message && (
-            <p className="text-xs text-red-400">
+            <p className="text-xs text-destructive">
               {errors.sex.message.toString()}
             </p>
           )}
         </div>
+
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Grade</label>
+          <label className="text-xs text-muted-foreground">Class</label>
           <select
-            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
-            {...register("gradeId")}
-            defaultValue={data?.gradeId}
-          >
-            {grades.map((grade: { id: number; level: number }) => (
-              <option value={grade.id} key={grade.id}>
-                {grade.level}
-              </option>
-            ))}
-          </select>
-          {errors.gradeId?.message && (
-            <p className="text-xs text-red-400">
-              {errors.gradeId.message.toString()}
-            </p>
-          )}
-        </div>
-        <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Class</label>
-          <select
-            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+            className="ring-[1.5px] ring-border p-2 rounded-md text-sm w-full"
             {...register("classId")}
             defaultValue={data?.classId}
           >
-            {classes.map(
-              (classItem: {
-                id: number;
-                name: string;
-                capacity: number;
-              }) => (
-                <option value={classItem.id} key={classItem.id}>
-                  {classItem.name} - {classItem.capacity} Capacity
-                </option>
-              )
-            )}
+            <option value="">Select a class</option>
+            {classes.map((classItem) => (
+              <option value={classItem.$id} key={classItem.$id}>
+                {classItem.name} - {classItem.capacity} Capacity
+              </option>
+            ))}
           </select>
           {errors.classId?.message && (
-            <p className="text-xs text-red-400">
+            <p className="text-xs text-destructive">
               {errors.classId.message.toString()}
             </p>
           )}
         </div>
-      </div>
-      {state.error && (
-        <span className="text-red-500">Something went wrong!</span>
-      )}
-      <button type="submit" className="bg-blue-400 text-white p-2 rounded-md">
-        {type === "create" ? "Create" : "Update"}
-      </button>
-    </form>
+          </div>
+        </div>
+
+        <div className="sticky bottom-0 bg-background py-4 border-t">
+          <button 
+            type="submit" 
+            className="w-full bg-primary text-primary-foreground p-3 rounded-md font-medium"
+            disabled={createStudentMutation.isPending || updateStudentMutation.isPending || uploading}
+          >
+            {createStudentMutation.isPending || updateStudentMutation.isPending || uploading 
+              ? "Processing..." 
+              : type === "create" ? "Create" : "Update"
+            }
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 

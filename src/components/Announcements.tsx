@@ -1,28 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
-import { getAnnouncements } from "@/lib/appwrite-data";
+import { useAnnouncements } from "@/lib/hooks/useQueries";
 
 const Announcements = () => {
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: announcements, isLoading, error } = useAnnouncements();
 
-  useEffect(() => {
-    const fetchAnnouncements = async () => {
-      try {
-        const res = await getAnnouncements(1, 3, {});
-        setData(res.data);
-      } catch (error) {
-        console.warn('Failed to fetch announcements:', error);
-        setData([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAnnouncements();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="bg-white p-4 rounded-md">
         <div className="flex items-center justify-between">
@@ -36,6 +18,22 @@ const Announcements = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="bg-white p-4 rounded-md">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-semibold">Announcements</h1>
+          <span className="text-xs text-gray-400">View All</span>
+        </div>
+        <div className="flex items-center justify-center h-32">
+          <p className="text-red-500">Failed to load announcements</p>
+        </div>
+      </div>
+    );
+  }
+
+  const data = announcements || [];
+
   return (
     <div className="bg-white p-4 rounded-md">
       <div className="flex items-center justify-between">
@@ -48,7 +46,7 @@ const Announcements = () => {
             <div className="flex items-center justify-between">
               <h2 className="font-medium">{data[0].title}</h2>
               <span className="text-xs text-gray-400 bg-white rounded-md px-1 py-1">
-                {new Intl.DateTimeFormat("en-GB").format(data[0].date)}
+                {new Intl.DateTimeFormat("en-GB").format(new Date(data[0].date))}
               </span>
             </div>
             <p className="text-sm text-gray-400 mt-1">{data[0].description}</p>
@@ -59,7 +57,7 @@ const Announcements = () => {
             <div className="flex items-center justify-between">
               <h2 className="font-medium">{data[1].title}</h2>
               <span className="text-xs text-gray-400 bg-white rounded-md px-1 py-1">
-                {new Intl.DateTimeFormat("en-GB").format(data[1].date)}
+                {new Intl.DateTimeFormat("en-GB").format(new Date(data[1].date))}
               </span>
             </div>
             <p className="text-sm text-gray-400 mt-1">{data[1].description}</p>
@@ -70,7 +68,7 @@ const Announcements = () => {
             <div className="flex items-center justify-between">
               <h2 className="font-medium">{data[2].title}</h2>
               <span className="text-xs text-gray-400 bg-white rounded-md px-1 py-1">
-                {new Intl.DateTimeFormat("en-GB").format(data[2].date)}
+                {new Intl.DateTimeFormat("en-GB").format(new Date(data[2].date))}
               </span>
             </div>
             <p className="text-sm text-gray-400 mt-1">{data[2].description}</p>

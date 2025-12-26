@@ -1,42 +1,46 @@
 'use client';
 
 import React from 'react';
-import { Typography, Button } from '@material-tailwind/react';
-import { ArrowRight, Users, Award, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AnimatedCounter from './AnimatedCounter';
 import { useLocale } from '@/lib/locale-context';
 import { useTranslation } from '@/lib/translations';
+import { Typography, Button } from '@material-tailwind/react';
+import { ArrowRight, Users, Award, BookOpen, ArrowDown } from 'lucide-react';
+import { useStudents, useTeachers } from '@/lib/hooks/useQueries';
 
 export default function HeroSection() {
   const { locale } = useLocale();
   const { t } = useTranslation(locale);
+  
+  // Fetch real data for statistics
+  const { data: students = [] } = useStudents();
+  const { data: teachers = [] } = useTeachers();
+  
+  // Calculate real statistics
+  const studentCount = 350 // students.length;
+  const teacherCount = 40 // teachers.length;
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: 'url(/DEmFgqRO4iZk.jpg)',
-          backgroundSize: '100% 100%',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
+        className="absolute inset-0 bg-[url('/LSL-SCHOOL.jpg')]  bg-center bg-no-repeat"
+        style={{ backgroundSize: '100% 100%' }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-800/80 to-blue-600/60"></div>
+        {/* <div className="absolute inset-0 bg-gradient-to-r from-blue-400/40 to-blue-200/20"></div> */}
       </div>
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 py-20 text-center text-white">
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 0.8, y: 0 }}
           transition={{ duration: 0.8 }}
         >
           <Typography
             variant="h1"
-            className="mb-6 text-4xl md:text-6xl lg:text-7xl font-bold leading-tight"
+            className="mb-6  text-4xl text-cyan-950 md:text-6xl lg:text-7xl font-bold leading-tight"
             placeholder=""
             onResize={() => {}}
             onResizeCapture={() => {}}
@@ -44,14 +48,14 @@ export default function HeroSection() {
             onPointerLeaveCapture={() => {}}
           >
             {t('hero.title')}
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-blue-100">
+            <span className="block  bg-clip-text text-cyan-950">
               {t('hero.subtitle')}
             </span>
           </Typography>
 
           <Typography
             variant="lead"
-            className="mb-8 text-xl md:text-2xl max-w-4xl mx-auto text-blue-100"
+            className="mb-8 text-xl md:text-2xl max-w-4xl mx-auto text-cyan-950"
             placeholder=""
             onResize={() => {}}
             onResizeCapture={() => {}}
@@ -64,24 +68,28 @@ export default function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button
               size="lg"
-              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105"
+              className="bg-gradient-to-r flex p-3 from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105"
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               {t('hero.explorePrograms')}
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <ArrowDown className="ml-2 h-5 w-5" />
             </Button>
-            <Button
+            {/* <Button
               variant="outlined"
               size="lg"
               className="border-blue-200 text-blue-200 hover:bg-blue-200 hover:text-blue-800 transition-all duration-300"
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               {t('hero.scheduleTour')}
-            </Button>
+            </Button> */}
           </div>
         </motion.div>
 
@@ -94,7 +102,7 @@ export default function HeroSection() {
         >
           <div className="text-center">
             <div className="flex justify-center mb-2">
-              <Users className="h-8 w-8 text-blue-300" />
+              <Users className="h-8 w-8 text-cyan-950" />
             </div>
             <Typography
               variant="h3"
@@ -102,14 +110,18 @@ export default function HeroSection() {
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
-              <AnimatedCounter end={1200} suffix="+" />
+              <AnimatedCounter end={studentCount} suffix="+" />
             </Typography>
             <Typography
               className="text-blue-200"
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               {t('hero.stats.students')}
             </Typography>
@@ -117,7 +129,7 @@ export default function HeroSection() {
 
           <div className="text-center">
             <div className="flex justify-center mb-2">
-              <Award className="h-8 w-8 text-blue-300" />
+              <Award className="h-8 w-8 text-cyan-950" />
             </div>
             <Typography
               variant="h3"
@@ -125,14 +137,18 @@ export default function HeroSection() {
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
-              <AnimatedCounter end={25} suffix="+" />
+              <AnimatedCounter end={2} suffix="+" />
             </Typography>
             <Typography
               className="text-blue-200"
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               {t('hero.stats.years')}
             </Typography>
@@ -140,7 +156,7 @@ export default function HeroSection() {
 
           <div className="text-center">
             <div className="flex justify-center mb-2">
-              <BookOpen className="h-8 w-8 text-blue-300" />
+              <BookOpen className="h-8 w-8 text-cyan-950" />
             </div>
             <Typography
               variant="h3"
@@ -148,16 +164,20 @@ export default function HeroSection() {
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
-              <AnimatedCounter end={50} suffix="+" />
+              <AnimatedCounter end={teacherCount} suffix="+" />
             </Typography>
             <Typography
               className="text-blue-200"
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
-              {t('hero.stats.programs')}
+              Teachers
             </Typography>
           </div>
         </motion.div>

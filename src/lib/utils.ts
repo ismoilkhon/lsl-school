@@ -1,3 +1,5 @@
+import { Client } from 'appwrite';
+
 // IT APPEARS THAT BIG CALENDAR SHOWS THE LAST WEEK WHEN THE CURRENT DAY IS A WEEKEND.
 // FOR THIS REASON WE'LL GET THE LAST WEEK AS THE REFERENCE WEEK.
 // IN THE TUTORIAL WE'RE TAKING THE NEXT WEEK AS THE REFERENCE WEEK.
@@ -55,4 +57,13 @@ export const getAppwriteFilePreviewUrl = (
   const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '';
   const bucketId = process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || 'uploads';
   return `${endpoint}/storage/buckets/${bucketId}/files/${fileId}/preview?project=${projectId}&width=${width}&height=${height}&quality=80`;
+};
+
+export const getAppwriteClient = () => {
+    const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://syd.cloud.appwrite.io/v1';
+    const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '';
+    
+    return new Client()
+        .setEndpoint(endpoint)
+        .setProject(projectId);
 };

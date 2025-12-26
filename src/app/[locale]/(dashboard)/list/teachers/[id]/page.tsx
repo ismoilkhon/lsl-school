@@ -1,26 +1,46 @@
-import { adminGetDocument, adminListDocuments } from "@/lib/appwrite-admin";
+"use client";
+
+import { useTeacher, useClasses, useLessons } from "@/lib/hooks/useQueries";
 import { COLLECTIONS } from "@/lib/appwrite";
-import { Query } from "node-appwrite";
 import Image from "next/image";
 import { getAppwriteFilePreviewUrl } from "@/lib/utils";
 import FormContainer from "@/components/FormContainer";
-import { headers } from "next/headers";
+import { useAuthStore } from "@/lib/auth-store";
 
-const TeacherDetailPage = async ({ params }: { params: { id: string } }) => {
-  const teacher = await adminGetDocument(COLLECTIONS.TEACHERS, params.id);
+const TeacherDetailPage = ({ params }: { params: { id: string } }) => {
+  const { getUserRole } = useAuthStore();
+  const { data: teacher, isLoading: teacherLoading, error: teacherError } = useTeacher(params.id);
+  
+  // Get related data using TanStack Query
+  const { data: classes = [], isLoading: classesLoading } = useClasses();
+  const { data: lessons = [], isLoading: lessonsLoading } = useLessons();
+  
+  // Filter related data
+  const supervisedClasses = classes.filter(c => c.supervisorId === params.id);
+  const teacherLessons = lessons.filter(l => l.teacherId === params.id);
+  
+  const role = getUserRole();
+  const isLoading = teacherLoading || classesLoading || lessonsLoading;
 
-  if (!teacher) {
-    return <div>Teacher not found</div>;
+  if (isLoading) {
+    return (
+      <div className="p-4 flex-1 m-4 mt-0">
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    );
   }
 
-  // Related: classes supervised or lessons taught
-  const [classesRes, lessonsRes] = await Promise.all([
-    adminListDocuments(COLLECTIONS.CLASSES, [Query.equal('supervisorId', params.id), Query.limit(10)]),
-    adminListDocuments(COLLECTIONS.LESSONS, [Query.equal('teacherId', params.id), Query.limit(10)]),
-  ]);
-  const classes = (classesRes?.documents as any[]) || [];
-  const lessons = (lessonsRes?.documents as any[]) || [];
-  const role = headers().get('x-user-role') || 'teacher';
+  if (teacherError || !teacher) {
+    return (
+      <div className="p-4 flex-1 m-4 mt-0">
+        <div className="text-center py-8">
+          <p className="text-red-500">Failed to load teacher: {teacherError?.message || 'Teacher not found'}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 flex-1 m-4 mt-0">
@@ -68,11 +88,11 @@ const TeacherDetailPage = async ({ params }: { params: { id: string } }) => {
         {/* Classes supervised */}
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <h2 className="text-sm font-semibold text-gray-700 mb-3">Supervised Classes</h2>
-          {classes.length === 0 ? (
+          {supervisedClasses.length === 0 ? (
             <p className="text-sm text-gray-500">No supervised classes.</p>
           ) : (
             <ul className="divide-y">
-              {classes.map((c: any) => (
+              {supervisedClasses.map((c: any) => (
                 <li key={c.$id} className="py-2 text-sm flex items-center justify-between">
                   <span className="font-medium">{c.name}</span>
                   <span className="text-gray-500">Capacity {c.capacity}</span>
@@ -85,11 +105,11 @@ const TeacherDetailPage = async ({ params }: { params: { id: string } }) => {
         {/* Lessons taught */}
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <h2 className="text-sm font-semibold text-gray-700 mb-3">Lessons</h2>
-          {lessons.length === 0 ? (
+          {teacherLessons.length === 0 ? (
             <p className="text-sm text-gray-500">No lessons assigned.</p>
           ) : (
             <ul className="divide-y">
-              {lessons.map((l: any) => (
+              {teacherLessons.map((l: any) => (
                 <li key={l.$id} className="py-2 text-sm flex items-center justify-between">
                   <span className="font-medium">{l.name}</span>
                   <span className="text-gray-500">{l.day} · {l.startTime ? new Date(l.startTime).toLocaleTimeString() : ''}</span>

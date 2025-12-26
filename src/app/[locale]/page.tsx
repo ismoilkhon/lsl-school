@@ -12,8 +12,8 @@ import NavigationBar from "@/components/publicComponents/Navbar";
 import ProgramsSection from "@/components/publicComponents/ProgramsSection";
 import SmoothScrolling from "@/components/publicComponents/SmoothScrolling";
 import TestimonialsCarousel from "@/components/publicComponents/TestimonialsCarousel";
-import StudentLifeSection from "@/components/publicComponents/StudentLifeSection";
-import AdmissionsSection from "@/components/publicComponents/AdmissionsSection";
+// import StudentLifeSection from "@/components/publicComponents/StudentLifeSection";
+// import AdmissionsSection from "@/components/publicComponents/AdmissionsSection";
 
 export default function HomePage() {
   const { user, loading, getUserRole } = useAuthStore();
@@ -51,10 +51,10 @@ export default function HomePage() {
         <HeroSection />
         <AboutSection />
         <ProgramsSection />
-        <StudentLifeSection />
+        {/* <StudentLifeSection /> */}
         <EventsSection />
         <TestimonialsCarousel />
-        <AdmissionsSection />
+        {/* <AdmissionsSection /> */}
         <ContactSection />
         <Footer />
       </div>

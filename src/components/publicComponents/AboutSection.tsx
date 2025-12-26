@@ -6,6 +6,7 @@ import { Target, Eye, Heart, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLocale } from '@/lib/locale-context';
 import { useTranslation } from '@/lib/translations';
+import studentsImage from '@/../public/yFx8haCPmgHC.jpg';
 
 export default function AboutSection() {
   const { locale } = useLocale();
@@ -51,6 +52,8 @@ export default function AboutSection() {
             placeholder=""
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
+            onResize={() => {}}
+            onResizeCapture={() => {}}
           >
             {t('about.title')}
           </Typography>
@@ -60,6 +63,8 @@ export default function AboutSection() {
             placeholder=""
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
+            onResize={() => {}}
+            onResizeCapture={() => {}}
           >
             {t('about.description')}
           </Typography>
@@ -75,12 +80,11 @@ export default function AboutSection() {
           >
             <div className="relative">
               <div
-                className="w-full h-96 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl shadow-2xl flex items-center justify-center"
+                style={{
+                  backgroundImage: `url(${studentsImage.src})`
+                }}
+                className="w-full h-96 bg-cover bg-center rounded-2xl shadow-2xl flex items-center justify-center"
               >
-                <div className="text-white text-center">
-                  <div className="text-6xl mb-4">🎓</div>
-                  <div className="text-xl font-semibold">Students in Classroom</div>
-                </div>
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-blue-800/20 to-transparent rounded-2xl"></div>
             </div>
@@ -100,6 +104,8 @@ export default function AboutSection() {
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               {t('about.mission.title')}
             </Typography>
@@ -108,6 +114,8 @@ export default function AboutSection() {
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               {t('about.mission.content')}
             </Typography>
@@ -118,6 +126,8 @@ export default function AboutSection() {
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               {t('about.vision.title')}
             </Typography>
@@ -126,6 +136,8 @@ export default function AboutSection() {
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               {t('about.vision.content')}
             </Typography>
@@ -145,6 +157,8 @@ export default function AboutSection() {
             placeholder=""
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
+            onResize={() => {}}
+            onResizeCapture={() => {}}
           >
             {t('about.values.title')}
           </Typography>
@@ -158,8 +172,22 @@ export default function AboutSection() {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <Card className="h-full hover:shadow-xl transition-shadow duration-300 bg-blue-100 dark:bg-blue-800">
-                  <CardBody className="text-center p-6">
+                <Card 
+                  className="h-full hover:shadow-xl transition-shadow duration-300 bg-blue-100 dark:bg-blue-800"
+                  placeholder=""
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
+                >
+                  <CardBody 
+                    className="text-center p-6"
+                    placeholder=""
+                    onPointerEnterCapture={() => {}}
+                    onPointerLeaveCapture={() => {}}
+                    onResize={() => {}}
+                    onResizeCapture={() => {}}
+                  >
                     <div className="flex justify-center mb-4 text-blue-700 dark:text-blue-200">
                       {value.icon}
                     </div>
@@ -169,6 +197,8 @@ export default function AboutSection() {
                       placeholder=""
                       onPointerEnterCapture={() => {}}
                       onPointerLeaveCapture={() => {}}
+                      onResize={() => {}}
+                      onResizeCapture={() => {}}
                     >
                       {value.title}
                     </Typography>
@@ -177,6 +207,8 @@ export default function AboutSection() {
                       placeholder=""
                       onPointerEnterCapture={() => {}}
                       onPointerLeaveCapture={() => {}}
+                      onResize={() => {}}
+                      onResizeCapture={() => {}}
                     >
                       {value.description}
                     </Typography>

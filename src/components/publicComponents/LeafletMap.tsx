@@ -91,7 +91,7 @@ export default function LeafletMap({
           `);
 
           // Add navigation controls
-          const navigationControl = L.control({ position: 'topright' });
+          const navigationControl = (L.control as any)({ position: 'topright' });
           navigationControl.onAdd = function() {
             const div = L.DomUtil.create('div', 'leaflet-control leaflet-bar');
             div.innerHTML = `
@@ -170,8 +170,21 @@ export default function LeafletMap({
   }, [latitude, longitude, address, schoolName]);
 
   return (
-    <Card>
-      <CardBody className="p-0">
+    <Card
+      placeholder=""
+      onResize={() => {}}
+      onResizeCapture={() => {}}
+      onPointerEnterCapture={() => {}}
+      onPointerLeaveCapture={() => {}}
+    >
+      <CardBody 
+        className="p-0"
+        placeholder=""
+        onResize={() => {}}
+        onResizeCapture={() => {}}
+        onPointerEnterCapture={() => {}}
+        onPointerLeaveCapture={() => {}}
+      >
         <div className="relative">
           <div 
             ref={mapRef} 
@@ -197,6 +210,11 @@ export default function LeafletMap({
               variant="outlined"
               className="bg-white hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-lg shadow-md flex items-center gap-2 transition-colors"
               onClick={() => window.open(`https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}&zoom=15`, '_blank')}
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
             >
               <ExternalLink className="h-4 w-4" />
               <span className="text-sm font-medium">OpenStreetMap</span>
@@ -206,6 +224,11 @@ export default function LeafletMap({
               variant="outlined"
               className="bg-white hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-lg shadow-md flex items-center gap-2 transition-colors"
               onClick={() => window.open(`https://www.google.com/maps?q=${latitude},${longitude}`, '_blank')}
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
             >
               <ExternalLink className="h-4 w-4" />
               <span className="text-sm font-medium">Google Maps</span>

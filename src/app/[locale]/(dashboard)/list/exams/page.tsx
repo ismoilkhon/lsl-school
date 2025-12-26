@@ -3,8 +3,15 @@ import { COLLECTIONS } from "@/lib/appwrite";
 import { Query } from "node-appwrite";
 
 const ExamsListPage = async () => {
-  const res = await adminListDocuments(COLLECTIONS.EXAMS, [Query.limit(50), Query.offset(0)]);
-  const data = (res.documents as any[]) || [];
+  let data: any[] = [];
+
+  try {
+    const res = await adminListDocuments(COLLECTIONS.EXAMS, [Query.limit(50), Query.offset(0)]);
+    data = (res.documents as any[]) || [];
+  } catch (error: any) {
+    console.error('Error fetching exams:', error);
+    data = [];
+  }
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
@@ -21,7 +28,7 @@ const ExamsListPage = async () => {
           <tbody>
             {data.length > 0 ? (
               data.map((exam: any) => (
-                <tr key={exam.$id} className="border-b hover:bg-gray-50">
+                <tr key={exam.$id} className="border-b hover:bg-secondary">
                   <td className="p-2">{exam.title}</td>
                   <td className="p-2">
                     {exam.startTime ? new Date(exam.startTime).toLocaleString() : "TBD"}

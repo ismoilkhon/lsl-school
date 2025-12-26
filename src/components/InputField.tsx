@@ -8,7 +8,9 @@ type InputFieldProps = {
   defaultValue?: string;
   error?: FieldError;
   hidden?: boolean;
-  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  textarea?: boolean;
+  placeholder?: string;
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>;
 };
 
 const InputField = ({
@@ -19,20 +21,35 @@ const InputField = ({
   defaultValue,
   error,
   hidden,
+  textarea,
+  placeholder,
   inputProps,
 }: InputFieldProps) => {
+  if (hidden) return null;
+
   return (
-    <div className={hidden ? "hidden" : "flex flex-col gap-2 w-full md:w-1/4"}>
-      <label className="text-xs text-gray-500">{label}</label>
-      <input
-        type={type}
-        {...register(name)}
-        className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
-        {...inputProps}
-        defaultValue={defaultValue}
-      />
+    <div className="flex flex-col gap-2 w-full">
+      <label className="text-sm font-medium text-foreground">{label}</label>
+      {textarea ? (
+        <textarea
+          {...register(name)}
+          className="ring-[1.5px] ring-border p-3 rounded-md text-sm w-full focus:ring-ring focus:border-ring min-h-[80px] resize-y"
+          placeholder={placeholder}
+          defaultValue={defaultValue}
+          {...inputProps}
+        />
+      ) : (
+        <input
+          type={type}
+          {...register(name)}
+          className="ring-[1.5px] ring-border p-3 rounded-md text-sm w-full focus:ring-ring focus:border-ring"
+          placeholder={placeholder}
+          defaultValue={defaultValue}
+          {...inputProps}
+        />
+      )}
       {error?.message && (
-        <p className="text-xs text-red-400">{error.message.toString()}</p>
+        <p className="text-xs text-destructive">{error.message.toString()}</p>
       )}
     </div>
   );

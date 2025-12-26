@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import FormModal from "./FormModal";
 import { useAuthStore } from "@/lib/auth-store";
+import { useTeachers } from "@/lib/hooks/useQueries";
 
 export type FormContainerProps = {
   table:
@@ -28,6 +29,16 @@ const FormContainer = ({ table, type, data, id }: FormContainerProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const allowedRolesByTable: Partial<Record<FormContainerProps['table'], string[]>> = {
+    attendance: ["admin", "teacher"],
+    assignment: ["admin", "teacher"],
+    exam: ["admin", "teacher"],
+    result: ["admin", "teacher"],
+  };
+
+  // Fetch teachers data for subject forms
+  const { data: teachers = [] } = useTeachers();
+
   useEffect(() => {
     const fetchRelatedData = async () => {
       try {
@@ -36,15 +47,24 @@ const FormContainer = ({ table, type, data, id }: FormContainerProps) => {
         
         // Only fetch data for admin users
         const userRole = getUserRole();
-        if (userRole !== 'admin') {
-          setError('Access denied. Admin privileges required.');
+        const allowedRoles = allowedRolesByTable[table] || ["admin"];
+        if (!userRole || !allowedRoles.includes(userRole)) {
+          setError(
+            allowedRoles.includes("admin") && !allowedRoles.includes("teacher")
+              ? "Access denied. Admin privileges required."
+              : "Access denied. You do not have permission to manage this resource."
+          );
           setLoading(false);
           return;
         }
 
-        // For now, use empty data since admin functions require server-side execution
-        // In a real app, you would make API calls to server endpoints
-        setRelatedData({});
+        // Set related data based on table type
+        if (table === 'subject') {
+          setRelatedData({ teachers });
+        } else {
+          setRelatedData({});
+        }
+        
         setLoading(false);
       } catch (err) {
         console.error('Error fetching form data:', err);
@@ -58,7 +78,7 @@ const FormContainer = ({ table, type, data, id }: FormContainerProps) => {
     } else {
       setLoading(false);
     }
-  }, [table, type, getUserRole]);
+  }, [table, type, getUserRole, teachers]);
 
   if (loading) {
     return (

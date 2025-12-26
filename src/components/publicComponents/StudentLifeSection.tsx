@@ -96,8 +96,22 @@ export default function StudentLifeSection() {
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              <Card className="h-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                <CardBody className="p-6">
+              <Card 
+                className="h-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
+                placeholder=""
+                onResize={() => {}}
+                onResizeCapture={() => {}}
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
+                <CardBody 
+                  className="p-6"
+                  placeholder=""
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
                   <div className="flex items-center justify-center mb-4 text-blue-600">
                     {activityIcons.clubs}
                   </div>
@@ -141,8 +155,22 @@ export default function StudentLifeSection() {
               transition={{ duration: 0.6, delay: 0.3 }}
               viewport={{ once: true }}
             >
-              <Card className="h-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                <CardBody className="p-6">
+              <Card 
+                className="h-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
+                placeholder=""
+                onResize={() => {}}
+                onResizeCapture={() => {}}
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
+                <CardBody 
+                  className="p-6"
+                  placeholder=""
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
                   <div className="flex items-center justify-center mb-4 text-blue-600">
                     {activityIcons.leadership}
                   </div>
@@ -186,8 +214,22 @@ export default function StudentLifeSection() {
               transition={{ duration: 0.6, delay: 0.4 }}
               viewport={{ once: true }}
             >
-              <Card className="h-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                <CardBody className="p-6">
+              <Card 
+                className="h-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
+                placeholder=""
+                onResize={() => {}}
+                onResizeCapture={() => {}}
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
+                <CardBody 
+                  className="p-6"
+                  placeholder=""
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
                   <div className="flex items-center justify-center mb-4 text-blue-600">
                     {activityIcons.facilities}
                   </div>
@@ -266,8 +308,22 @@ export default function StudentLifeSection() {
                 viewport={{ once: true }}
                 className="text-center"
               >
-                <Card className="hover:shadow-lg transition-shadow duration-300">
-                  <CardBody className="p-4">
+                <Card 
+                  className="hover:shadow-lg transition-shadow duration-300"
+                  placeholder=""
+                  onResize={() => {}}
+                  onResizeCapture={() => {}}
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
+                  <CardBody 
+                    className="p-4"
+                    placeholder=""
+                    onResize={() => {}}
+                    onResizeCapture={() => {}}
+                    onPointerEnterCapture={() => {}}
+                    onPointerLeaveCapture={() => {}}
+                  >
                     <div className="flex justify-center mb-3 text-blue-600">
                       {communityIcons[index]}
                     </div>

@@ -176,15 +176,6 @@ export default function SignInPage() {
                         </div>
                     )}
                     
-                    <p className="text-sm text-gray-600">
-                        Or{' '}
-                        <button
-                            onClick={() => router.push(`/${locale}/sign-up`)}
-                            className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
-                        >
-                            create a new account
-                        </button>
-                    </p>
                 </div>
                 
                 <div className="bg-white rounded-xl shadow-lg p-8">

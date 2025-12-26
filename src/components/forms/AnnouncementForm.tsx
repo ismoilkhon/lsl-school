@@ -4,17 +4,18 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import InputField from "../InputField";
-import { useFormState } from "react-dom";
-import { createAnnouncement, updateAnnouncement } from "@/lib/actions";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/auth-store";
+import { useClasses, useCreateAnnouncement, useUpdateAnnouncement } from "@/lib/hooks/useQueries";
 
 const announcementSchema = z.object({
   id: z.string().optional(),
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
   date: z.string().min(1, "Date is required"),
+  classId: z.string().optional(),
   priority: z.enum(["low", "medium", "high"]).optional().default("medium"),
   targetAudience: z.enum(["all", "students", "teachers", "parents"]).optional().default("all"),
 });
@@ -49,39 +50,54 @@ export default function AnnouncementForm({
     }
   });
 
-  const [state, formAction] = useFormState(
-    type === 'create' ? createAnnouncement : updateAnnouncement,
-    { success: false, error: false } as any
-  );
+  const { data: classes = [] } = useClasses();
+  const createAnnouncementMutation = useCreateAnnouncement();
+  const updateAnnouncementMutation = useUpdateAnnouncement();
 
-  const onSubmit = handleSubmit(async (form) => {
+  const router = useRouter();
+
+  const onSubmit = handleSubmit(async (formData) => {
     if (!isAdmin) {
       toast.error('Only admin can add or edit announcements');
       return;
     }
-    // Add the user role to the form data for server-side validation
-    const formData = new FormData();
-    Object.entries(form).forEach(([key, value]) => {
-      formData.append(key, value as string);
-    });
-    formData.append('userRole', role);
-    formAction(formData as any);
+
+    try {
+      const announcementData = {
+        title: formData.title,
+        description: formData.description,
+        date: formData.date,
+        classId: formData.classId || '',
+        authorId: 'admin', // This should come from auth context
+        isActive: true
+      };
+
+      if (type === 'create') {
+        await createAnnouncementMutation.mutateAsync(announcementData);
+        toast.success("Announcement has been created!");
+      } else {
+        await updateAnnouncementMutation.mutateAsync({ id: data.$id, data: announcementData });
+        toast.success("Announcement has been updated!");
+      }
+      
+      setOpen(false);
+      router.refresh();
+    } catch (error) {
+      toast.error("Operation failed");
+      console.error("Form submission error:", error);
+    }
   });
 
-  useEffect(() => {
-    if (state.success) {
-      toast(`Announcement has been ${type === 'create' ? 'created' : 'updated'}!`);
-      setOpen(false);
-    }
-  }, [state, setOpen, type]);
-
   return (
-    <form className="flex flex-col gap-6" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">
-        {type === 'create' ? 'Create a new announcement' : 'Update the announcement'}
-      </h1>
-      
-      <div className="flex flex-wrap gap-4">
+    <div className="max-h-screen overflow-y-auto">
+      <form className="flex flex-col gap-4 max-w-4xl mx-auto p-4" onSubmit={onSubmit}>
+        <h1 className="text-lg font-semibold text-center text-gray-800 sticky top-0 bg-white py-2 border-b">
+          {type === 'create' ? 'Create a new announcement' : 'Update the announcement'}
+        </h1>
+        
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h2 className="text-base font-semibold mb-3 text-gray-700">Announcement Details</h2>
+          <div className="flex flex-wrap gap-4">
         <InputField 
           label="Title" 
           name="title" 
@@ -109,6 +125,21 @@ export default function AnnouncementForm({
           register={register} 
           error={errors.date} 
         />
+
+        <div className="flex flex-col gap-2 w-full md:w-1/4">
+          <label className="text-xs text-gray-500">Class (optional)</label>
+          <select
+            {...register("classId")}
+            className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All Classes</option>
+            {classes.map((classItem) => (
+              <option key={classItem.$id} value={classItem.$id}>
+                {classItem.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <div className="flex flex-col gap-2 w-full md:w-1/3">
           <label className="text-xs text-gray-500">Priority</label>
@@ -151,26 +182,31 @@ export default function AnnouncementForm({
             error={undefined} 
           />
         )}
-      </div>
-
-      {state.error && <span className="text-red-500">Something went wrong!</span>}
-      
-      <button 
-        className="bg-blue-600 text-white px-4 py-2 rounded-md disabled:opacity-50" 
-        disabled={!isAdmin}
-        type="submit"
-      >
-        {type === 'create' ? 'Create' : 'Update'}
-      </button>
-      
-      {!isAdmin && (
-        <p className="text-xs text-gray-500">
-          Only admin can add or edit announcements. You have read-only access.
-        </p>
-      )}
-      <p className="text-xs text-gray-500">
-        Note: Priority and Target Audience features may not be available in all environments.
-      </p>
-    </form>
+          </div>
+        </div>
+        
+        <div className="sticky bottom-0 bg-white py-4 border-t">
+          <button 
+            className="w-full bg-primary text-primary-foreground px-4 py-3 rounded-md disabled:opacity-50 font-medium" 
+            disabled={!isAdmin || createAnnouncementMutation.isPending || updateAnnouncementMutation.isPending}
+            type="submit"
+          >
+            {createAnnouncementMutation.isPending || updateAnnouncementMutation.isPending 
+              ? "Processing..." 
+              : type === 'create' ? 'Create' : 'Update'
+            }
+          </button>
+          
+          {!isAdmin && (
+            <p className="text-xs text-gray-500 mt-2 text-center">
+              Only admin can add or edit announcements. You have read-only access.
+            </p>
+          )}
+          <p className="text-xs text-gray-500 mt-2 text-center">
+            Note: Priority and Target Audience features may not be available in all environments.
+          </p>
+        </div>
+      </form>
+    </div>
   );
 }

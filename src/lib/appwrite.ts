@@ -16,12 +16,12 @@ export const BUCKET_ID = process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || 'uploads'
 
 // Collection IDs
 export const COLLECTIONS = {
-    STUDENTS: 'students',
+    ADMINS: 'admins',
     TEACHERS: 'teachers',
     PARENTS: 'parents',
-    GRADES: 'grades',
-    CLASSES: 'classes',
     SUBJECTS: 'subjects',
+    CLASSES: 'classes',
+    STUDENTS: 'students',
     LESSONS: 'lessons',
     EXAMS: 'exams',
     ASSIGNMENTS: 'assignments',
@@ -29,6 +29,7 @@ export const COLLECTIONS = {
     ATTENDANCES: 'attendances',
     EVENTS: 'events',
     ANNOUNCEMENTS: 'announcements',
+    GRADES: 'grades',
 } as const;
 
 // Helper function to create a new document

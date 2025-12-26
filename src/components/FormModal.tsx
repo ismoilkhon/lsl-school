@@ -6,6 +6,7 @@ import {
   deleteStudent,
   deleteSubject,
   deleteTeacher,
+  deleteParent,
   deleteEvent,
   deleteAnnouncement,
   deleteLesson,
@@ -15,7 +16,6 @@ import {
 } from "@/lib/actions";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 import { toast } from "react-toastify";
@@ -35,7 +35,7 @@ const deleteActionMap = {
   result: deleteResult,
   attendance: deleteAttendance,
 // TODO: OTHER DELETE ACTIONS
-  parent: deleteSubject,
+  parent: deleteParent,
 };
 
 // USE LAZY LOADING
@@ -61,7 +61,22 @@ const ExamForm = dynamic(() => import("./forms/ExamForm"), {
 const EventForm = dynamic(() => import("./forms/EventForm"), {
   loading: () => <h1>Loading...</h1>,
 });
+const LessonForm = dynamic(() => import("./forms/LessonForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const AssignmentForm = dynamic(() => import("./forms/AssignmentForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const ResultForm = dynamic(() => import("./forms/ResultForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
 const AnnouncementForm = dynamic(() => import("./forms/AnnouncementForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const ParentForm = dynamic(() => import("./forms/ParentForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const AttendanceForm = dynamic(() => import("./forms/AttendanceForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 // TODO: OTHER FORMS
@@ -87,7 +102,6 @@ const forms: {
       type={type}
       data={data}
       setOpen={setOpen}
-      relatedData={relatedData}
     />
   ),
   teacher: (setOpen, type, data, relatedData) => (
@@ -95,7 +109,6 @@ const forms: {
       type={type}
       data={data}
       setOpen={setOpen}
-      relatedData={relatedData}
     />
   ),
   student: (setOpen, type, data, relatedData) => (
@@ -103,7 +116,6 @@ const forms: {
       type={type}
       data={data}
       setOpen={setOpen}
-      relatedData={relatedData}
     />
   ),
   exam: (setOpen, type, data, relatedData) => (
@@ -111,7 +123,6 @@ const forms: {
       type={type}
       data={data}
       setOpen={setOpen}
-      relatedData={relatedData}
     />
     // TODO OTHER LIST ITEMS
   ),
@@ -122,61 +133,41 @@ const forms: {
       setOpen={setOpen}
     />
   ),
-  // Placeholder forms for unimplemented types
   parent: (setOpen, type, data, relatedData) => (
-            <div className="p-4 text-center">
-          <p className="text-blue-600 dark:text-blue-300">Parent form is not yet implemented.</p>
-          <button 
-            onClick={() => setOpen(false)}
-            className="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
-          >
-            Close
-          </button>
-        </div>
+    <ParentForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+    />
   ),
   lesson: (setOpen, type, data, relatedData) => (
-    <div className="p-4 text-center">
-      <p className="text-blue-600 dark:text-blue-300">Lesson form is not yet implemented.</p>
-      <button 
-        onClick={() => setOpen(false)}
-        className="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
-      >
-        Close
-      </button>
-    </div>
+    <LessonForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+    />
   ),
   assignment: (setOpen, type, data, relatedData) => (
-    <div className="p-4 text-center">
-      <p className="text-blue-600 dark:text-blue-300">Assignment form is not yet implemented.</p>
-      <button 
-        onClick={() => setOpen(false)}
-        className="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
-      >
-        Close
-      </button>
-    </div>
+    <AssignmentForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+    />
   ),
   result: (setOpen, type, data, relatedData) => (
-    <div className="p-4 text-center">
-      <p className="text-blue-600 dark:text-blue-300">Result form is not yet implemented.</p>
-      <button 
-        onClick={() => setOpen(false)}
-        className="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
-      >
-        Close
-      </button>
-    </div>
+    <ResultForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+    />
   ),
   attendance: (setOpen, type, data, relatedData) => (
-    <div className="p-4 text-center">
-      <p className="text-blue-600 dark:text-blue-300">Attendance form is not yet implemented.</p>
-      <button 
-        onClick={() => setOpen(false)}
-        className="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
-      >
-        Close
-      </button>
-    </div>
+    <AttendanceForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
   ),
   announcement: (setOpen, type, data, relatedData) => (
     <AnnouncementForm
@@ -240,17 +231,15 @@ const FormModal = ({
       error: false,
     });
 
-    const router = useRouter();
-
     useEffect(() => {
       if (state.success) {
         toast(`${table} has been deleted!`);
         setOpen(false);
-        router.refresh();
       } else if (state.error) {
         toast.error(`Failed to delete ${table}. Please try again.`);
       }
-    }, [state, router, table]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [state]);
 
     console.log('FormModal: Rendering form for table:', table, 'type:', type);
     console.log('FormModal: Available forms:', Object.keys(forms));

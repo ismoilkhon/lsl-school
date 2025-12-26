@@ -1,10 +1,10 @@
 import { Client, Account } from 'appwrite';
 import { cookies } from 'next/headers';
 
-// Initialize Appwrite client for server-side operations
+// Initialize Appwrite client for server-side authentication
 const client = new Client()
-  .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1')
-  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '');
+    .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://syd.cloud.appwrite.io/v1')
+    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '');
 
 const account = new Account(client);
 

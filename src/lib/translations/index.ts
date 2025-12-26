@@ -51,14 +51,14 @@ export function useTranslation(locale: Locale) {
 
 // Language names for display
 export const languageNames = {
-  en: 'English',
-  uz: 'O\'zbekcha',
-  ru: 'Русский',
+  en: 'En',
+  uz: 'O\'z',
+  ru: 'Ру',
 } as const;
 
 // Language flags (you can use emoji flags or import flag icons)
 export const languageFlags = {
-  en: '🇺🇸',
+  en: '',
   uz: '🇺🇿',
   ru: '🇷🇺',
 } as const;

@@ -113,7 +113,7 @@ export default function ContactSection() {
     {
       icon: <MapPin className="h-6 w-6" />,
       title: t('contact.address'),
-      details: ["LSL School", "New Location, Central Asia"]
+      details: ["Namangan", "Baynalminal MFY, 7-uy"]
     },
     {
       icon: <Clock className="h-6 w-6" />,
@@ -139,6 +139,8 @@ export default function ContactSection() {
             placeholder=""
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
+            onResize={() => {}}
+            onResizeCapture={() => {}}
           >
             {t('contact.title')}
           </Typography>
@@ -148,6 +150,8 @@ export default function ContactSection() {
             placeholder=""
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
+            onResize={() => {}}
+            onResizeCapture={() => {}}
           >
             {t('contact.description')}
           </Typography>
@@ -167,6 +171,8 @@ export default function ContactSection() {
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               {t('contact.contactInfo')}
             </Typography>
@@ -180,8 +186,22 @@ export default function ContactSection() {
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   viewport={{ once: true }}
                 >
-                  <Card className="hover:shadow-lg transition-shadow duration-300">
-                    <CardBody className="p-6">
+                  <Card 
+                    className="hover:shadow-lg transition-shadow duration-300"
+                    placeholder=""
+                    onResize={() => {}}
+                    onResizeCapture={() => {}}
+                    onPointerEnterCapture={() => {}}
+                    onPointerLeaveCapture={() => {}}
+                  >
+                    <CardBody 
+                      className="p-6"
+                      placeholder=""
+                      onResize={() => {}}
+                      onResizeCapture={() => {}}
+                      onPointerEnterCapture={() => {}}
+                      onPointerLeaveCapture={() => {}}
+                    >
                       <div className="flex items-start space-x-4">
                         <div className="flex-shrink-0 p-3 bg-orange-100 rounded-lg text-orange-600">
                           {info.icon}
@@ -193,6 +213,8 @@ export default function ContactSection() {
                             placeholder=""
                             onPointerEnterCapture={() => {}}
                             onPointerLeaveCapture={() => {}}
+                            onResize={() => {}}
+                            onResizeCapture={() => {}}
                           >
                             {info.title}
                           </Typography>
@@ -203,6 +225,8 @@ export default function ContactSection() {
                               placeholder=""
                               onPointerEnterCapture={() => {}}
                               onPointerLeaveCapture={() => {}}
+                              onResize={() => {}}
+                              onResizeCapture={() => {}}
                             >
                               {detail}
                             </Typography>
@@ -226,7 +250,7 @@ export default function ContactSection() {
               <LeafletMap
                 latitude={40.993861}
                 longitude={71.668722}
-                address="LSL School, New Location, Central Asia"
+                address="Namangan, Baynalminal MFY, 7-uy"
                 schoolName="LSL School"
               />
             </motion.div>
@@ -245,12 +269,27 @@ export default function ContactSection() {
               placeholder=""
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               {t('contact.sendMessage')}
             </Typography>
 
-            <Card>
-              <CardBody className="p-8">
+            <Card
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
+            >
+              <CardBody 
+                className="p-8"
+                placeholder=""
+                onResize={() => {}}
+                onResizeCapture={() => {}}
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -372,7 +411,7 @@ export default function ContactSection() {
                     ) : (
                       <>
                         <Send className="h-5 w-5" />
-                        Send Message (Test)
+                        Send Message
                       </>
                     )}
                   </button>

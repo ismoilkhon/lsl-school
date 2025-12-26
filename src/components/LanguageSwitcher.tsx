@@ -35,7 +35,7 @@ export default function LanguageSwitcher({ currentLocale, className = '' }: Lang
         className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors"
         aria-label="Select language"
       >
-        <Globe className="h-4 w-4" />
+        {/* <Globe className="h-4 w-4" /> */}
         <span className="text-sm font-medium">
           {languageFlags[currentLocale]} {languageNames[currentLocale]}
         </span>

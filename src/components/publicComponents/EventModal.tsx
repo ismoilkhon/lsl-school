@@ -4,6 +4,7 @@ import React from 'react';
 import { Dialog, DialogHeader, DialogBody, DialogFooter, Typography, Button, Card, CardBody } from '@material-tailwind/react';
 import { Calendar, Clock, MapPin, Users, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
 interface Event {
   id: number;
@@ -50,6 +51,8 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
           placeholder=""
           onPointerEnterCapture={() => {}}
           onPointerLeaveCapture={() => {}}
+          onResize={() => {}}
+          onResizeCapture={() => {}}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -57,14 +60,30 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.3 }}
           >
-            <Card className="mx-auto w-full max-w-4xl">
-              <CardBody className="p-0">
+            <Card 
+              className="mx-auto w-full max-w-4xl"
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
+            >
+              <CardBody 
+                className="p-0"
+                placeholder=""
+                onResize={() => {}}
+                onResizeCapture={() => {}}
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
                 {/* Header Image */}
                 <div className="relative h-64 overflow-hidden rounded-t-lg">
-                  <img
+                  <Image
                     src={event.image}
                     alt={event.title}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    style={{ width: '100%', height: '100%' }}
                   />
                   <div className="absolute inset-0 bg-black/40"></div>
                   <div className="absolute top-4 right-4">
@@ -75,6 +94,8 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                       placeholder=""
                       onPointerEnterCapture={() => {}}
                       onPointerLeaveCapture={() => {}}
+                      onResize={() => {}}
+                      onResizeCapture={() => {}}
                     >
                       <X className="h-6 w-6" />
                     </Button>
@@ -87,19 +108,35 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                 </div>
 
                 <div className="p-6">
-                  <DialogHeader className="p-0 mb-4">
+                  <DialogHeader 
+                    className="p-0 mb-4"
+                    placeholder=""
+                    onResize={() => {}}
+                    onResizeCapture={() => {}}
+                    onPointerEnterCapture={() => {}}
+                    onPointerLeaveCapture={() => {}}
+                  >
                     <Typography
                       variant="h3"
                       className="text-blue-900 font-bold"
                       placeholder=""
                       onPointerEnterCapture={() => {}}
                       onPointerLeaveCapture={() => {}}
+                      onResize={() => {}}
+                      onResizeCapture={() => {}}
                     >
                       {event.title}
                     </Typography>
                   </DialogHeader>
 
-                  <DialogBody className="p-0">
+                  <DialogBody 
+                    className="p-0"
+                    placeholder=""
+                    onResize={() => {}}
+                    onResizeCapture={() => {}}
+                    onPointerEnterCapture={() => {}}
+                    onPointerLeaveCapture={() => {}}
+                  >
                     {/* Event Details Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                       <div className="space-y-4">
@@ -112,6 +149,8 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                               placeholder=""
                               onPointerEnterCapture={() => {}}
                               onPointerLeaveCapture={() => {}}
+                              onResize={() => {}}
+                              onResizeCapture={() => {}}
                             >
                               Date
                             </Typography>
@@ -120,6 +159,8 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                               placeholder=""
                               onPointerEnterCapture={() => {}}
                               onPointerLeaveCapture={() => {}}
+                              onResize={() => {}}
+                              onResizeCapture={() => {}}
                             >
                               {event.date}
                             </Typography>
@@ -135,6 +176,8 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                               placeholder=""
                               onPointerEnterCapture={() => {}}
                               onPointerLeaveCapture={() => {}}
+                              onResize={() => {}}
+                              onResizeCapture={() => {}}
                             >
                               Time
                             </Typography>
@@ -143,6 +186,8 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                               placeholder=""
                               onPointerEnterCapture={() => {}}
                               onPointerLeaveCapture={() => {}}
+                              onResize={() => {}}
+                              onResizeCapture={() => {}}
                             >
                               {event.time}
                             </Typography>
@@ -160,6 +205,8 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                               placeholder=""
                               onPointerEnterCapture={() => {}}
                               onPointerLeaveCapture={() => {}}
+                              onResize={() => {}}
+                              onResizeCapture={() => {}}
                             >
                               Location
                             </Typography>
@@ -168,6 +215,8 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                               placeholder=""
                               onPointerEnterCapture={() => {}}
                               onPointerLeaveCapture={() => {}}
+                              onResize={() => {}}
+                              onResizeCapture={() => {}}
                             >
                               {event.location}
                             </Typography>
@@ -183,6 +232,8 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                               placeholder=""
                               onPointerEnterCapture={() => {}}
                               onPointerLeaveCapture={() => {}}
+                              onResize={() => {}}
+                              onResizeCapture={() => {}}
                             >
                               Expected Attendees
                             </Typography>
@@ -191,6 +242,8 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                               placeholder=""
                               onPointerEnterCapture={() => {}}
                               onPointerLeaveCapture={() => {}}
+                              onResize={() => {}}
+                              onResizeCapture={() => {}}
                             >
                               {event.attendees}
                             </Typography>
@@ -207,6 +260,8 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                         placeholder=""
                         onPointerEnterCapture={() => {}}
                         onPointerLeaveCapture={() => {}}
+                        onResize={() => {}}
+                        onResizeCapture={() => {}}
                       >
                         About This Event
                       </Typography>
@@ -215,6 +270,8 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                         placeholder=""
                         onPointerEnterCapture={() => {}}
                         onPointerLeaveCapture={() => {}}
+                        onResize={() => {}}
+                        onResizeCapture={() => {}}
                       >
                         {event.details}
                       </Typography>
@@ -228,6 +285,8 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                         placeholder=""
                         onPointerEnterCapture={() => {}}
                         onPointerLeaveCapture={() => {}}
+                        onResize={() => {}}
+                        onResizeCapture={() => {}}
                       >
                         Organized by: {event.organizer}
                       </Typography>
@@ -242,6 +301,8 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                           placeholder=""
                           onPointerEnterCapture={() => {}}
                           onPointerLeaveCapture={() => {}}
+                          onResize={() => {}}
+                          onResizeCapture={() => {}}
                         >
                           Requirements
                         </Typography>
@@ -257,7 +318,14 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                     )}
                   </DialogBody>
 
-                  <DialogFooter className="p-0 pt-6 border-t border-gray-200">
+                  <DialogFooter 
+                    className="p-0 pt-6 border-t border-gray-200"
+                    placeholder=""
+                    onResize={() => {}}
+                    onResizeCapture={() => {}}
+                    onPointerEnterCapture={() => {}}
+                    onPointerLeaveCapture={() => {}}
+                  >
                     <div className="flex flex-col sm:flex-row gap-3 w-full">
                       <Button
                         variant="outlined"
@@ -266,6 +334,8 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                         placeholder=""
                         onPointerEnterCapture={() => {}}
                         onPointerLeaveCapture={() => {}}
+                        onResize={() => {}}
+                        onResizeCapture={() => {}}
                       >
                         Close
                       </Button>
@@ -274,6 +344,8 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                         placeholder=""
                         onPointerEnterCapture={() => {}}
                         onPointerLeaveCapture={() => {}}
+                        onResize={() => {}}
+                        onResizeCapture={() => {}}
                       >
                         Register for Event
                       </Button>
